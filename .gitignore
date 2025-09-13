@@ -4,6 +4,7 @@
 /node_modules
 /.pnp
 .pnp.js
+package-lock.json
 
 # testing
 /coverage
@@ -41,3 +42,7 @@ next-env.d.ts
 
 # OS
 Thumbs.db
+
+# Platform-specific binaries (prevent caching issues)
+**/swc-*
+**/@next/swc-*

@@ -1,0 +1,6 @@
+# Copy this to .env.local to run the app
+
+MONGODB_URI=mongodb://localhost:27017/midburn-camp
+ADMIN_PASSWORD=midburn2024
+JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
+NEXTAUTH_URL=http://localhost:3023

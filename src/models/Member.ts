@@ -1,0 +1,109 @@
+import mongoose, { Document, Schema } from 'mongoose';
+
+export interface IMember extends Document {
+  // Basic Information
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  
+  // Camp Information
+  campRole: string;
+  emergencyContact: {
+    name: string;
+    phone: string;
+    relationship: string;
+  };
+  
+  // Dietary & Medical
+  dietaryRestrictions: string[];
+  medicalConditions: string;
+  allergies: string;
+  
+  // Logistics
+  arrivalDate: Date;
+  departureDate: Date;
+  needsTransport: boolean;
+  hasVehicle: boolean;
+  vehicleDetails?: string;
+  
+  // Additional
+  specialSkills: string[];
+  previousBurns: number;
+  comments: string;
+  
+  // System fields
+  isApproved: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+const MemberSchema = new Schema<IMember>({
+  firstName: { type: String, required: true, trim: true },
+  lastName: { type: String, required: true, trim: true },
+  email: { type: String, required: true, unique: true, lowercase: true, trim: true },
+  phone: { type: String, required: true, trim: true },
+  
+  campRole: { 
+    type: String, 
+    required: true,
+    enum: [
+      'Camp Lead',
+      'Kitchen Manager', 
+      'Build Team',
+      'Art Team',
+      'Safety Officer',
+      'Medic',
+      'DJ/Music',
+      'Photographer',
+      'General Member',
+      'Other'
+    ]
+  },
+  
+  emergencyContact: {
+    name: { type: String, required: true, trim: true },
+    phone: { type: String, required: true, trim: true },
+    relationship: { type: String, required: true, trim: true }
+  },
+  
+  dietaryRestrictions: [{
+    type: String,
+    enum: [
+      'Vegetarian',
+      'Vegan', 
+      'Gluten-Free',
+      'Kosher',
+      'Halal',
+      'Lactose Intolerant',
+      'Nut Allergy',
+      'Other'
+    ]
+  }],
+  
+  medicalConditions: { type: String, default: '', trim: true },
+  allergies: { type: String, default: '', trim: true },
+  
+  arrivalDate: { type: Date, required: true },
+  departureDate: { type: Date, required: true },
+  needsTransport: { type: Boolean, default: false },
+  hasVehicle: { type: Boolean, default: false },
+  vehicleDetails: { type: String, trim: true },
+  
+  specialSkills: [{ type: String, trim: true }],
+  previousBurns: { type: Number, default: 0, min: 0 },
+  comments: { type: String, default: '', trim: true },
+  
+  isApproved: { type: Boolean, default: false },
+}, {
+  timestamps: true,
+});
+
+// Indexes for better query performance
+MemberSchema.index({ email: 1 });
+MemberSchema.index({ campRole: 1 });
+MemberSchema.index({ isApproved: 1 });
+MemberSchema.index({ createdAt: -1 });
+
+// Ensure we don't re-compile the model
+export default mongoose.models.Member || mongoose.model<IMember>('Member', MemberSchema);

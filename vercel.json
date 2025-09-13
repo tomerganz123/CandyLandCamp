@@ -1,0 +1,13 @@
+{
+  "functions": {
+    "src/app/api/**/*.ts": {
+      "maxDuration": 30
+    }
+  },
+  "env": {
+    "MONGODB_URI": "@mongodb-uri",
+    "ADMIN_PASSWORD": "@admin-password", 
+    "JWT_SECRET": "@jwt-secret",
+    "NEXTAUTH_URL": "@nextauth-url"
+  }
+}

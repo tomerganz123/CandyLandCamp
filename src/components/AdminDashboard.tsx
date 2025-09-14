@@ -589,6 +589,7 @@ export default function AdminDashboard({ token, onLogout }: AdminDashboardProps)
                   <h4 className="font-medium text-gray-900 mb-2">Camp Details</h4>
                   <p className="text-sm text-gray-600">Role: {selectedMember.campRole}</p>
                   <p className="text-sm text-gray-600">Previous Burns: {selectedMember.previousBurns}</p>
+                  <p className="text-sm text-gray-600">Ticket Status: {selectedMember.ticketStatus}</p>
                 </div>
                 
                 <div>

@@ -7,6 +7,9 @@ export interface IMember extends Document {
   email: string;
   phone: string;
   
+  // Ticket Information
+  ticketStatus: string;
+  
   // Camp Information
   campRole: string;
   emergencyContact: {
@@ -44,6 +47,17 @@ const MemberSchema = new Schema<IMember>({
   lastName: { type: String, required: true, trim: true },
   email: { type: String, required: true, unique: true, lowercase: true, trim: true },
   phone: { type: String, required: true, trim: true },
+  
+  ticketStatus: { 
+    type: String, 
+    required: true,
+    enum: [
+      'Yes I bought via Camp',
+      'Yes I bought via other Department',
+      'No - but should get a ticket via other department',
+      'No - no lead for a ticket at this stage'
+    ]
+  },
   
   campRole: { 
     type: String, 

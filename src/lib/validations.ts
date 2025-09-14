@@ -7,6 +7,15 @@ export const memberRegistrationSchema = z.object({
   email: z.string().email('Invalid email address'),
   phone: z.string().min(10, 'Phone number must be at least 10 digits'),
   
+  ticketStatus: z.enum([
+    'Yes I bought via Camp',
+    'Yes I bought via other Department',
+    'No - but should get a ticket via other department',
+    'No - no lead for a ticket at this stage'
+  ], {
+    required_error: 'Please select your ticket status'
+  }),
+  
   campRole: z.enum([
     'Camp Lead',
     'Kitchen Manager', 

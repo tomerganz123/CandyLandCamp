@@ -37,6 +37,13 @@ const ARRIVAL_DAYS = [
   'Thursday'
 ];
 
+const TICKET_STATUS_OPTIONS = [
+  'Yes I bought via Camp',
+  'Yes I bought via other Department',
+  'No - but should get a ticket via other department',
+  'No - no lead for a ticket at this stage'
+];
+
 interface RegistrationFormProps {
   onSuccess: (data: any) => void;
 }
@@ -67,6 +74,7 @@ export default function RegistrationForm({ onSuccess }: RegistrationFormProps) {
       canArriveEarly: false,
       arrivalDays: [],
       agreesToStayTillSaturday: false,
+      ticketStatus: '',
     },
   });
 
@@ -171,6 +179,36 @@ export default function RegistrationForm({ onSuccess }: RegistrationFormProps) {
               <p className="mt-1 text-sm text-red-600">{errors.phone.message}</p>
             )}
           </div>
+        </div>
+      </div>
+
+      {/* Ticket Information */}
+      <div className="bg-white rounded-xl shadow-lg p-6 border border-orange-100">
+        <div className="flex items-center gap-2 mb-6">
+          <Star className="h-5 w-5 text-orange-600" />
+          <h2 className="text-xl font-semibold text-gray-800">Ticket Information</h2>
+        </div>
+
+        <div className="form-field">
+          <label htmlFor="ticketStatus" className="block text-sm font-medium text-gray-700 mb-3">
+            Do you already have a ticket? *
+          </label>
+          <div className="space-y-3">
+            {TICKET_STATUS_OPTIONS.map((option) => (
+              <label key={option} className="flex items-center space-x-3 cursor-pointer p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                <input
+                  {...register('ticketStatus')}
+                  type="radio"
+                  value={option}
+                  className="text-orange-600 focus:ring-orange-500 focus:ring-2"
+                />
+                <span className="text-sm text-gray-700 font-medium">{option}</span>
+              </label>
+            ))}
+          </div>
+          {errors.ticketStatus && (
+            <p className="mt-2 text-sm text-red-600">{errors.ticketStatus.message}</p>
+          )}
         </div>
       </div>
 

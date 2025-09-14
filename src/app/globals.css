@@ -112,3 +112,116 @@
 .midburn-gradient {
   background: linear-gradient(135deg, #f97316 0%, #ea580c 50%, #c2410c 100%);
 }
+
+/* Trippy psychedelic effects */
+.psychedelic-bg {
+  background: linear-gradient(45deg, #ff006e, #8338ec, #3a86ff, #06ffa5, #ffbe0b, #ff006e);
+  background-size: 300% 300%;
+  animation: psychedelic-flow 8s ease-in-out infinite;
+}
+
+@keyframes psychedelic-flow {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+.trippy-border {
+  border: 3px solid transparent;
+  background: linear-gradient(white, white) padding-box,
+              linear-gradient(45deg, #ff006e, #8338ec, #3a86ff, #06ffa5, #ffbe0b) border-box;
+  animation: border-flow 4s ease-in-out infinite;
+}
+
+@keyframes border-flow {
+  0%, 100% { filter: hue-rotate(0deg); }
+  50% { filter: hue-rotate(180deg); }
+}
+
+.mushroom-float {
+  animation: mushroom-float 6s ease-in-out infinite;
+}
+
+@keyframes mushroom-float {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  33% { transform: translateY(-10px) rotate(2deg); }
+  66% { transform: translateY(-5px) rotate(-2deg); }
+}
+
+.kaleidoscope {
+  background: 
+    radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
+    radial-gradient(circle at 40% 40%, rgba(120, 255, 198, 0.3) 0%, transparent 50%);
+  animation: kaleidoscope-spin 12s linear infinite;
+}
+
+@keyframes kaleidoscope-spin {
+  0% { transform: rotate(0deg) scale(1); }
+  50% { transform: rotate(180deg) scale(1.1); }
+  100% { transform: rotate(360deg) scale(1); }
+}
+
+.trippy-text {
+  background: linear-gradient(45deg, #ff006e, #8338ec, #3a86ff, #06ffa5, #ffbe0b, #ff006e);
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: trippy-text-flow 4s ease-in-out infinite;
+}
+
+@keyframes trippy-text-flow {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+.form-card-trippy {
+  position: relative;
+  overflow: hidden;
+}
+
+.form-card-trippy::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: 
+    radial-gradient(circle, rgba(255, 0, 110, 0.1) 0%, transparent 40%),
+    radial-gradient(circle, rgba(131, 56, 236, 0.1) 20%, transparent 60%),
+    radial-gradient(circle, rgba(58, 134, 255, 0.1) 40%, transparent 80%);
+  animation: trippy-bg-rotate 20s linear infinite;
+  z-index: -1;
+}
+
+@keyframes trippy-bg-rotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.mushroom-emoji {
+  font-size: 1.5rem;
+  display: inline-block;
+  animation: mushroom-pulse 3s ease-in-out infinite;
+}
+
+@keyframes mushroom-pulse {
+  0%, 100% { transform: scale(1) rotate(0deg); }
+  50% { transform: scale(1.2) rotate(5deg); }
+}
+
+.rainbow-shadow {
+  box-shadow: 
+    0 0 20px rgba(255, 0, 110, 0.3),
+    0 0 40px rgba(131, 56, 236, 0.2),
+    0 0 60px rgba(58, 134, 255, 0.1);
+}
+
+.trippy-input:focus {
+  box-shadow: 
+    0 0 0 3px rgba(255, 0, 110, 0.3),
+    0 0 20px rgba(131, 56, 236, 0.2),
+    0 0 40px rgba(58, 134, 255, 0.1);
+  border-color: #ff006e;
+}

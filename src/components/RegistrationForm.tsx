@@ -119,10 +119,10 @@ export default function RegistrationForm({ onSuccess }: RegistrationFormProps) {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
       {/* Personal Information */}
-      <div className="bg-white rounded-xl shadow-lg p-6 border border-orange-100">
+      <div className="bg-white rounded-xl shadow-lg p-6 border border-orange-100 form-card-trippy rainbow-shadow">
         <div className="flex items-center gap-2 mb-6">
-          <User className="h-5 w-5 text-orange-600" />
-          <h2 className="text-xl font-semibold text-gray-800">Personal Information</h2>
+          <User className="h-5 w-5 text-orange-600 mushroom-float" />
+          <h2 className="text-xl font-semibold text-gray-800">Personal Information <span className="mushroom-emoji">🍄</span></h2>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -133,8 +133,8 @@ export default function RegistrationForm({ onSuccess }: RegistrationFormProps) {
             <input
               {...register('firstName')}
               type="text"
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
-              placeholder="Your first name"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all trippy-input"
+              placeholder="Your first name 🌈"
             />
             {errors.firstName && (
               <p className="mt-1 text-sm text-red-600">{errors.firstName.message}</p>
@@ -207,10 +207,10 @@ export default function RegistrationForm({ onSuccess }: RegistrationFormProps) {
       </div>
 
       {/* Ticket Information */}
-      <div className="bg-white rounded-xl shadow-lg p-6 border border-orange-100">
+      <div className="bg-white rounded-xl shadow-lg p-6 border border-orange-100 form-card-trippy trippy-border">
         <div className="flex items-center gap-2 mb-6">
-          <Star className="h-5 w-5 text-orange-600" />
-          <h2 className="text-xl font-semibold text-gray-800">Ticket Information</h2>
+          <Star className="h-5 w-5 text-orange-600 mushroom-float" />
+          <h2 className="text-xl font-semibold text-gray-800">Ticket Information <span className="mushroom-emoji">🎫</span></h2>
         </div>
 
         <div className="form-field">
@@ -237,10 +237,10 @@ export default function RegistrationForm({ onSuccess }: RegistrationFormProps) {
       </div>
 
       {/* Camp Information */}
-      <div className="bg-white rounded-xl shadow-lg p-6 border border-orange-100">
+      <div className="bg-white rounded-xl shadow-lg p-6 border border-orange-100 form-card-trippy kaleidoscope">
         <div className="flex items-center gap-2 mb-6">
-          <Star className="h-5 w-5 text-orange-600" />
-          <h2 className="text-xl font-semibold text-gray-800">Camp Information</h2>
+          <Star className="h-5 w-5 text-orange-600 mushroom-float" />
+          <h2 className="text-xl font-semibold text-gray-800 trippy-text">Camp Information <span className="mushroom-emoji">🌈</span></h2>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -327,10 +327,10 @@ export default function RegistrationForm({ onSuccess }: RegistrationFormProps) {
 
 
       {/* Dietary & Medical */}
-      <div className="bg-white rounded-xl shadow-lg p-6 border border-orange-100">
+      <div className="bg-white rounded-xl shadow-lg p-6 border border-orange-100 form-card-trippy">
         <div className="flex items-center gap-2 mb-6">
-          <Utensils className="h-5 w-5 text-orange-600" />
-          <h2 className="text-xl font-semibold text-gray-800">Dietary & Medical Information</h2>
+          <Utensils className="h-5 w-5 text-orange-600 mushroom-float" />
+          <h2 className="text-xl font-semibold text-gray-800">Dietary & Medical Information <span className="mushroom-emoji">🌿</span></h2>
         </div>
 
         <div className="space-y-6">
@@ -382,17 +382,17 @@ export default function RegistrationForm({ onSuccess }: RegistrationFormProps) {
       </div>
 
       {/* Logistics */}
-      <div className="bg-white rounded-xl shadow-lg p-6 border border-orange-100">
+      <div className="bg-white rounded-xl shadow-lg p-6 border border-orange-100 form-card-trippy psychedelic-bg">
         <div className="flex items-center gap-2 mb-6">
-          <Calendar className="h-5 w-5 text-orange-600" />
-          <h2 className="text-xl font-semibold text-gray-800">Logistics</h2>
+          <Calendar className="h-5 w-5 text-white mushroom-float" />
+          <h2 className="text-xl font-semibold text-white drop-shadow-lg">Logistics <span className="mushroom-emoji">🚀</span></h2>
         </div>
 
         {/* Important logistics note */}
-        <div className="mb-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
-          <p className="text-sm text-blue-800 font-medium">
+        <div className="mb-6 p-4 bg-black/20 rounded-lg border border-white/30 backdrop-blur-sm">
+          <p className="text-sm text-white font-medium drop-shadow-lg">
             📋 We will require 15 people to arrive to the event before it starts, and help with all the camp setup. 
-            You can also come for a day and come back later.
+            You can also come for a day and come back later. <span className="mushroom-emoji">🍄</span>
           </p>
         </div>
 
@@ -494,10 +494,10 @@ export default function RegistrationForm({ onSuccess }: RegistrationFormProps) {
       </div>
 
       {/* Additional Comments */}
-      <div className="bg-white rounded-xl shadow-lg p-6 border border-orange-100">
+      <div className="bg-white rounded-xl shadow-lg p-6 border border-orange-100 form-card-trippy">
         <div className="flex items-center gap-2 mb-6">
-          <MessageCircle className="h-5 w-5 text-orange-600" />
-          <h2 className="text-xl font-semibold text-gray-800">Additional Comments</h2>
+          <MessageCircle className="h-5 w-5 text-orange-600 mushroom-float" />
+          <h2 className="text-xl font-semibold text-gray-800">Additional Comments <span className="mushroom-emoji">💭</span></h2>
         </div>
 
         <div className="form-field">
@@ -521,15 +521,15 @@ export default function RegistrationForm({ onSuccess }: RegistrationFormProps) {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white py-4 px-8 rounded-lg font-semibold text-lg hover:from-orange-600 hover:to-red-600 focus:ring-4 focus:ring-orange-300 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
+          className="w-full psychedelic-bg text-white py-4 px-8 rounded-lg font-semibold text-lg hover:scale-105 focus:ring-4 focus:ring-purple-300 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed rainbow-shadow mushroom-float"
         >
           {isSubmitting ? (
             <div className="flex items-center justify-center gap-3">
               <div className="spinner h-5 w-5"></div>
-              Submitting Registration...
+              Submitting Registration... <span className="mushroom-emoji">🌀</span>
             </div>
           ) : (
-            'Complete Registration 🔥'
+            'Complete Registration 🔥🍄🌈✨'
           )}
         </button>
 

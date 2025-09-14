@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { memberRegistrationSchema, type MemberRegistrationInput } from '@/lib/validations';
-import { Calendar, User, Mail, Phone, Heart, Utensils, Car, Star, MessageCircle } from 'lucide-react';
+import { Calendar, User, Mail, Phone, Utensils, Car, Star, MessageCircle } from 'lucide-react';
 
 const CAMP_ROLES = [
   'Camp Lead',
@@ -296,60 +296,6 @@ export default function RegistrationForm({ onSuccess }: RegistrationFormProps) {
         </div>
       </div>
 
-      {/* Emergency Contact */}
-      <div className="bg-white rounded-xl shadow-lg p-6 border border-orange-100">
-        <div className="flex items-center gap-2 mb-6">
-          <Heart className="h-5 w-5 text-orange-600" />
-          <h2 className="text-xl font-semibold text-gray-800">Emergency Contact</h2>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="form-field">
-            <label htmlFor="emergencyContact.name" className="block text-sm font-medium text-gray-700 mb-2">
-              Contact Name *
-            </label>
-            <input
-              {...register('emergencyContact.name')}
-              type="text"
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
-              placeholder="Full name"
-            />
-            {errors.emergencyContact?.name && (
-              <p className="mt-1 text-sm text-red-600">{errors.emergencyContact.name.message}</p>
-            )}
-          </div>
-
-          <div className="form-field">
-            <label htmlFor="emergencyContact.phone" className="block text-sm font-medium text-gray-700 mb-2">
-              Contact Phone *
-            </label>
-            <input
-              {...register('emergencyContact.phone')}
-              type="tel"
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
-              placeholder="+972-50-123-4567"
-            />
-            {errors.emergencyContact?.phone && (
-              <p className="mt-1 text-sm text-red-600">{errors.emergencyContact.phone.message}</p>
-            )}
-          </div>
-
-          <div className="form-field">
-            <label htmlFor="emergencyContact.relationship" className="block text-sm font-medium text-gray-700 mb-2">
-              Relationship *
-            </label>
-            <input
-              {...register('emergencyContact.relationship')}
-              type="text"
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
-              placeholder="e.g., Parent, Spouse, Friend"
-            />
-            {errors.emergencyContact?.relationship && (
-              <p className="mt-1 text-sm text-red-600">{errors.emergencyContact.relationship.message}</p>
-            )}
-          </div>
-        </div>
-      </div>
 
       {/* Dietary & Medical */}
       <div className="bg-white rounded-xl shadow-lg p-6 border border-orange-100">

@@ -8,11 +8,6 @@ export interface MemberFormData {
   idNumber: string;
   ticketStatus?: string;
   campRole: string;
-  emergencyContact: {
-    name: string;
-    phone: string;
-    relationship: string;
-  };
   dietaryRestrictions: string[];
   medicalConditions: string;
   allergies: string;

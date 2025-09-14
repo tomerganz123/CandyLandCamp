@@ -593,12 +593,6 @@ export default function AdminDashboard({ token, onLogout }: AdminDashboardProps)
                   <p className="text-sm text-gray-600">Ticket Status: {selectedMember.ticketStatus}</p>
                 </div>
                 
-                <div>
-                  <h4 className="font-medium text-gray-900 mb-2">Emergency Contact</h4>
-                  <p className="text-sm text-gray-600">Name: {selectedMember.emergencyContact.name}</p>
-                  <p className="text-sm text-gray-600">Phone: {selectedMember.emergencyContact.phone}</p>
-                  <p className="text-sm text-gray-600">Relationship: {selectedMember.emergencyContact.relationship}</p>
-                </div>
                 
                 <div>
                   <h4 className="font-medium text-gray-900 mb-2">Logistics</h4>

@@ -13,11 +13,6 @@ export interface IMember extends Document {
   
   // Camp Information
   campRole: string;
-  emergencyContact: {
-    name: string;
-    phone: string;
-    relationship: string;
-  };
   
   // Dietary & Medical
   dietaryRestrictions: string[];
@@ -76,12 +71,6 @@ const MemberSchema = new Schema<IMember>({
       'General Member',
       'Other'
     ]
-  },
-  
-  emergencyContact: {
-    name: { type: String, required: true, trim: true },
-    phone: { type: String, required: true, trim: true },
-    relationship: { type: String, required: true, trim: true }
   },
   
   dietaryRestrictions: [{

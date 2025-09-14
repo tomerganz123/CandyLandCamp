@@ -30,12 +30,6 @@ export const memberRegistrationSchema = z.object({
     'Other'
   ]),
   
-  emergencyContact: z.object({
-    name: z.string().min(1, 'Emergency contact name is required'),
-    phone: z.string().min(10, 'Emergency contact phone is required'),
-    relationship: z.string().min(1, 'Relationship is required'),
-  }),
-  
   dietaryRestrictions: z.array(z.enum([
     'Vegetarian',
     'Vegan', 

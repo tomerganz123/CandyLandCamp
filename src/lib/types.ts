@@ -14,8 +14,9 @@ export interface MemberFormData {
   dietaryRestrictions: string[];
   medicalConditions: string;
   allergies: string;
-  arrivalDate: string;
-  departureDate: string;
+  canArriveEarly: boolean;
+  arrivalDays: string[];
+  agreesToStayTillSaturday: boolean;
   needsTransport: boolean;
   hasVehicle: boolean;
   vehicleDetails?: string;

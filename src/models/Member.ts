@@ -21,8 +21,9 @@ export interface IMember extends Document {
   allergies: string;
   
   // Logistics
-  arrivalDate: Date;
-  departureDate: Date;
+  canArriveEarly: boolean;
+  arrivalDays: string[];
+  agreesToStayTillSaturday: boolean;
   needsTransport: boolean;
   hasVehicle: boolean;
   vehicleDetails?: string;
@@ -73,10 +74,8 @@ const MemberSchema = new Schema<IMember>({
       'Vegetarian',
       'Vegan', 
       'Gluten-Free',
-      'Kosher',
       'Halal',
       'Lactose Intolerant',
-      'Nut Allergy',
       'Other'
     ]
   }],
@@ -84,8 +83,12 @@ const MemberSchema = new Schema<IMember>({
   medicalConditions: { type: String, default: '', trim: true },
   allergies: { type: String, default: '', trim: true },
   
-  arrivalDate: { type: Date, required: true },
-  departureDate: { type: Date, required: true },
+  canArriveEarly: { type: Boolean, default: false },
+  arrivalDays: [{
+    type: String,
+    enum: ['Saturday', 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday']
+  }],
+  agreesToStayTillSaturday: { type: Boolean, required: true },
   needsTransport: { type: Boolean, default: false },
   hasVehicle: { type: Boolean, default: false },
   vehicleDetails: { type: String, trim: true },

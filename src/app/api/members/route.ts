@@ -66,7 +66,9 @@ export async function POST(request: NextRequest) {
     console.error('Member registration error:', error);
     
     // Return specific error messages
-    if (error.message === 'Database connection timeout') {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    
+    if (errorMessage === 'Database connection timeout') {
       return NextResponse.json(
         { success: false, error: 'Database connection timeout. Please try again.' },
         { status: 503 }
@@ -74,7 +76,7 @@ export async function POST(request: NextRequest) {
     }
     
     return NextResponse.json(
-      { success: false, error: 'Internal server error', details: error.message },
+      { success: false, error: 'Internal server error', details: errorMessage },
       { status: 500 }
     );
   }

@@ -19,6 +19,7 @@ export interface MemberFormData {
   vehicleDetails?: string;
   specialSkills: string[];
   previousBurns: number;
+  giftParticipation?: string;
   comments: string;
 }
 

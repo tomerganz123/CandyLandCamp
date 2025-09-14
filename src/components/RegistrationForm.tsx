@@ -44,6 +44,12 @@ const TICKET_STATUS_OPTIONS = [
   'No - no lead for a ticket at this stage'
 ];
 
+const GIFT_OPTIONS = [
+  'קבאב הזמן',
+  'סדנאות יוגה / מדיטציה במקפ',
+  'מסיבה שקיעה בקמפ'
+];
+
 interface RegistrationFormProps {
   onSuccess: (data: any) => void;
 }
@@ -76,6 +82,7 @@ export default function RegistrationForm({ onSuccess }: RegistrationFormProps) {
       agreesToStayTillSaturday: false,
       ticketStatus: undefined,
       idNumber: '',
+      giftParticipation: undefined,
     },
   });
 
@@ -294,6 +301,28 @@ export default function RegistrationForm({ onSuccess }: RegistrationFormProps) {
             )}
           />
         </div>
+
+        <div className="mt-6">
+          <label className="block text-sm font-medium text-gray-700 mb-3">
+            Which Gift would you like to participate in? *
+          </label>
+          <div className="space-y-3">
+            {GIFT_OPTIONS.map((gift) => (
+              <label key={gift} className="flex items-center space-x-3 cursor-pointer p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                <input
+                  {...register('giftParticipation')}
+                  type="radio"
+                  value={gift}
+                  className="text-orange-600 focus:ring-orange-500 focus:ring-2"
+                />
+                <span className="text-sm text-gray-700 font-medium">{gift}</span>
+              </label>
+            ))}
+          </div>
+          {errors.giftParticipation && (
+            <p className="mt-2 text-sm text-red-600">{errors.giftParticipation.message}</p>
+          )}
+        </div>
       </div>
 
 
@@ -357,6 +386,14 @@ export default function RegistrationForm({ onSuccess }: RegistrationFormProps) {
         <div className="flex items-center gap-2 mb-6">
           <Calendar className="h-5 w-5 text-orange-600" />
           <h2 className="text-xl font-semibold text-gray-800">Logistics</h2>
+        </div>
+
+        {/* Important logistics note */}
+        <div className="mb-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+          <p className="text-sm text-blue-800 font-medium">
+            📋 We will require 15 people to arrive to the event before it starts, and help with all the camp setup. 
+            You can also come for a day and come back later.
+          </p>
         </div>
 
         <div className="space-y-6">

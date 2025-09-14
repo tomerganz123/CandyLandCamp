@@ -30,6 +30,7 @@ export interface IMember extends Document {
   // Additional
   specialSkills: string[];
   previousBurns: number;
+  giftParticipation: string;
   comments: string;
   
   // System fields
@@ -101,6 +102,15 @@ const MemberSchema = new Schema<IMember>({
   
   specialSkills: [{ type: String, trim: true }],
   previousBurns: { type: Number, default: 0, min: 0 },
+  giftParticipation: {
+    type: String,
+    required: true,
+    enum: [
+      'קבאב הזמן',
+      'סדנאות יוגה / מדיטציה במקפ',
+      'מסיבה שקיעה בקמפ'
+    ]
+  },
   comments: { type: String, default: '', trim: true },
   
   isApproved: { type: Boolean, default: false },

@@ -62,6 +62,13 @@ export const memberRegistrationSchema = z.object({
   
   specialSkills: z.array(z.string()).default([]),
   previousBurns: z.number().min(0).default(0),
+  giftParticipation: z.enum([
+    'קבאב הזמן',
+    'סדנאות יוגה / מדיטציה במקפ',
+    'מסיבה שקיעה בקמפ'
+  ], {
+    errorMap: () => ({ message: 'Please select which gift you would like to participate in' })
+  }),
   comments: z.string().default(''),
 });
 

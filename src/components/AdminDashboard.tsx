@@ -599,12 +599,15 @@ export default function AdminDashboard({ token, onLogout }: AdminDashboardProps)
                 </div>
                 
                 <div>
-                  <h4 className="font-medium text-gray-900 mb-2">Dates</h4>
+                  <h4 className="font-medium text-gray-900 mb-2">Logistics</h4>
                   <p className="text-sm text-gray-600">
-                    Arrival: {new Date(selectedMember.arrivalDate).toLocaleDateString()}
+                    Arrival Days: {selectedMember.arrivalDays.join(', ')}
                   </p>
                   <p className="text-sm text-gray-600">
-                    Departure: {new Date(selectedMember.departureDate).toLocaleDateString()}
+                    Can arrive early for building: {selectedMember.canArriveEarly ? 'Yes' : 'No'}
+                  </p>
+                  <p className="text-sm text-gray-600">
+                    Agreed to stay till Saturday: {selectedMember.agreesToStayTillSaturday ? 'Yes' : 'No'}
                   </p>
                 </div>
               </div>

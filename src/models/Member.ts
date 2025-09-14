@@ -6,6 +6,7 @@ export interface IMember extends Document {
   lastName: string;
   email: string;
   phone: string;
+  idNumber: string;
   
   // Ticket Information
   ticketStatus: string;
@@ -47,6 +48,7 @@ const MemberSchema = new Schema<IMember>({
   lastName: { type: String, required: true, trim: true },
   email: { type: String, required: true, unique: true, lowercase: true, trim: true },
   phone: { type: String, required: true, trim: true },
+  idNumber: { type: String, required: true, trim: true },
   
   ticketStatus: { 
     type: String, 

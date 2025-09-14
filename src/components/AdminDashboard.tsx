@@ -583,6 +583,7 @@ export default function AdminDashboard({ token, onLogout }: AdminDashboardProps)
                   <h4 className="font-medium text-gray-900 mb-2">Contact Information</h4>
                   <p className="text-sm text-gray-600">Email: {selectedMember.email}</p>
                   <p className="text-sm text-gray-600">Phone: {selectedMember.phone}</p>
+                  <p className="text-sm text-gray-600">ID/Passport: {selectedMember.idNumber}</p>
                 </div>
                 
                 <div>

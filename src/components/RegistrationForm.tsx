@@ -75,6 +75,7 @@ export default function RegistrationForm({ onSuccess }: RegistrationFormProps) {
       arrivalDays: [],
       agreesToStayTillSaturday: false,
       ticketStatus: undefined,
+      idNumber: '',
     },
   });
 
@@ -145,6 +146,22 @@ export default function RegistrationForm({ onSuccess }: RegistrationFormProps) {
             />
             {errors.lastName && (
               <p className="mt-1 text-sm text-red-600">{errors.lastName.message}</p>
+            )}
+          </div>
+
+          <div className="form-field">
+            <label htmlFor="idNumber" className="block text-sm font-medium text-gray-700 mb-2">
+              <User className="inline h-4 w-4 mr-1" />
+              ID / Passport Number *
+            </label>
+            <input
+              {...register('idNumber')}
+              type="text"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
+              placeholder="ID or Passport number"
+            />
+            {errors.idNumber && (
+              <p className="mt-1 text-sm text-red-600">{errors.idNumber.message}</p>
             )}
           </div>
 

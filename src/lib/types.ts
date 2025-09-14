@@ -5,6 +5,7 @@ export interface MemberFormData {
   lastName: string;
   email: string;
   phone: string;
+  idNumber: string;
   ticketStatus?: string;
   campRole: string;
   emergencyContact: {

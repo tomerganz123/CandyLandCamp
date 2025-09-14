@@ -6,6 +6,7 @@ export const memberRegistrationSchema = z.object({
   lastName: z.string().min(1, 'Last name is required').max(50),
   email: z.string().email('Invalid email address'),
   phone: z.string().min(10, 'Phone number must be at least 10 digits'),
+  idNumber: z.string().min(1, 'ID or Passport number is required').max(20),
   
   ticketStatus: z.enum([
     'Yes I bought via Camp',

@@ -4,7 +4,7 @@ MONGODB_URI=mongodb+srv://tomerganz_db_user:RhEqhWorpJ6zCAAx@cluster0.dxihaof.mo
 
 ADMIN_PASSWORD=midburn2024
 
-JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
+JWT_SECRET=qY7m9hZ2xP4tV6rL0aW8jN3cK5uG1eFq
 
 NEXTAUTH_URL=https://your-actual-vercel-app-url.vercel.app
 

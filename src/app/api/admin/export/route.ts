@@ -3,6 +3,9 @@ import connectDB from '@/lib/mongodb';
 import Member from '@/models/Member';
 import { verifyAdminToken } from '@/lib/auth';
 
+// Force dynamic rendering
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: NextRequest) {
   try {
     // Check admin authentication

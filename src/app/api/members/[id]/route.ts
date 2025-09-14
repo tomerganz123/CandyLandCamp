@@ -4,6 +4,9 @@ import Member from '@/models/Member';
 import { memberUpdateSchema } from '@/lib/validations';
 import { verifyAdminToken } from '@/lib/auth';
 
+// Force dynamic rendering
+export const dynamic = 'force-dynamic';
+
 interface RouteParams {
   params: {
     id: string;

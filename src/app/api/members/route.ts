@@ -4,6 +4,9 @@ import Member from '@/models/Member';
 import { memberRegistrationSchema } from '@/lib/validations';
 import { verifyAdminToken } from '@/lib/auth';
 
+// Force dynamic rendering
+export const dynamic = 'force-dynamic';
+
 // POST - Create new member registration
 export async function POST(request: NextRequest) {
   try {

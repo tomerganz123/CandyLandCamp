@@ -43,14 +43,16 @@ export const memberRegistrationSchema = z.object({
   allergies: z.string().default(''),
   
   canArriveEarly: z.boolean().default(false),
-  arrivalDays: z.array(z.enum([
+  arrivalDay: z.enum([
     'Saturday',
     'Sunday',
     'Monday',
     'Tuesday',
     'Wednesday',
     'Thursday'
-  ])).min(1, 'Please select at least one arrival day'),
+  ], {
+    errorMap: () => ({ message: 'Please select your arrival day' })
+  }),
   agreesToStayTillSaturday: z.boolean().refine((val) => val === true, {
     message: 'You must agree to stay till Saturday and help with camp packing'
   }),

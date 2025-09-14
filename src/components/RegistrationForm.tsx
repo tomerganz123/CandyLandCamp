@@ -72,7 +72,7 @@ export default function RegistrationForm({ onSuccess }: RegistrationFormProps) {
       comments: '',
       vehicleDetails: '',
       canArriveEarly: false,
-      arrivalDays: [],
+      arrivalDay: undefined,
       agreesToStayTillSaturday: false,
       ticketStatus: undefined,
       idNumber: '',
@@ -374,26 +374,26 @@ export default function RegistrationForm({ onSuccess }: RegistrationFormProps) {
             </div>
           </div>
 
-          {/* Arrival Days */}
+          {/* Arrival Day */}
           <div className="form-field">
             <label className="block text-sm font-medium text-gray-700 mb-3">
-              Arrival Days (Select all days you can arrive) *
+              Arrival Day (Select the day you will arrive) *
             </label>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
               {ARRIVAL_DAYS.map((day) => (
-                <label key={day} className="flex items-center space-x-2 cursor-pointer">
+                <label key={day} className="flex items-center space-x-2 cursor-pointer p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
                   <input
-                    {...register('arrivalDays')}
-                    type="checkbox"
+                    {...register('arrivalDay')}
+                    type="radio"
                     value={day}
-                    className="rounded border-gray-300 text-orange-600 focus:ring-orange-500"
+                    className="text-orange-600 focus:ring-orange-500 focus:ring-2"
                   />
-                  <span className="text-sm text-gray-700">{day}</span>
+                  <span className="text-sm text-gray-700 font-medium">{day}</span>
                 </label>
               ))}
             </div>
-            {errors.arrivalDays && (
-              <p className="mt-1 text-sm text-red-600">{errors.arrivalDays.message}</p>
+            {errors.arrivalDay && (
+              <p className="mt-1 text-sm text-red-600">{errors.arrivalDay.message}</p>
             )}
           </div>
 

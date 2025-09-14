@@ -12,7 +12,7 @@ export interface MemberFormData {
   medicalConditions: string;
   allergies: string;
   canArriveEarly: boolean;
-  arrivalDays: string[];
+  arrivalDay?: string;
   agreesToStayTillSaturday: boolean;
   needsTransport: boolean;
   hasVehicle: boolean;

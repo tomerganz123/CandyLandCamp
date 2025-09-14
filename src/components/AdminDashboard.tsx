@@ -597,7 +597,7 @@ export default function AdminDashboard({ token, onLogout }: AdminDashboardProps)
                 <div>
                   <h4 className="font-medium text-gray-900 mb-2">Logistics</h4>
                   <p className="text-sm text-gray-600">
-                    Arrival Days: {selectedMember.arrivalDays.join(', ')}
+                    Arrival Day: {selectedMember.arrivalDay}
                   </p>
                   <p className="text-sm text-gray-600">
                     Can arrive early for building: {selectedMember.canArriveEarly ? 'Yes' : 'No'}

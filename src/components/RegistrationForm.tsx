@@ -83,6 +83,7 @@ export default function RegistrationForm({ onSuccess }: RegistrationFormProps) {
       ticketStatus: undefined,
       idNumber: '',
       giftParticipation: undefined,
+      acceptsCampFee: false,
     },
   });
 
@@ -325,6 +326,35 @@ export default function RegistrationForm({ onSuccess }: RegistrationFormProps) {
         </div>
       </div>
 
+      {/* Camp Fee */}
+      <div className="bg-white rounded-xl shadow-lg p-6 border border-orange-100 form-card-trippy trippy-border">
+        <div className="flex items-center gap-2 mb-6">
+          <Star className="h-5 w-5 text-orange-600 mushroom-float" />
+          <h2 className="text-xl font-semibold text-gray-800">Camp Fee <span className="mushroom-emoji">💰</span></h2>
+        </div>
+
+        <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200 mb-6">
+          <p className="text-sm text-yellow-800 font-medium mb-4">
+            💰 The camp fee is approximately 1500-1700 ILS, which must be paid in full regardless of the number of days you attend.
+          </p>
+        </div>
+
+        <div className="form-field bg-orange-50 p-4 rounded-lg border border-orange-200">
+          <div className="flex items-start space-x-3">
+            <input
+              {...register('acceptsCampFee')}
+              type="checkbox"
+              className="rounded border-gray-300 text-orange-600 focus:ring-orange-500 h-5 w-5 mt-0.5"
+            />
+            <label className="text-sm font-medium text-gray-700">
+              I understand the camp fee will be around 1500-1700 ILS and needs to be paid in full regardless of the number of days I am attending. *
+            </label>
+          </div>
+          {errors.acceptsCampFee && (
+            <p className="mt-1 text-sm text-red-600">{errors.acceptsCampFee.message}</p>
+          )}
+        </div>
+      </div>
 
       {/* Dietary & Medical */}
       <div className="bg-white rounded-xl shadow-lg p-6 border border-orange-100 form-card-trippy">

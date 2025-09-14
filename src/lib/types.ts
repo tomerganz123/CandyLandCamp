@@ -20,6 +20,7 @@ export interface MemberFormData {
   specialSkills: string[];
   previousBurns: number;
   giftParticipation?: string;
+  acceptsCampFee: boolean;
   comments: string;
 }
 

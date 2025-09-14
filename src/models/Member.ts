@@ -31,6 +31,7 @@ export interface IMember extends Document {
   specialSkills: string[];
   previousBurns: number;
   giftParticipation: string;
+  acceptsCampFee: boolean;
   comments: string;
   
   // System fields
@@ -111,6 +112,7 @@ const MemberSchema = new Schema<IMember>({
       'מסיבה שקיעה בקמפ'
     ]
   },
+  acceptsCampFee: { type: Boolean, required: true },
   comments: { type: String, default: '', trim: true },
   
   isApproved: { type: Boolean, default: false },

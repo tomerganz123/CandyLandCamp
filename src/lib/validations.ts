@@ -69,6 +69,9 @@ export const memberRegistrationSchema = z.object({
   ], {
     errorMap: () => ({ message: 'Please select which gift you would like to participate in' })
   }),
+  acceptsCampFee: z.boolean().refine((val) => val === true, {
+    message: 'You must accept the camp fee terms to register'
+  }),
   comments: z.string().default(''),
 });
 

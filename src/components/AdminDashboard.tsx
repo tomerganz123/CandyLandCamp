@@ -592,6 +592,7 @@ export default function AdminDashboard({ token, onLogout }: AdminDashboardProps)
                   <p className="text-sm text-gray-600">Previous Burns: {selectedMember.previousBurns}</p>
                   <p className="text-sm text-gray-600">Ticket Status: {selectedMember.ticketStatus}</p>
                   <p className="text-sm text-gray-600">Gift Participation: {selectedMember.giftParticipation}</p>
+                  <p className="text-sm text-gray-600">Accepted Camp Fee: {selectedMember.acceptsCampFee ? 'Yes' : 'No'}</p>
                 </div>
                 
                 

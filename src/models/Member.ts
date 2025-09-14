@@ -62,15 +62,13 @@ const MemberSchema = new Schema<IMember>({
     type: String, 
     required: true,
     enum: [
-      'Camp Lead',
       'Kitchen Manager', 
       'Build Team',
       'Art Team',
       'Safety Officer',
-      'Medic',
+      'Shift Manager',
+      'Suppliers Manager',
       'DJ/Music',
-      'Photographer',
-      'General Member',
       'Other'
     ]
   },

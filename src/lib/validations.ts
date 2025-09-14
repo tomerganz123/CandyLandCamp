@@ -18,15 +18,13 @@ export const memberRegistrationSchema = z.object({
   }),
   
   campRole: z.enum([
-    'Camp Lead',
     'Kitchen Manager', 
     'Build Team',
     'Art Team',
     'Safety Officer',
-    'Medic',
+    'Shift Manager',
+    'Suppliers Manager',
     'DJ/Music',
-    'Photographer',
-    'General Member',
     'Other'
   ]),
   

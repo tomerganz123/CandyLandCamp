@@ -7,15 +7,13 @@ import { memberRegistrationSchema, type MemberRegistrationInput } from '@/lib/va
 import { Calendar, User, Mail, Phone, Utensils, Car, Star, MessageCircle } from 'lucide-react';
 
 const CAMP_ROLES = [
-  'Camp Lead',
   'Kitchen Manager', 
   'Build Team',
   'Art Team',
   'Safety Officer',
-  'Medic',
+  'Shift Manager',
+  'Suppliers Manager',
   'DJ/Music',
-  'Photographer',
-  'General Member',
   'Other'
 ];
 
@@ -238,16 +236,16 @@ export default function RegistrationForm({ onSuccess }: RegistrationFormProps) {
       </div>
 
       {/* Camp Information */}
-      <div className="bg-white rounded-xl shadow-lg p-6 border border-orange-100 form-card-trippy kaleidoscope">
+      <div className="bg-white rounded-xl shadow-lg p-6 border border-orange-100 form-card-trippy">
         <div className="flex items-center gap-2 mb-6">
           <Star className="h-5 w-5 text-orange-600 mushroom-float" />
-          <h2 className="text-xl font-semibold text-gray-800 trippy-text">Camp Information <span className="mushroom-emoji">🌈</span></h2>
+          <h2 className="text-xl font-semibold text-gray-800">Camp Information <span className="mushroom-emoji">🌈</span></h2>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="form-field">
             <label htmlFor="campRole" className="block text-sm font-medium text-gray-700 mb-2">
-              Camp Role *
+              Role I'd be happy to take: *
             </label>
             <select
               {...register('campRole')}

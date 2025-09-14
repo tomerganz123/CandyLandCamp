@@ -74,7 +74,7 @@ export default function RegistrationForm({ onSuccess }: RegistrationFormProps) {
       canArriveEarly: false,
       arrivalDays: [],
       agreesToStayTillSaturday: false,
-      ticketStatus: '',
+      ticketStatus: undefined,
     },
   });
 

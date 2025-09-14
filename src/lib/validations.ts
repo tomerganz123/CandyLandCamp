@@ -13,7 +13,7 @@ export const memberRegistrationSchema = z.object({
     'No - but should get a ticket via other department',
     'No - no lead for a ticket at this stage'
   ], {
-    required_error: 'Please select your ticket status'
+    errorMap: () => ({ message: 'Please select your ticket status' })
   }),
   
   campRole: z.enum([

@@ -7,6 +7,8 @@ export interface IMember extends Document {
   email: string;
   phone: string;
   idNumber: string;
+  gender: string;
+  age: number;
   
   // Ticket Information
   ticketStatus: string;
@@ -46,6 +48,12 @@ const MemberSchema = new Schema<IMember>({
   email: { type: String, required: true, unique: true, lowercase: true, trim: true },
   phone: { type: String, required: true, trim: true },
   idNumber: { type: String, required: true, trim: true },
+  gender: { 
+    type: String, 
+    required: true,
+    enum: ['Male', 'Female', 'Non-binary', 'Prefer not to say']
+  },
+  age: { type: Number, required: true, min: 18, max: 99 },
   
   ticketStatus: { 
     type: String, 

@@ -7,6 +7,10 @@ export const memberRegistrationSchema = z.object({
   email: z.string().email('Invalid email address'),
   phone: z.string().min(10, 'Phone number must be at least 10 digits'),
   idNumber: z.string().min(1, 'ID or Passport number is required').max(20),
+  gender: z.enum(['Male', 'Female', 'Non-binary', 'Prefer not to say'], {
+    errorMap: () => ({ message: 'Please select your gender' })
+  }),
+  age: z.number().min(18, 'Must be at least 18 years old').max(99, 'Please enter a valid age'),
   
   ticketStatus: z.enum([
     'Yes I bought via Camp',

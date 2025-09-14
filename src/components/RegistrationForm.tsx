@@ -80,6 +80,8 @@ export default function RegistrationForm({ onSuccess }: RegistrationFormProps) {
       agreesToStayTillSaturday: false,
       ticketStatus: undefined,
       idNumber: '',
+      gender: '',
+      age: undefined,
       giftParticipation: undefined,
       acceptsCampFee: false,
     },
@@ -152,6 +154,42 @@ export default function RegistrationForm({ onSuccess }: RegistrationFormProps) {
             />
             {errors.lastName && (
               <p className="mt-1 text-sm text-red-600">{errors.lastName.message}</p>
+            )}
+          </div>
+
+          <div className="form-field">
+            <label htmlFor="gender" className="block text-sm font-medium text-gray-700 mb-2">
+              Gender *
+            </label>
+            <select
+              {...register('gender')}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
+            >
+              <option value="">Select gender</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Non-binary">Non-binary</option>
+              <option value="Prefer not to say">Prefer not to say</option>
+            </select>
+            {errors.gender && (
+              <p className="mt-1 text-sm text-red-600">{errors.gender.message}</p>
+            )}
+          </div>
+
+          <div className="form-field">
+            <label htmlFor="age" className="block text-sm font-medium text-gray-700 mb-2">
+              Age *
+            </label>
+            <input
+              {...register('age', { valueAsNumber: true })}
+              type="number"
+              min="18"
+              max="99"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
+              placeholder="Your age"
+            />
+            {errors.age && (
+              <p className="mt-1 text-sm text-red-600">{errors.age.message}</p>
             )}
           </div>
 

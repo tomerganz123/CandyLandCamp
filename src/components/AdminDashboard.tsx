@@ -584,6 +584,8 @@ export default function AdminDashboard({ token, onLogout }: AdminDashboardProps)
                   <p className="text-sm text-gray-600">Email: {selectedMember.email}</p>
                   <p className="text-sm text-gray-600">Phone: {selectedMember.phone}</p>
                   <p className="text-sm text-gray-600">ID/Passport: {selectedMember.idNumber}</p>
+                  <p className="text-sm text-gray-600">Gender: {selectedMember.gender}</p>
+                  <p className="text-sm text-gray-600">Age: {selectedMember.age}</p>
                 </div>
                 
                 <div>

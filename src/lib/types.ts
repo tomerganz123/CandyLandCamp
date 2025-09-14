@@ -6,6 +6,8 @@ export interface MemberFormData {
   email: string;
   phone: string;
   idNumber: string;
+  gender: string;
+  age: number;
   ticketStatus?: string;
   campRole: string;
   dietaryRestrictions: string[];

@@ -7,11 +7,15 @@ import { verifyAdminToken } from '@/lib/auth';
 // POST - Create new member registration
 export async function POST(request: NextRequest) {
   try {
+    console.log('Starting member registration...');
+    
     const body = await request.json();
+    console.log('Request body received');
     
     // Validate the request body
     const validationResult = memberRegistrationSchema.safeParse(body);
     if (!validationResult.success) {
+      console.log('Validation failed:', validationResult.error.errors);
       return NextResponse.json(
         { 
           success: false, 
@@ -22,12 +26,21 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Connect to database
-    await connectDB();
+    console.log('Connecting to database...');
+    // Connect to database with timeout
+    const connectPromise = connectDB();
+    const timeoutPromise = new Promise((_, reject) => 
+      setTimeout(() => reject(new Error('Database connection timeout')), 10000)
+    );
+    
+    await Promise.race([connectPromise, timeoutPromise]);
+    console.log('Database connected');
 
     // Check if member already exists
+    console.log('Checking for existing member...');
     const existingMember = await Member.findOne({ email: validationResult.data.email });
     if (existingMember) {
+      console.log('Member already exists');
       return NextResponse.json(
         { success: false, error: 'Member with this email already registered' },
         { status: 409 }
@@ -35,8 +48,10 @@ export async function POST(request: NextRequest) {
     }
 
     // Create new member
+    console.log('Creating new member...');
     const member = new Member(validationResult.data);
     await member.save();
+    console.log('Member saved successfully');
 
     return NextResponse.json(
       { 
@@ -49,8 +64,17 @@ export async function POST(request: NextRequest) {
 
   } catch (error) {
     console.error('Member registration error:', error);
+    
+    // Return specific error messages
+    if (error.message === 'Database connection timeout') {
+      return NextResponse.json(
+        { success: false, error: 'Database connection timeout. Please try again.' },
+        { status: 503 }
+      );
+    }
+    
     return NextResponse.json(
-      { success: false, error: 'Internal server error' },
+      { success: false, error: 'Internal server error', details: error.message },
       { status: 500 }
     );
   }

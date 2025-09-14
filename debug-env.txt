@@ -1,0 +1,14 @@
+# Check these in your Vercel Dashboard → Settings → Environment Variables
+
+MONGODB_URI=mongodb+srv://tomerganz_db_user:RhEqhWorpJ6zCAAx@cluster0.dxihaof.mongodb.net/midburn-camp?retryWrites=true&w=majority&appName=Cluster0
+
+ADMIN_PASSWORD=midburn2024
+
+JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
+
+NEXTAUTH_URL=https://your-actual-vercel-app-url.vercel.app
+
+# Make sure:
+# 1. All variables are set for "Production, Preview, Development"
+# 2. NEXTAUTH_URL uses your actual Vercel app URL
+# 3. No extra spaces or quotes in the values

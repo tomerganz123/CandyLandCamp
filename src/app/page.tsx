@@ -24,7 +24,7 @@ export default function HomePage() {
                 Registration Successful! 🎉
               </h1>
               <p className="text-lg text-gray-600">
-                Welcome to our Midburn camp family!
+                Welcome to the BABA ZMAN family!
               </p>
             </div>
 
@@ -97,11 +97,11 @@ export default function HomePage() {
           </div>
           
           <h1 className="text-4xl md:text-6xl font-bold mb-6">
-            Join Our Midburn Camp!
+            BABA ZMAN Midburn 2025
           </h1>
           
           <p className="text-xl md:text-2xl mb-8 opacity-90">
-            Register now for an unforgettable experience at Israel's Burning Man
+            Register now
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
@@ -111,7 +111,7 @@ export default function HomePage() {
             </div>
             <div className="flex items-center justify-center gap-3 bg-white/10 rounded-lg p-4 backdrop-blur-sm">
               <Calendar className="h-6 w-6" />
-              <span className="font-semibold">June 2024</span>
+              <span className="font-semibold">November 2024</span>
             </div>
             <div className="flex items-center justify-center gap-3 bg-white/10 rounded-lg p-4 backdrop-blur-sm">
               <MapPin className="h-6 w-6" />
@@ -126,10 +126,10 @@ export default function HomePage() {
         <div className="max-w-4xl mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">
-              Camp Registration Form
+              BABA ZMAN Registration Form
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Fill out the form below to join our camp. We'll review your application and get back to you within 24 hours.
+              Fill out the form below to join BABA ZMAN. We'll review your application and get back to you within 24 hours.
             </p>
           </div>
 

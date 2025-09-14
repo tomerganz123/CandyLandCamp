@@ -5,20 +5,20 @@ import './globals.css'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Midburn Camp Registration',
-  description: 'Register for our amazing camp at Midburn 2024! Join our community of burners for an unforgettable experience.',
-  keywords: ['midburn', 'camp', 'registration', 'burning man', 'israel'],
-  authors: [{ name: 'Midburn Camp Team' }],
+  title: 'BABA ZMAN Midburn 2025',
+  description: 'Register for BABA ZMAN at Midburn 2025! Join our community of burners for an unforgettable experience.',
+  keywords: ['midburn', 'baba zman', 'camp', 'registration', 'burning man', 'israel', '2025'],
+  authors: [{ name: 'BABA ZMAN Team' }],
   openGraph: {
-    title: 'Midburn Camp Registration',
-    description: 'Register for our amazing camp at Midburn 2024!',
+    title: 'BABA ZMAN Midburn 2025',
+    description: 'Register for BABA ZMAN at Midburn 2025!',
     type: 'website',
     images: ['/og-image.jpg'],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Midburn Camp Registration',
-    description: 'Register for our amazing camp at Midburn 2024!',
+    title: 'BABA ZMAN Midburn 2025',
+    description: 'Register for BABA ZMAN at Midburn 2025!',
   },
 }
 

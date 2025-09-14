@@ -122,7 +122,7 @@ export default function HomePage() {
             </div>
             <div className="flex items-center justify-center gap-3 bg-black/30 rounded-lg p-4 backdrop-blur-sm border border-white/20">
               <Calendar className="h-6 w-6 drop-shadow-lg" />
-              <span className="font-semibold drop-shadow-lg">November 2024</span>
+              <span className="font-semibold drop-shadow-lg">November 24-29th</span>
             </div>
             <div className="flex items-center justify-center gap-3 bg-black/30 rounded-lg p-4 backdrop-blur-sm border border-white/20">
               <MapPin className="h-6 w-6 drop-shadow-lg" />

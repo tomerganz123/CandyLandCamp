@@ -30,10 +30,8 @@ export const memberRegistrationSchema = z.object({
     'Vegetarian',
     'Vegan', 
     'Gluten-Free',
-    'Kosher',
     'Halal',
     'Lactose Intolerant',
-    'Nut Allergy',
     'Other'
   ])).default([]),
   

@@ -23,11 +23,18 @@ const DIETARY_OPTIONS = [
   'Vegetarian',
   'Vegan', 
   'Gluten-Free',
-  'Kosher',
   'Halal',
   'Lactose Intolerant',
-  'Nut Allergy',
   'Other'
+];
+
+const ARRIVAL_DAYS = [
+  'Saturday',
+  'Sunday',
+  'Monday',
+  'Tuesday',
+  'Wednesday',
+  'Thursday'
 ];
 
 interface RegistrationFormProps {
@@ -57,6 +64,9 @@ export default function RegistrationForm({ onSuccess }: RegistrationFormProps) {
       allergies: '',
       comments: '',
       vehicleDetails: '',
+      canArriveEarly: false,
+      arrivalDays: [],
+      agreesToStayTillSaturday: false,
     },
   });
 
@@ -348,73 +358,100 @@ export default function RegistrationForm({ onSuccess }: RegistrationFormProps) {
           <h2 className="text-xl font-semibold text-gray-800">Logistics</h2>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="space-y-6">
+          {/* Build Days Availability */}
           <div className="form-field">
-            <label htmlFor="arrivalDate" className="block text-sm font-medium text-gray-700 mb-2">
-              Arrival Date *
-            </label>
-            <input
-              {...register('arrivalDate')}
-              type="date"
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
-            />
-            {errors.arrivalDate && (
-              <p className="mt-1 text-sm text-red-600">{errors.arrivalDate.message}</p>
-            )}
-          </div>
-
-          <div className="form-field">
-            <label htmlFor="departureDate" className="block text-sm font-medium text-gray-700 mb-2">
-              Departure Date *
-            </label>
-            <input
-              {...register('departureDate')}
-              type="date"
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
-            />
-            {errors.departureDate && (
-              <p className="mt-1 text-sm text-red-600">{errors.departureDate.message}</p>
-            )}
-          </div>
-        </div>
-
-        <div className="mt-6 space-y-4">
-          <div className="flex items-center space-x-3">
-            <input
-              {...register('needsTransport')}
-              type="checkbox"
-              className="rounded border-gray-300 text-orange-600 focus:ring-orange-500 h-5 w-5"
-            />
-            <label className="text-sm font-medium text-gray-700">
-              I need transportation to/from the event
-            </label>
-          </div>
-
-          <div className="flex items-center space-x-3">
-            <input
-              {...register('hasVehicle')}
-              type="checkbox"
-              className="rounded border-gray-300 text-orange-600 focus:ring-orange-500 h-5 w-5"
-            />
-            <label className="text-sm font-medium text-gray-700">
-              I have a vehicle and can help with transportation
-            </label>
-          </div>
-
-          {hasVehicle && (
-            <div className="form-field mt-4">
-              <label htmlFor="vehicleDetails" className="block text-sm font-medium text-gray-700 mb-2">
-                <Car className="inline h-4 w-4 mr-1" />
-                Vehicle Details
-              </label>
+            <div className="flex items-center space-x-3">
               <input
-                {...register('vehicleDetails')}
-                type="text"
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
-                placeholder="e.g., Toyota Corolla, 4 seats available"
+                {...register('canArriveEarly')}
+                type="checkbox"
+                className="rounded border-gray-300 text-orange-600 focus:ring-orange-500 h-5 w-5"
               />
+              <label className="text-sm font-medium text-gray-700">
+                Can you arrive for the building days (Sat & Sun 22/23 Nov)?
+              </label>
             </div>
-          )}
+          </div>
+
+          {/* Arrival Days */}
+          <div className="form-field">
+            <label className="block text-sm font-medium text-gray-700 mb-3">
+              Arrival Days (Select all days you can arrive) *
+            </label>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+              {ARRIVAL_DAYS.map((day) => (
+                <label key={day} className="flex items-center space-x-2 cursor-pointer">
+                  <input
+                    {...register('arrivalDays')}
+                    type="checkbox"
+                    value={day}
+                    className="rounded border-gray-300 text-orange-600 focus:ring-orange-500"
+                  />
+                  <span className="text-sm text-gray-700">{day}</span>
+                </label>
+              ))}
+            </div>
+            {errors.arrivalDays && (
+              <p className="mt-1 text-sm text-red-600">{errors.arrivalDays.message}</p>
+            )}
+          </div>
+
+          {/* Mandatory commitment checkbox */}
+          <div className="form-field bg-orange-50 p-4 rounded-lg border border-orange-200">
+            <div className="flex items-start space-x-3">
+              <input
+                {...register('agreesToStayTillSaturday')}
+                type="checkbox"
+                className="rounded border-gray-300 text-orange-600 focus:ring-orange-500 h-5 w-5 mt-0.5"
+              />
+              <label className="text-sm font-medium text-gray-700">
+                I understand I need to stay till Saturday and help with the camp packing *
+              </label>
+            </div>
+            {errors.agreesToStayTillSaturday && (
+              <p className="mt-1 text-sm text-red-600">{errors.agreesToStayTillSaturday.message}</p>
+            )}
+          </div>
+
+          {/* Transportation */}
+          <div className="space-y-4">
+            <div className="flex items-center space-x-3">
+              <input
+                {...register('needsTransport')}
+                type="checkbox"
+                className="rounded border-gray-300 text-orange-600 focus:ring-orange-500 h-5 w-5"
+              />
+              <label className="text-sm font-medium text-gray-700">
+                I need transportation to/from the event
+              </label>
+            </div>
+
+            <div className="flex items-center space-x-3">
+              <input
+                {...register('hasVehicle')}
+                type="checkbox"
+                className="rounded border-gray-300 text-orange-600 focus:ring-orange-500 h-5 w-5"
+              />
+              <label className="text-sm font-medium text-gray-700">
+                I have a vehicle and can help with transportation
+              </label>
+            </div>
+
+            {hasVehicle && (
+              <div className="form-field mt-4">
+                <label htmlFor="vehicleDetails" className="block text-sm font-medium text-gray-700 mb-2">
+                  <Car className="inline h-4 w-4 mr-1" />
+                  Vehicle Details
+                </label>
+                <input
+                  {...register('vehicleDetails')}
+                  type="text"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
+                  placeholder="e.g., Toyota Corolla, 4 seats available"
+                />
+              </div>
+            )}
+          </div>
         </div>
       </div>
 

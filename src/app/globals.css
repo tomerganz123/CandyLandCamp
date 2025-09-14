@@ -51,10 +51,10 @@
 
 @layer base {
   * {
-    @apply border-border;
+    @apply border-gray-200;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-white text-gray-900;
   }
 }
 
@@ -86,7 +86,7 @@
 
 /* Loading spinner */
 .spinner {
-  @apply animate-spin rounded-full border-2 border-gray-300 border-t-primary-500;
+  @apply animate-spin rounded-full border-2 border-gray-300 border-t-orange-500;
 }
 
 /* Success/Error animations */

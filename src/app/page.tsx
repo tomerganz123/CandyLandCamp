@@ -90,32 +90,43 @@ export default function HomePage() {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <div className="bg-gradient-to-r from-orange-600 to-red-600 text-white py-16">
-        <div className="max-w-4xl mx-auto px-4 text-center">
+      <div 
+        className="relative bg-gradient-to-r from-orange-600 to-red-600 text-white py-16 min-h-[600px] flex items-center"
+        style={{
+          backgroundImage: 'url(/baba-zman-logo.png)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundBlendMode: 'overlay',
+        }}
+      >
+        {/* Dark overlay for better text readability */}
+        <div className="absolute inset-0 bg-black/40"></div>
+        
+        <div className="relative z-10 max-w-4xl mx-auto px-4 text-center">
           <div className="flex justify-center mb-6">
-            <Flame className="h-16 w-16 text-yellow-300 animate-pulse" />
+            <Flame className="h-16 w-16 text-yellow-300 animate-pulse drop-shadow-lg" />
           </div>
           
-          <h1 className="text-4xl md:text-6xl font-bold mb-6">
+          <h1 className="text-4xl md:text-6xl font-bold mb-6 drop-shadow-2xl">
             BABA ZMAN Midburn 2025
           </h1>
           
-          <p className="text-xl md:text-2xl mb-8 opacity-90">
+          <p className="text-xl md:text-2xl mb-8 opacity-90 drop-shadow-lg">
             Register now
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
-            <div className="flex items-center justify-center gap-3 bg-white/10 rounded-lg p-4 backdrop-blur-sm">
-              <Users className="h-6 w-6" />
-              <span className="font-semibold">Amazing Community</span>
+            <div className="flex items-center justify-center gap-3 bg-black/30 rounded-lg p-4 backdrop-blur-sm border border-white/20">
+              <Users className="h-6 w-6 drop-shadow-lg" />
+              <span className="font-semibold drop-shadow-lg">Amazing Community</span>
             </div>
-            <div className="flex items-center justify-center gap-3 bg-white/10 rounded-lg p-4 backdrop-blur-sm">
-              <Calendar className="h-6 w-6" />
-              <span className="font-semibold">November 2024</span>
+            <div className="flex items-center justify-center gap-3 bg-black/30 rounded-lg p-4 backdrop-blur-sm border border-white/20">
+              <Calendar className="h-6 w-6 drop-shadow-lg" />
+              <span className="font-semibold drop-shadow-lg">November 2024</span>
             </div>
-            <div className="flex items-center justify-center gap-3 bg-white/10 rounded-lg p-4 backdrop-blur-sm">
-              <MapPin className="h-6 w-6" />
-              <span className="font-semibold">Negev Desert</span>
+            <div className="flex items-center justify-center gap-3 bg-black/30 rounded-lg p-4 backdrop-blur-sm border border-white/20">
+              <MapPin className="h-6 w-6 drop-shadow-lg" />
+              <span className="font-semibold drop-shadow-lg">Negev Desert</span>
             </div>
           </div>
         </div>

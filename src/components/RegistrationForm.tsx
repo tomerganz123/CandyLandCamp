@@ -371,7 +371,8 @@ export default function RegistrationForm({ onSuccess }: RegistrationFormProps) {
 
         <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200 mb-6">
           <p className="text-sm text-yellow-800 font-medium mb-4">
-            💰 The camp fee is approximately 1500-1700 ILS, which must be paid in full regardless of the number of days you attend.
+            💰 The camp fee is approximately 1500-2000 ILS, which must be paid in full regardless of the number of days you attend.
+            This will cover Shade, Electricity, Food, Kitchen Supplies, Water, and other camp expenses.
           </p>
         </div>
 

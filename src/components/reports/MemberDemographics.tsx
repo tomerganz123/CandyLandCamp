@@ -11,7 +11,8 @@ import {
   ResponsiveContainer,
   PieChart,
   Pie,
-  Cell
+  Cell,
+  Legend
 } from 'recharts';
 import { Users, Download, UserCheck, UserX, TrendingUp } from 'lucide-react';
 import { IMember } from '@/models/Member';
@@ -207,18 +208,18 @@ export default function MemberDemographics({ token }: MemberDemographicsProps) {
                 data={data.genderBreakdown}
                 cx="50%"
                 cy="50%"
-                labelLine={false}
-                label={({ name, value, payload }) => `${payload.gender}: ${payload.percentage}%`}
                 outerRadius={80}
                 fill="#8884d8"
                 dataKey="count"
                 nameKey="gender"
+                label
               >
                 {data.genderBreakdown.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                 ))}
               </Pie>
-              <Tooltip />
+              <Tooltip formatter={(value, name) => [value, name]} />
+              <Legend />
             </PieChart>
           </ResponsiveContainer>
         </div>

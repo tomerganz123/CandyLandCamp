@@ -10,14 +10,38 @@ export default function AdminPage() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Check if there's a stored token
-    const storedToken = localStorage.getItem('adminToken');
-    if (storedToken) {
-      // TODO: Validate token with server
-      setToken(storedToken);
-      setIsAuthenticated(true);
-    }
-    setIsLoading(false);
+    const validateStoredToken = async () => {
+      const storedToken = localStorage.getItem('adminToken');
+      if (storedToken) {
+        try {
+          // Validate token with server by making a test API call
+          const response = await fetch('/api/admin/stats', {
+            headers: {
+              'Authorization': `Bearer ${storedToken}`,
+            },
+          });
+
+          if (response.ok) {
+            // Token is valid
+            setToken(storedToken);
+            setIsAuthenticated(true);
+          } else {
+            // Token is invalid/expired, remove it
+            localStorage.removeItem('adminToken');
+            setToken(null);
+            setIsAuthenticated(false);
+          }
+        } catch (error) {
+          // Network error or token validation failed
+          localStorage.removeItem('adminToken');
+          setToken(null);
+          setIsAuthenticated(false);
+        }
+      }
+      setIsLoading(false);
+    };
+
+    validateStoredToken();
   }, []);
 
   const handleLoginSuccess = (newToken: string) => {

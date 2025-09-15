@@ -208,7 +208,7 @@ export default function MemberDemographics({ token }: MemberDemographicsProps) {
                 cx="50%"
                 cy="50%"
                 labelLine={false}
-                label={({ gender, percentage }) => `${gender}: ${percentage}%`}
+                label={(entry) => `${entry.gender}: ${entry.percentage}%`}
                 outerRadius={80}
                 fill="#8884d8"
                 dataKey="count"

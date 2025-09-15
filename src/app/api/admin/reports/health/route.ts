@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
-import Member from '@/models/Member';
+import Member, { IMember } from '@/models/Member';
 import { verifyAdminToken } from '@/lib/auth';
 
 // Force dynamic rendering

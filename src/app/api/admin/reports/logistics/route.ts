@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
-import Member from '@/models/Member';
+import Member, { IMember } from '@/models/Member';
 import { verifyAdminToken } from '@/lib/auth';
 
 // Force dynamic rendering
@@ -148,8 +148,9 @@ export async function GET(request: NextRequest) {
 
   } catch (error) {
     console.error('Logistics report error:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     return NextResponse.json(
-      { success: false, error: 'Internal server error' },
+      { success: false, error: 'Internal server error', details: errorMessage },
       { status: 500 }
     );
   }

@@ -86,28 +86,9 @@ export default function ReportsPage() {
   const handleExportAll = async () => {
     if (!token) return;
     
-    try {
-      const response = await fetch('/api/admin/reports/export-all', {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-
-      if (response.ok) {
-        const blob = await response.blob();
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.style.display = 'none';
-        a.href = url;
-        a.download = `baba-zman-complete-reports-${new Date().toISOString().split('T')[0]}.zip`;
-        document.body.appendChild(a);
-        a.click();
-        window.URL.revokeObjectURL(url);
-        document.body.removeChild(a);
-      }
-    } catch (error) {
-      console.error('Export failed:', error);
-    }
+    // For now, just export the current category's data
+    // TODO: Implement combined export endpoint
+    alert('Export All feature coming soon! Use individual export buttons for now.');
   };
 
   if (isLoading) {

@@ -249,6 +249,14 @@ export default function AdminDashboard({ token, onLogout }: AdminDashboardProps)
             </div>
             
             <div className="flex items-center gap-4">
+              <a
+                href="/admin/reports"
+                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                <BarChart3 className="h-4 w-4" />
+                Reports
+              </a>
+              
               <button
                 onClick={() => {
                   fetchMembers();

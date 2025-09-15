@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { 
-  BarChart, 
+  BarChart as RechartsBarChart, 
   Bar, 
   XAxis, 
   YAxis, 
@@ -13,7 +13,7 @@ import {
   Pie,
   Cell
 } from 'recharts';
-import { Users, Download, UserCheck, UserX } from 'lucide-react';
+import { Users, Download, UserCheck, UserX, TrendingUp } from 'lucide-react';
 import { IMember } from '@/models/Member';
 
 interface MemberDemographicsProps {
@@ -173,7 +173,7 @@ export default function MemberDemographics({ token }: MemberDemographicsProps) {
 
         <div className="bg-purple-50 rounded-lg p-6 border border-purple-200">
           <div className="flex items-center">
-            <BarChart3 className="h-8 w-8 text-purple-600" />
+            <TrendingUp className="h-8 w-8 text-purple-600" />
             <div className="ml-4">
               <p className="text-sm font-medium text-purple-600">Average Age</p>
               <p className="text-2xl font-semibold text-purple-900">{data.totalStats.averageAge}</p>
@@ -188,13 +188,13 @@ export default function MemberDemographics({ token }: MemberDemographicsProps) {
         <div className="bg-white rounded-lg border border-gray-200 p-6">
           <h3 className="text-lg font-semibold text-gray-800 mb-4">Age Distribution</h3>
           <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={data.ageDistribution}>
+            <RechartsBarChart data={data.ageDistribution}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="ageGroup" />
               <YAxis />
               <Tooltip />
               <Bar dataKey="count" fill="#f97316" />
-            </BarChart>
+            </RechartsBarChart>
           </ResponsiveContainer>
         </div>
 
@@ -227,13 +227,13 @@ export default function MemberDemographics({ token }: MemberDemographicsProps) {
       <div className="bg-white rounded-lg border border-gray-200 p-6 mb-8">
         <h3 className="text-lg font-semibold text-gray-800 mb-4">Previous Burns Experience</h3>
         <ResponsiveContainer width="100%" height={300}>
-          <BarChart data={data.experienceBreakdown}>
+          <RechartsBarChart data={data.experienceBreakdown}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="burns" />
             <YAxis />
             <Tooltip />
             <Bar dataKey="count" fill="#ea580c" />
-          </BarChart>
+          </RechartsBarChart>
         </ResponsiveContainer>
       </div>
 

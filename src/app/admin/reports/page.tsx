@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { 
-  BarChart3, 
+  TrendingUp, 
   Users, 
   Ticket, 
   Car, 
@@ -162,7 +162,7 @@ export default function ReportsPage() {
               </button>
               
               <div className="flex items-center gap-3">
-                <BarChart3 className="h-8 w-8 text-orange-600" />
+                <TrendingUp className="h-8 w-8 text-orange-600" />
                 <div>
                   <h1 className="text-xl font-semibold text-gray-800">
                     BABA ZMAN Reports

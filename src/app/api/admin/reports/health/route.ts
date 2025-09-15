@@ -43,7 +43,7 @@ export async function GET(request: NextRequest) {
 
     members.forEach(member => {
       // Dietary restrictions
-      member.dietaryRestrictions.forEach(restriction => {
+      member.dietaryRestrictions.forEach((restriction: string) => {
         dietaryCounts[restriction] = (dietaryCounts[restriction] || 0) + 1;
       });
       

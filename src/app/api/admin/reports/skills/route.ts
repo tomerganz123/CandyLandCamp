@@ -39,7 +39,7 @@ export async function GET(request: NextRequest) {
       giftParticipation[member.giftParticipation] = (giftParticipation[member.giftParticipation] || 0) + 1;
 
       // Skills
-      member.specialSkills.forEach(skill => {
+      member.specialSkills.forEach((skill: string) => {
         if (!skillsDirectory[skill]) {
           skillsDirectory[skill] = [];
         }

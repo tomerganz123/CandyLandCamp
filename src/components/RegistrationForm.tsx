@@ -384,7 +384,7 @@ export default function RegistrationForm({ onSuccess }: RegistrationFormProps) {
               className="rounded border-gray-300 text-orange-600 focus:ring-orange-500 h-5 w-5 mt-0.5"
             />
             <label className="text-sm font-medium text-gray-700">
-              I understand the camp fee will be around 1500-1700 ILS and needs to be paid in full regardless of the number of days I am attending. *
+              I understand the camp fee will be around 1500-2000 ILS and needs to be paid in full regardless of the number of days I am attending. *
             </label>
           </div>
           {errors.acceptsCampFee && (

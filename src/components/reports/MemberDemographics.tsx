@@ -208,10 +208,11 @@ export default function MemberDemographics({ token }: MemberDemographicsProps) {
                 cx="50%"
                 cy="50%"
                 labelLine={false}
-                label={(entry) => `${entry.gender}: ${entry.percentage}%`}
+                label={({ name, value, payload }) => `${payload.gender}: ${payload.percentage}%`}
                 outerRadius={80}
                 fill="#8884d8"
                 dataKey="count"
+                nameKey="gender"
               >
                 {data.genderBreakdown.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />

@@ -80,7 +80,7 @@ export default function RegistrationForm({ onSuccess }: RegistrationFormProps) {
       agreesToStayTillSaturday: false,
       ticketStatus: undefined,
       idNumber: '',
-      gender: '',
+      gender: undefined,
       age: undefined,
       giftParticipation: undefined,
       acceptsCampFee: false,

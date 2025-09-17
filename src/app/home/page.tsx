@@ -27,9 +27,10 @@ function PublicHome() {
     minutes: 0
   });
 
-  // Countdown to Midburn
+  // Countdown to Midburn (Nov 24th 12pm Israel Time)
   useEffect(() => {
-    const targetDate = new Date('2025-05-26T00:00:00');
+    // November 24th, 2025 at 12:00 PM Israel Time (UTC+2)
+    const targetDate = new Date('2025-11-24T10:00:00Z'); // 12pm Israel = 10am UTC
     
     const updateCountdown = () => {
       const now = new Date();
@@ -96,26 +97,34 @@ function PublicHome() {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-orange-50 via-yellow-50 to-orange-100 overflow-hidden">
-        <div className="absolute inset-0 bg-[url('/images/desert-pattern.svg')] opacity-5"></div>
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-32">
+      <section 
+        className="relative bg-gradient-to-r from-orange-600 to-red-600 text-white overflow-hidden"
+        style={{
+          backgroundImage: 'url(/baba-zman-logo.png)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundBlendMode: 'overlay',
+        }}
+      >
+        <div className="absolute inset-0 bg-black/40"></div>
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
           <div className="text-center">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
             >
-              <h1 className="text-5xl md:text-7xl font-bold text-gray-900 mb-6">
+              <h1 className="text-4xl md:text-6xl font-bold text-white mb-4 drop-shadow-2xl">
                 {isRTL ? 'באבא זמן' : 'BABA ZMAN'}
               </h1>
-              <p className="text-xl md:text-2xl text-gray-600 mb-2">
+              <p className="text-lg md:text-xl text-white/90 mb-2 drop-shadow-lg">
                 {t('home.hero.subtitle')}
               </p>
-              <p className="text-lg text-gray-500 mb-8">
+              <p className="text-base text-white/80 mb-6 drop-shadow-lg">
                 {t('home.hero.tagline')}
               </p>
-              <p className="text-lg font-semibold text-orange-600 mb-8">
-                {t('home.hero.dates')}
+              <p className="text-lg font-semibold text-yellow-300 mb-6 drop-shadow-lg">
+                November 24-29, 2025
               </p>
             </motion.div>
 
@@ -124,42 +133,36 @@ function PublicHome() {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.8, delay: 0.2 }}
-              className="flex justify-center items-center space-x-8 mb-12"
+              className="flex justify-center items-center space-x-6 mb-8"
             >
-              <div className="text-center">
-                <div className="text-3xl md:text-4xl font-bold text-orange-600">
+              <div className="text-center bg-black/30 rounded-lg p-4 backdrop-blur-sm border border-white/20">
+                <div className="text-2xl md:text-3xl font-bold text-yellow-300 drop-shadow-lg">
                   {timeLeft.days}
                 </div>
-                <div className="text-sm text-gray-600">Days</div>
+                <div className="text-sm text-white/80 drop-shadow-lg">Days</div>
               </div>
-              <div className="text-center">
-                <div className="text-3xl md:text-4xl font-bold text-orange-600">
+              <div className="text-center bg-black/30 rounded-lg p-4 backdrop-blur-sm border border-white/20">
+                <div className="text-2xl md:text-3xl font-bold text-yellow-300 drop-shadow-lg">
                   {timeLeft.hours}
                 </div>
-                <div className="text-sm text-gray-600">Hours</div>
+                <div className="text-sm text-white/80 drop-shadow-lg">Hours</div>
               </div>
-              <div className="text-center">
-                <div className="text-3xl md:text-4xl font-bold text-orange-600">
+              <div className="text-center bg-black/30 rounded-lg p-4 backdrop-blur-sm border border-white/20">
+                <div className="text-2xl md:text-3xl font-bold text-yellow-300 drop-shadow-lg">
                   {timeLeft.minutes}
                 </div>
-                <div className="text-sm text-gray-600">Minutes</div>
+                <div className="text-sm text-white/80 drop-shadow-lg">Minutes</div>
               </div>
             </motion.div>
 
-            {/* CTA Buttons */}
+            {/* Learn More Button Only */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.4 }}
-              className="flex flex-col sm:flex-row gap-4 justify-center items-center"
+              className="flex justify-center"
             >
-              <Button asChild size="lg" className="bg-orange-600 hover:bg-orange-700 text-lg px-8 py-3">
-                <Link href="/">
-                  {t('common.register')}
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </Link>
-              </Button>
-              <Button variant="outline" size="lg" className="text-lg px-8 py-3" asChild>
+              <Button variant="outline" size="lg" className="text-lg px-8 py-3 bg-white/10 border-white/30 text-white hover:bg-white/20 backdrop-blur-sm" asChild>
                 <a href="#features">
                   {t('common.learnMore')}
                 </a>

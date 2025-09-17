@@ -1,7 +1,7 @@
 {
   "dates": {
-    "start": "2025-05-26",
-    "end": "2025-05-31",
+    "start": "2025-11-24",
+    "end": "2025-11-29",
     "year": 2025
   },
   "location": {
@@ -14,48 +14,48 @@
   },
   "schedule": [
     {
-      "day": "Monday",
-      "date": "2025-05-26",
+      "day": "Sunday",
+      "date": "2025-11-24",
       "events": [
         { "time": "10:00", "title": "Camp Setup Begins", "description": "Early arrivals help set up camp infrastructure" },
         { "time": "18:00", "title": "Welcome Circle", "description": "Meet your camp mates and get oriented" }
       ]
     },
     {
-      "day": "Tuesday", 
-      "date": "2025-05-27",
+      "day": "Monday", 
+      "date": "2025-11-25",
       "events": [
         { "time": "08:00", "title": "Morning Yoga", "description": "Start the day with mindful movement" },
         { "time": "19:00", "title": "Community Dinner", "description": "Shared meal and camp bonding" }
       ]
     },
     {
-      "day": "Wednesday",
-      "date": "2025-05-28", 
+      "day": "Tuesday",
+      "date": "2025-11-26", 
       "events": [
         { "time": "10:00", "title": "Art Workshop", "description": "Collaborative art creation" },
         { "time": "20:00", "title": "Kabab HaZman", "description": "Our signature gift to the community" }
       ]
     },
     {
-      "day": "Thursday",
-      "date": "2025-05-29",
+      "day": "Wednesday",
+      "date": "2025-11-27",
       "events": [
         { "time": "16:00", "title": "Meditation Session", "description": "Mindfulness practice in nature" },
         { "time": "18:30", "title": "Sunset Party", "description": "Dance and celebrate as the sun sets" }
       ]
     },
     {
-      "day": "Friday",
-      "date": "2025-05-30",
+      "day": "Thursday",
+      "date": "2025-11-28",
       "events": [
         { "time": "09:00", "title": "Burn Preparation", "description": "Final preparations for the main event" },
         { "time": "21:00", "title": "The Burn", "description": "The climactic moment of Midburn" }
       ]
     },
     {
-      "day": "Saturday",
-      "date": "2025-05-31",
+      "day": "Friday",
+      "date": "2025-11-29",
       "events": [
         { "time": "08:00", "title": "Exodus Begins", "description": "Pack up and leave no trace" },
         { "time": "12:00", "title": "Final Cleanup", "description": "Camp breakdown and site restoration" }

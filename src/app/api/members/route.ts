@@ -116,6 +116,8 @@ export async function GET(request: NextRequest) {
     const search = searchParams.get('search') || '';
     const role = searchParams.get('role') || '';
     const approved = searchParams.get('approved');
+    const gender = searchParams.get('gender') || '';
+    const ticketStatus = searchParams.get('ticketStatus') || '';
 
     // Build query
     const query: any = {};
@@ -134,6 +136,18 @@ export async function GET(request: NextRequest) {
     
     if (approved !== null && approved !== '') {
       query.isApproved = approved === 'true';
+    }
+    
+    if (gender) {
+      query.gender = gender;
+    }
+    
+    if (ticketStatus) {
+      // Handle multiple ticket status values (comma-separated)
+      const ticketStatusArray = ticketStatus.split(',').map(s => s.trim()).filter(s => s);
+      if (ticketStatusArray.length > 0) {
+        query.ticketStatus = { $in: ticketStatusArray };
+      }
     }
 
     // Get members with pagination

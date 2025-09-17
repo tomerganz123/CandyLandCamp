@@ -31,12 +31,41 @@ export async function GET(request: NextRequest) {
     // Get query parameters
     const { searchParams } = new URL(request.url);
     const format = searchParams.get('format') || 'json';
+    const search = searchParams.get('search') || '';
+    const role = searchParams.get('role') || '';
     const approved = searchParams.get('approved');
+    const gender = searchParams.get('gender') || '';
+    const ticketStatus = searchParams.get('ticketStatus') || '';
 
-    // Build query
+    // Build query (same logic as members API)
     const query: any = {};
+    
+    if (search) {
+      query.$or = [
+        { firstName: { $regex: search, $options: 'i' } },
+        { lastName: { $regex: search, $options: 'i' } },
+        { email: { $regex: search, $options: 'i' } },
+      ];
+    }
+    
+    if (role) {
+      query.campRole = role;
+    }
+    
     if (approved !== null && approved !== '') {
       query.isApproved = approved === 'true';
+    }
+    
+    if (gender) {
+      query.gender = gender;
+    }
+    
+    if (ticketStatus) {
+      // Handle multiple ticket status values (comma-separated)
+      const ticketStatusArray = ticketStatus.split(',').map(s => s.trim()).filter(s => s);
+      if (ticketStatusArray.length > 0) {
+        query.ticketStatus = { $in: ticketStatusArray };
+      }
     }
 
     // Get all members matching the query

@@ -16,7 +16,10 @@ import {
   LogOut,
   RefreshCw,
   TrendingUp,
-  FileText
+  FileText,
+  Settings,
+  Eye,
+  EyeOff
 } from 'lucide-react';
 import { IMember } from '@/models/Member';
 
@@ -52,10 +55,31 @@ export default function AdminDashboard({ token, onLogout }: AdminDashboardProps)
   const [searchTerm, setSearchTerm] = useState('');
   const [roleFilter, setRoleFilter] = useState('');
   const [approvedFilter, setApprovedFilter] = useState('');
+  const [genderFilter, setGenderFilter] = useState('');
+  const [ticketStatusFilter, setTicketStatusFilter] = useState<string[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [pagination, setPagination] = useState<any>(null);
   const [selectedMember, setSelectedMember] = useState<IMember | null>(null);
   const [isExporting, setIsExporting] = useState(false);
+  const [showFieldToggles, setShowFieldToggles] = useState(false);
+  
+  // Field visibility toggles
+  const [visibleFields, setVisibleFields] = useState({
+    gender: false,
+    age: false,
+    ticketStatus: false,
+    arrivalDay: false,
+    previousBurns: false,
+    dietaryRestrictions: false,
+    specialSkills: false,
+    giftParticipation: false,
+    acceptsCampFee: false,
+    canArriveEarly: false,
+    agreesToStayTillSaturday: false,
+    hasVehicle: false,
+    needsTransport: false,
+    comments: false
+  });
 
   const fetchMembers = async () => {
     try {
@@ -67,6 +91,8 @@ export default function AdminDashboard({ token, onLogout }: AdminDashboardProps)
       if (searchTerm) params.append('search', searchTerm);
       if (roleFilter) params.append('role', roleFilter);
       if (approvedFilter) params.append('approved', approvedFilter);
+      if (genderFilter) params.append('gender', genderFilter);
+      if (ticketStatusFilter.length > 0) params.append('ticketStatus', ticketStatusFilter.join(','));
 
       const response = await fetch(`/api/members?${params}`, {
         headers: {
@@ -168,7 +194,11 @@ export default function AdminDashboard({ token, onLogout }: AdminDashboardProps)
     setIsExporting(true);
     try {
       const params = new URLSearchParams();
+      if (searchTerm) params.append('search', searchTerm);
+      if (roleFilter) params.append('role', roleFilter);
       if (approvedFilter) params.append('approved', approvedFilter);
+      if (genderFilter) params.append('gender', genderFilter);
+      if (ticketStatusFilter.length > 0) params.append('ticketStatus', ticketStatusFilter.join(','));
       params.append('format', format);
 
       const response = await fetch(`/api/admin/export?${params}`, {
@@ -220,7 +250,7 @@ export default function AdminDashboard({ token, onLogout }: AdminDashboardProps)
     };
 
     loadData();
-  }, [currentPage, searchTerm, roleFilter, approvedFilter]);
+  }, [currentPage, searchTerm, roleFilter, approvedFilter, genderFilter, ticketStatusFilter]);
 
   if (loading && !members.length) {
     return (
@@ -234,6 +264,25 @@ export default function AdminDashboard({ token, onLogout }: AdminDashboardProps)
   }
 
   const roleOptions = stats ? Object.keys(stats.byRole) : [];
+  const genderOptions = ['Male', 'Female', 'Non-binary', 'Prefer not to say'];
+  const ticketStatusOptions = [
+    'Yes I bought via Camp',
+    'Yes I bought via other Department', 
+    'No - but should get a ticket via other department',
+    'No - no lead for a ticket at this stage'
+  ];
+  
+  const handleTicketStatusChange = (status: string, checked: boolean) => {
+    if (checked) {
+      setTicketStatusFilter([...ticketStatusFilter, status]);
+    } else {
+      setTicketStatusFilter(ticketStatusFilter.filter(s => s !== status));
+    }
+  };
+  
+  const toggleFieldVisibility = (field: keyof typeof visibleFields) => {
+    setVisibleFields(prev => ({ ...prev, [field]: !prev[field] }));
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -340,60 +389,122 @@ export default function AdminDashboard({ token, onLogout }: AdminDashboardProps)
 
         {/* Controls */}
         <div className="bg-white rounded-lg shadow p-6 mb-6">
-          <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
-            <div className="flex flex-col md:flex-row gap-4 flex-1">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                <input
-                  type="text"
-                  placeholder="Search members..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent w-full md:w-64"
-                />
+          <div className="flex flex-col gap-6">
+            {/* Search and Basic Filters */}
+            <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
+              <div className="flex flex-col sm:flex-row gap-4 flex-1">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                  <input
+                    type="text"
+                    placeholder="Search members..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent w-full sm:w-64"
+                  />
+                </div>
+
+                <select
+                  value={roleFilter}
+                  onChange={(e) => setRoleFilter(e.target.value)}
+                  className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                >
+                  <option value="">All Roles</option>
+                  {roleOptions.map((role) => (
+                    <option key={role} value={role}>{role}</option>
+                  ))}
+                </select>
+
+                <select
+                  value={approvedFilter}
+                  onChange={(e) => setApprovedFilter(e.target.value)}
+                  className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                >
+                  <option value="">All Status</option>
+                  <option value="true">Approved</option>
+                  <option value="false">Pending</option>
+                </select>
+
+                <select
+                  value={genderFilter}
+                  onChange={(e) => setGenderFilter(e.target.value)}
+                  className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                >
+                  <option value="">All Genders</option>
+                  {genderOptions.map((gender) => (
+                    <option key={gender} value={gender}>{gender}</option>
+                  ))}
+                </select>
               </div>
 
-              <select
-                value={roleFilter}
-                onChange={(e) => setRoleFilter(e.target.value)}
-                className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-              >
-                <option value="">All Roles</option>
-                {roleOptions.map((role) => (
-                  <option key={role} value={role}>{role}</option>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setShowFieldToggles(!showFieldToggles)}
+                  className="flex items-center gap-2 px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
+                >
+                  <Settings className="h-4 w-4" />
+                  Columns
+                </button>
+                
+                <button
+                  onClick={() => exportMembers('csv')}
+                  disabled={isExporting}
+                  className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50"
+                >
+                  <Download className="h-4 w-4" />
+                  Export CSV
+                </button>
+                
+                <button
+                  onClick={() => exportMembers('json')}
+                  disabled={isExporting}
+                  className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+                >
+                  <FileText className="h-4 w-4" />
+                  Export JSON
+                </button>
+              </div>
+            </div>
+
+            {/* Ticket Status Multi-Select Filter */}
+            <div className="border-t pt-4">
+              <h4 className="text-sm font-medium text-gray-700 mb-3">Ticket Status Filter:</h4>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                {ticketStatusOptions.map((status) => (
+                  <label key={status} className="flex items-center space-x-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={ticketStatusFilter.includes(status)}
+                      onChange={(e) => handleTicketStatusChange(status, e.target.checked)}
+                      className="rounded border-gray-300 text-orange-600 focus:ring-orange-500 focus:ring-2"
+                    />
+                    <span className="text-sm text-gray-700">{status}</span>
+                  </label>
                 ))}
-              </select>
-
-              <select
-                value={approvedFilter}
-                onChange={(e) => setApprovedFilter(e.target.value)}
-                className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-              >
-                <option value="">All Status</option>
-                <option value="true">Approved</option>
-                <option value="false">Pending</option>
-              </select>
+              </div>
             </div>
 
-            <div className="flex gap-2">
-              <button
-                onClick={() => exportMembers('csv')}
-                disabled={isExporting}
-                className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50"
-              >
-                <Download className="h-4 w-4" />
-                Export CSV
-              </button>
-              
-              <button
-                onClick={() => exportMembers('json')}
-                disabled={isExporting}
-                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
-              >
-                <FileText className="h-4 w-4" />
-                Export JSON
-              </button>
-            </div>
+            {/* Field Visibility Toggles */}
+            {showFieldToggles && (
+              <div className="border-t pt-4">
+                <h4 className="text-sm font-medium text-gray-700 mb-3">Show Additional Columns:</h4>
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
+                  {Object.entries(visibleFields).map(([field, visible]) => (
+                    <label key={field} className="flex items-center space-x-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={visible}
+                        onChange={() => toggleFieldVisibility(field as keyof typeof visibleFields)}
+                        className="rounded border-gray-300 text-orange-600 focus:ring-orange-500 focus:ring-2"
+                      />
+                      <span className="text-sm text-gray-700 capitalize">
+                        {field.replace(/([A-Z])/g, ' $1').trim()}
+                      </span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
@@ -412,6 +523,76 @@ export default function AdminDashboard({ token, onLogout }: AdminDashboardProps)
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Contact
                   </th>
+                  {visibleFields.gender && (
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Gender
+                    </th>
+                  )}
+                  {visibleFields.age && (
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Age
+                    </th>
+                  )}
+                  {visibleFields.ticketStatus && (
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Ticket Status
+                    </th>
+                  )}
+                  {visibleFields.arrivalDay && (
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Arrival Day
+                    </th>
+                  )}
+                  {visibleFields.previousBurns && (
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Previous Burns
+                    </th>
+                  )}
+                  {visibleFields.dietaryRestrictions && (
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Dietary
+                    </th>
+                  )}
+                  {visibleFields.specialSkills && (
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Skills
+                    </th>
+                  )}
+                  {visibleFields.giftParticipation && (
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Gift
+                    </th>
+                  )}
+                  {visibleFields.acceptsCampFee && (
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Camp Fee
+                    </th>
+                  )}
+                  {visibleFields.canArriveEarly && (
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Early Arrival
+                    </th>
+                  )}
+                  {visibleFields.agreesToStayTillSaturday && (
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Stay Till Sat
+                    </th>
+                  )}
+                  {visibleFields.hasVehicle && (
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Vehicle
+                    </th>
+                  )}
+                  {visibleFields.needsTransport && (
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Transport
+                    </th>
+                  )}
+                  {visibleFields.comments && (
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Comments
+                    </th>
+                  )}
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Status
                   </th>
@@ -448,6 +629,98 @@ export default function AdminDashboard({ token, onLogout }: AdminDashboardProps)
                         {member.phone}
                       </div>
                     </td>
+                    {visibleFields.gender && (
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        {member.gender}
+                      </td>
+                    )}
+                    {visibleFields.age && (
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        {member.age}
+                      </td>
+                    )}
+                    {visibleFields.ticketStatus && (
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                          {member.ticketStatus.split(' ')[0]} {/* Show first word for space */}
+                        </span>
+                      </td>
+                    )}
+                    {visibleFields.arrivalDay && (
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        {member.arrivalDay}
+                      </td>
+                    )}
+                    {visibleFields.previousBurns && (
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        {member.previousBurns}
+                      </td>
+                    )}
+                    {visibleFields.dietaryRestrictions && (
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        {member.dietaryRestrictions.length > 0 ? member.dietaryRestrictions.slice(0, 2).join(', ') : 'None'}
+                      </td>
+                    )}
+                    {visibleFields.specialSkills && (
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        {member.specialSkills.length > 0 ? member.specialSkills.slice(0, 2).join(', ') : 'None'}
+                      </td>
+                    )}
+                    {visibleFields.giftParticipation && (
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        {member.giftParticipation}
+                      </td>
+                    )}
+                    {visibleFields.acceptsCampFee && (
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                          member.acceptsCampFee ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                        }`}>
+                          {member.acceptsCampFee ? 'Yes' : 'No'}
+                        </span>
+                      </td>
+                    )}
+                    {visibleFields.canArriveEarly && (
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                          member.canArriveEarly ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                        }`}>
+                          {member.canArriveEarly ? 'Yes' : 'No'}
+                        </span>
+                      </td>
+                    )}
+                    {visibleFields.agreesToStayTillSaturday && (
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                          member.agreesToStayTillSaturday ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                        }`}>
+                          {member.agreesToStayTillSaturday ? 'Yes' : 'No'}
+                        </span>
+                      </td>
+                    )}
+                    {visibleFields.hasVehicle && (
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                          member.hasVehicle ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                        }`}>
+                          {member.hasVehicle ? 'Yes' : 'No'}
+                        </span>
+                      </td>
+                    )}
+                    {visibleFields.needsTransport && (
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                          member.needsTransport ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-100 text-gray-800'
+                        }`}>
+                          {member.needsTransport ? 'Yes' : 'No'}
+                        </span>
+                      </td>
+                    )}
+                    {visibleFields.comments && (
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 max-w-xs truncate">
+                        {member.comments || 'None'}
+                      </td>
+                    )}
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span
                         className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${

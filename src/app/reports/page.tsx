@@ -173,7 +173,6 @@ function ReportsPageContent() {
                       outerRadius={120}
                       dataKey="count"
                       nameKey="gender"
-                      label={({ gender, count }) => `${gender}: ${count}`}
                     >
                       {stats.genderBreakdown.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
@@ -261,7 +260,6 @@ function ReportsPageContent() {
                       outerRadius={120}
                       dataKey="count"
                       nameKey="role"
-                      label={({ role, count }) => `${role}: ${count}`}
                     >
                       {stats.roles.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />

@@ -126,8 +126,7 @@ const MemberSchema = new Schema<IMember>({
   timestamps: true,
 });
 
-// Indexes for better query performance
-MemberSchema.index({ email: 1 });
+// Indexes for better query performance (email index is already created via unique: true)
 MemberSchema.index({ campRole: 1 });
 MemberSchema.index({ isApproved: 1 });
 MemberSchema.index({ createdAt: -1 });

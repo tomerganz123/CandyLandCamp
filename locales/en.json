@@ -1,0 +1,103 @@
+{
+  "nav": {
+    "home": "Home",
+    "event": "Event",
+    "camp": "Camp", 
+    "gift": "The Gift",
+    "reports": "Reports",
+    "contact": "Contact",
+    "register": "Register Now"
+  },
+  "common": {
+    "learnMore": "Learn More",
+    "register": "Register Now",
+    "volunteer": "Volunteer",
+    "comingSoon": "Coming Soon",
+    "loading": "Loading...",
+    "error": "Something went wrong"
+  },
+  "home": {
+    "hero": {
+      "title": "BABA ZMAN",
+      "subtitle": "Midburn 2025 Camp",
+      "tagline": "Where time becomes magic in the desert",
+      "dates": "May 26-31, 2025",
+      "countdown": "Days until Midburn"
+    },
+    "features": {
+      "event": {
+        "title": "Event Info",
+        "description": "Everything you need to know about Midburn 2025"
+      },
+      "camp": {
+        "title": "Our Camp",
+        "description": "Discover the BABA ZMAN community and values"
+      },
+      "gift": {
+        "title": "The Gift",
+        "description": "Our contributions to the Midburn experience"
+      }
+    },
+    "community": {
+      "title": "From the Community",
+      "totalMembers": "Total Members",
+      "avgAge": "Average Age",
+      "arrivalDays": "Arrival Days"
+    }
+  },
+  "event": {
+    "title": "Event Information",
+    "subtitle": "Your guide to Midburn 2025",
+    "sections": {
+      "dates": "Dates & Location",
+      "travel": "Travel & Arrival", 
+      "schedule": "Daily Schedule",
+      "packing": "What to Bring",
+      "tickets": "Tickets FAQ"
+    }
+  },
+  "camp": {
+    "title": "BABA ZMAN Camp",
+    "subtitle": "Our community, values, and way of life",
+    "sections": {
+      "about": "About Us",
+      "values": "Our Values",
+      "teams": "Camp Teams",
+      "conduct": "Code of Conduct"
+    }
+  },
+  "gift": {
+    "title": "The Gift",
+    "subtitle": "Our contributions to the Midburn community",
+    "volunteerShift": "Volunteer for a shift"
+  },
+  "reports": {
+    "title": "Community Reports",
+    "subtitle": "Public statistics from our community",
+    "privacy": "Public data is aggregated; no personal information is shown.",
+    "charts": {
+      "totalMembers": "Total Members",
+      "genderBreakdown": "Gender Distribution",
+      "ageDistribution": "Age Distribution", 
+      "arrivalDays": "Arrival Days",
+      "rolesBreakdown": "Camp Roles"
+    }
+  },
+  "contact": {
+    "title": "Contact Us",
+    "subtitle": "Get in touch with the BABA ZMAN team",
+    "form": {
+      "name": "Name",
+      "email": "Email",
+      "subject": "Subject",
+      "message": "Message",
+      "send": "Send Message"
+    }
+  },
+  "footer": {
+    "description": "BABA ZMAN - Creating magic in the desert since 2025",
+    "quickLinks": "Quick Links",
+    "privacy": "Privacy Statement",
+    "privacyText": "We respect your privacy. Personal information is never shared publicly."
+  }
+}

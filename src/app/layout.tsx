@@ -5,6 +5,7 @@ import './globals.css'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://camp-managment-prd.vercel.app'),
   title: 'BABA ZMAN Midburn 2025',
   description: 'Register for BABA ZMAN at Midburn 2025! Join our community of burners for an unforgettable experience.',
   keywords: ['midburn', 'baba zman', 'camp', 'registration', 'burning man', 'israel', '2025'],

@@ -1,0 +1,72 @@
+{
+  "about": "BABA ZMAN is more than just a camp - we're a community of creators, dreamers, and doers who believe in the transformative power of shared experiences. Our camp embodies the spirit of radical self-expression, communal effort, and leaving no trace while creating unforgettable moments in the desert.",
+  "values": [
+    {
+      "title": "Radical Inclusion",
+      "description": "Everyone is welcome in our camp family, regardless of background, experience, or identity."
+    },
+    {
+      "title": "Communal Effort", 
+      "description": "We build, create, and maintain our camp together. Every contribution matters."
+    },
+    {
+      "title": "Creative Expression",
+      "description": "We encourage and support all forms of artistic and personal expression."
+    },
+    {
+      "title": "Leave No Trace",
+      "description": "We respect our desert home and leave it better than we found it."
+    },
+    {
+      "title": "Participation",
+      "description": "We are all participants, not spectators. Everyone contributes to the magic."
+    }
+  ],
+  "layoutImage": "/images/camp-layout-placeholder.jpg",
+  "teams": [
+    {
+      "name": "Art Team",
+      "description": "Creates installations, facilitates workshops, and brings beauty to our camp space.",
+      "responsibilities": ["Camp art installations", "Daily art workshops", "Collaborative projects"],
+      "volunteer": true
+    },
+    {
+      "name": "Build Team", 
+      "description": "Constructs and maintains camp infrastructure, shade structures, and common areas.",
+      "responsibilities": ["Shade structure setup", "Infrastructure maintenance", "Tool management"],
+      "volunteer": true
+    },
+    {
+      "name": "Kitchen Team",
+      "description": "Plans and prepares communal meals, manages food supplies and dietary needs.",
+      "responsibilities": ["Meal planning", "Food preparation", "Kitchen maintenance", "Dietary accommodations"],
+      "volunteer": true
+    },
+    {
+      "name": "Safety Team",
+      "description": "Ensures camp safety, provides first aid, and maintains emergency protocols.",
+      "responsibilities": ["First aid coverage", "Safety protocols", "Emergency response", "Risk assessment"],
+      "volunteer": true
+    },
+    {
+      "name": "Logistics Team",
+      "description": "Coordinates supplies, transportation, and day-to-day camp operations.",
+      "responsibilities": ["Supply management", "Transportation coordination", "Camp operations"],
+      "volunteer": true
+    },
+    {
+      "name": "DJ/Music Team",
+      "description": "Curates soundscapes, manages sound equipment, and creates musical experiences.",
+      "responsibilities": ["Sound system setup", "Music curation", "Equipment maintenance"],
+      "volunteer": true
+    }
+  ],
+  "codeOfConduct": [
+    "Respect all camp members and their boundaries",
+    "Contribute actively to camp life and maintenance", 
+    "Follow Leave No Trace principles",
+    "Support a safe and inclusive environment",
+    "Communicate openly and resolve conflicts peacefully",
+    "Take care of shared resources and spaces"
+  ]
+}

@@ -1,0 +1,83 @@
+{
+  "description": "BABA ZMAN offers three unique gifts to the Midburn community, each designed to nourish different aspects of the human experience - body, mind, and spirit.",
+  "gifts": [
+    {
+      "name": "קבאב הזמן (Kabab HaZman)",
+      "nameEn": "Kabab of Time",
+      "description": "Our signature culinary gift - a feast that brings people together around food, stories, and shared experiences. More than just a meal, it's a celebration of community and culture.",
+      "descriptionHe": "המתנה הקולינרית המיוחדת שלנו - משתה שמחבר בין אנשים סביב אוכל, סיפורים וחוויות משותפות. יותר מסתם ארוחה, זו חגיגה של קהילה ותרבות.",
+      "times": [
+        {
+          "day": "Wednesday",
+          "time": "20:00",
+          "duration": "2 hours",
+          "location": "BABA ZMAN Camp Center"
+        }
+      ],
+      "volunteering": {
+        "needed": true,
+        "roles": ["Prep cook", "Server", "Setup crew", "Cleanup crew"],
+        "description": "Help us create this magical culinary experience for hundreds of burners."
+      }
+    },
+    {
+      "name": "סדנאות יוגה ומדיטציה",
+      "nameEn": "Yoga & Meditation Workshops", 
+      "description": "Daily sessions for mind-body wellness in the desert. From sunrise yoga to sunset meditation, we offer spaces for inner exploration and physical practice.",
+      "descriptionHe": "מפגשים יומיים לרווחה גוף-נפש במדבר. מיוגה בזריחה ועד מדיטציה בשקיעה, אנו מציעים מרחבים לחקירה פנימית ותרגול גופני.",
+      "times": [
+        {
+          "day": "Daily",
+          "time": "07:00",
+          "duration": "1 hour",
+          "location": "Yoga Dome",
+          "title": "Morning Yoga"
+        },
+        {
+          "day": "Daily", 
+          "time": "17:30",
+          "duration": "45 minutes",
+          "location": "Meditation Circle",
+          "title": "Sunset Meditation"
+        },
+        {
+          "day": "Tuesday & Thursday",
+          "time": "15:00", 
+          "duration": "1.5 hours",
+          "location": "Workshop Tent",
+          "title": "Deep Practice Workshop"
+        }
+      ],
+      "volunteering": {
+        "needed": true,
+        "roles": ["Certified instructors", "Setup assistants", "Space holders"],
+        "description": "Share your practice and help create sacred space for community wellness."
+      }
+    },
+    {
+      "name": "מסיבת שקיעה",
+      "nameEn": "Sunset Party",
+      "description": "A celebration of music, dance, and community as day transitions to night. Join us for an uplifting experience that honors the beauty of the desert sunset.",
+      "descriptionHe": "חגיגה של מוזיקה, ריקוד וקהילה כשהיום עובר ללילה. הצטרפו אלינו לחוויה מרוממת שמכבדת את יופי השקיעה במדבר.",
+      "times": [
+        {
+          "day": "Thursday",
+          "time": "18:30",
+          "duration": "3 hours", 
+          "location": "BABA ZMAN Dance Floor"
+        }
+      ],
+      "volunteering": {
+        "needed": true,
+        "roles": ["DJs", "Sound technicians", "Decorators", "Bar staff", "Cleanup crew"],
+        "description": "Help create an unforgettable sunset celebration for the community."
+      }
+    }
+  ],
+  "volunteerInfo": {
+    "description": "All our gifts are created through volunteer participation. Join our teams to help bring these experiences to life!",
+    "benefits": ["Free camp meals during your shifts", "Special volunteer appreciation events", "Skills development opportunities", "Deep community connection"],
+    "commitment": "Most volunteer roles require 2-4 hour shifts. We work with your schedule and other camp commitments.",
+    "contact": "Reach out to our team leads or fill out the volunteer form to get involved."
+  }
+}

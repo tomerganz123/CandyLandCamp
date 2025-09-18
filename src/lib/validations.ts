@@ -1,5 +1,29 @@
 import { z } from 'zod';
 
+// Volunteer shift registration validation schema
+export const volunteerShiftSchema = z.object({
+  name: z.string().min(1, 'Name is required').max(100, 'Name must be less than 100 characters'),
+  email: z.string().email('Please enter a valid email address'),
+  campName: z.string().max(100, 'Camp name must be less than 100 characters').optional(),
+  shiftType: z.enum(['gift', 'camp']),
+  giftName: z.string().optional(),
+  teamName: z.string().optional(),
+  role: z.string().min(1, 'Role is required'),
+  timeSlot: z.string().optional(),
+  location: z.string().optional(),
+}).refine((data) => {
+  // Either giftName or teamName must be provided based on shiftType
+  if (data.shiftType === 'gift') {
+    return !!data.giftName;
+  }
+  if (data.shiftType === 'camp') {
+    return !!data.teamName;
+  }
+  return true;
+}, {
+  message: "Gift name is required for gift shifts, team name is required for camp shifts"
+});
+
 // Validation schemas using Zod
 export const memberRegistrationSchema = z.object({
   firstName: z.string().min(1, 'First name is required').max(50),
@@ -85,6 +109,7 @@ export const memberUpdateSchema = memberRegistrationSchema.partial().extend({
   isApproved: z.boolean().optional(),
 });
 
+export type VolunteerShiftInput = z.infer<typeof volunteerShiftSchema>;
 export type MemberRegistrationInput = z.infer<typeof memberRegistrationSchema>;
 export type AdminLoginInput = z.infer<typeof adminLoginSchema>;
 export type MemberUpdateInput = z.infer<typeof memberUpdateSchema>;

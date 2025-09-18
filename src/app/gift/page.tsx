@@ -6,6 +6,7 @@ import { Sparkles, Clock, MapPin, Users, Heart, Calendar } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useI18n } from '@/hooks/useI18n';
+import VolunteerPopup from '@/components/VolunteerPopup';
 
 interface GiftData {
   description: string;
@@ -43,9 +44,25 @@ const giftIcons = {
 
 import PublicLayout from '../layout-public';
 
+interface VolunteerShiftData {
+  shiftType: 'gift' | 'camp';
+  giftName?: string;
+  teamName?: string;
+  role: string;
+  timeSlot?: string;
+  location?: string;
+}
+
 function GiftPageContent() {
   const { t, isRTL } = useI18n();
   const [giftData, setGiftData] = useState<GiftData | null>(null);
+  const [volunteerPopup, setVolunteerPopup] = useState<{
+    isOpen: boolean;
+    shiftData: VolunteerShiftData | null;
+  }>({
+    isOpen: false,
+    shiftData: null,
+  });
 
   useEffect(() => {
     const fetchGiftData = async () => {
@@ -60,6 +77,33 @@ function GiftPageContent() {
 
     fetchGiftData();
   }, []);
+
+  const handleVolunteerClick = (gift: any, role: string) => {
+    // Find the main time slot for this gift
+    const timeSlot = gift.times.length > 0 
+      ? `${gift.times[0].day} ${gift.times[0].time} (${gift.times[0].duration})`
+      : undefined;
+    
+    const location = gift.times.length > 0 ? gift.times[0].location : undefined;
+
+    setVolunteerPopup({
+      isOpen: true,
+      shiftData: {
+        shiftType: 'gift',
+        giftName: gift.name,
+        role,
+        timeSlot,
+        location
+      }
+    });
+  };
+
+  const handleCloseVolunteerPopup = () => {
+    setVolunteerPopup({
+      isOpen: false,
+      shiftData: null,
+    });
+  };
 
   if (!giftData) {
     return (
@@ -83,9 +127,20 @@ function GiftPageContent() {
             transition={{ duration: 0.8 }}
             className="text-center"
           >
-            <div className="flex justify-center mb-6">
-              <Sparkles className="h-16 w-16 text-purple-600" />
+            {/* Gift Image */}
+            <div className="flex justify-center mb-8">
+              <div className="relative">
+                <img 
+                  src="/gift.png" 
+                  alt="BABA ZMAN Gifts" 
+                  className="max-w-sm md:max-w-md lg:max-w-lg w-full h-auto object-contain rounded-2xl shadow-2xl"
+                />
+                <div className="absolute -top-3 -right-3">
+                  <Sparkles className="h-10 w-10 text-purple-600 animate-pulse" />
+                </div>
+              </div>
             </div>
+            
             <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
               {t('gift.title')}
             </h1>
@@ -187,9 +242,17 @@ function GiftPageContent() {
                             ))}
                           </div>
                         </div>
-                        <Button className="bg-green-600 hover:bg-green-700">
-                          {t('gift.volunteerShift')}
-                        </Button>
+                        <div className="flex flex-wrap gap-2">
+                          {gift.volunteering.roles.map((role, roleIndex) => (
+                            <Button 
+                              key={roleIndex}
+                              className="bg-green-600 hover:bg-green-700 text-sm"
+                              onClick={() => handleVolunteerClick(gift, role)}
+                            >
+                              Volunteer as {role}
+                            </Button>
+                          ))}
+                        </div>
                       </div>
                     )}
                   </CardContent>
@@ -282,6 +345,20 @@ function GiftPageContent() {
           </motion.div>
         </section>
       </div>
+      
+      {/* Volunteer Popup */}
+      {volunteerPopup.shiftData && (
+        <VolunteerPopup
+          isOpen={volunteerPopup.isOpen}
+          onClose={handleCloseVolunteerPopup}
+          shiftType={volunteerPopup.shiftData.shiftType}
+          giftName={volunteerPopup.shiftData.giftName}
+          teamName={volunteerPopup.shiftData.teamName}
+          role={volunteerPopup.shiftData.role}
+          timeSlot={volunteerPopup.shiftData.timeSlot}
+          location={volunteerPopup.shiftData.location}
+        />
+      )}
     </div>
   );
 }

@@ -6,6 +6,7 @@ import { Users, Heart, Shield, Wrench, Utensils, Palette, Music, CheckCircle } f
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useI18n } from '@/hooks/useI18n';
+import VolunteerPopup from '@/components/VolunteerPopup';
 
 interface CampData {
   about: string;
@@ -34,9 +35,25 @@ const teamIcons = {
 
 import PublicLayout from '../layout-public';
 
+interface VolunteerShiftData {
+  shiftType: 'gift' | 'camp';
+  giftName?: string;
+  teamName?: string;
+  role: string;
+  timeSlot?: string;
+  location?: string;
+}
+
 function CampPageContent() {
   const { t } = useI18n();
   const [campData, setCampData] = useState<CampData | null>(null);
+  const [volunteerPopup, setVolunteerPopup] = useState<{
+    isOpen: boolean;
+    shiftData: VolunteerShiftData | null;
+  }>({
+    isOpen: false,
+    shiftData: null,
+  });
 
   useEffect(() => {
     const fetchCampData = async () => {
@@ -51,6 +68,24 @@ function CampPageContent() {
 
     fetchCampData();
   }, []);
+
+  const handleVolunteerClick = (team: any) => {
+    setVolunteerPopup({
+      isOpen: true,
+      shiftData: {
+        shiftType: 'camp',
+        teamName: team.name,
+        role: 'Team Member', // Generic role for camp teams
+      }
+    });
+  };
+
+  const handleCloseVolunteerPopup = () => {
+    setVolunteerPopup({
+      isOpen: false,
+      shiftData: null,
+    });
+  };
 
   if (!campData) {
     return (
@@ -220,7 +255,10 @@ function CampPageContent() {
                           </ul>
                         </div>
                         {team.volunteer && (
-                          <Button className="w-full bg-orange-600 hover:bg-orange-700">
+                          <Button 
+                            className="w-full bg-orange-600 hover:bg-orange-700"
+                            onClick={() => handleVolunteerClick(team)}
+                          >
                             {t('common.volunteer')}
                           </Button>
                         )}
@@ -280,6 +318,20 @@ function CampPageContent() {
           </motion.div>
         </section>
       </div>
+      
+      {/* Volunteer Popup */}
+      {volunteerPopup.shiftData && (
+        <VolunteerPopup
+          isOpen={volunteerPopup.isOpen}
+          onClose={handleCloseVolunteerPopup}
+          shiftType={volunteerPopup.shiftData.shiftType}
+          giftName={volunteerPopup.shiftData.giftName}
+          teamName={volunteerPopup.shiftData.teamName}
+          role={volunteerPopup.shiftData.role}
+          timeSlot={volunteerPopup.shiftData.timeSlot}
+          location={volunteerPopup.shiftData.location}
+        />
+      )}
     </div>
   );
 }

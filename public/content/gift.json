@@ -3,15 +3,15 @@
   "gifts": [
     {
       "name": "קבאב הזמן (Kabab HaZman)",
-      "nameEn": "Kabab of Time",
+      "nameEn": "Kabab on Time",
       "description": "Our signature culinary gift - a feast that brings people together around food, stories, and shared experiences. More than just a meal, it's a celebration of community and culture.",
       "descriptionHe": "המתנה הקולינרית המיוחדת שלנו - משתה שמחבר בין אנשים סביב אוכל, סיפורים וחוויות משותפות. יותר מסתם ארוחה, זו חגיגה של קהילה ותרבות.",
       "times": [
         {
           "day": "Wednesday",
-          "time": "20:00",
+          "time": "06:00",
           "duration": "2 hours",
-          "location": "BABA ZMAN Camp Center"
+          "location": "Exactly where you are"
         }
       ],
       "volunteering": {
@@ -27,8 +27,8 @@
       "descriptionHe": "מפגשים יומיים לרווחה גוף-נפש במדבר. מיוגה בזריחה ועד מדיטציה בשקיעה, אנו מציעים מרחבים לחקירה פנימית ותרגול גופני.",
       "times": [
         {
-          "day": "Daily",
-          "time": "07:00",
+          "day": "Tuesday & Thursday",
+          "time": "09:00",
           "duration": "1 hour",
           "location": "Yoga Dome",
           "title": "Morning Yoga"
@@ -36,7 +36,7 @@
         {
           "day": "Daily", 
           "time": "17:30",
-          "duration": "45 minutes",
+          "duration": "15 minutes",
           "location": "Meditation Circle",
           "title": "Sunset Meditation"
         },

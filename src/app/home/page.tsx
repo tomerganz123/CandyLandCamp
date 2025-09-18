@@ -23,10 +23,11 @@ import PublicLayout from '../layout-public';
 function PublicHome() {
   const { t, isRTL } = useI18n();
   const [stats, setStats] = useState<PublicStats | null>(null);
-  const [timeLeft, setTimeLeft] = useState<{ days: number; hours: number; minutes: number }>({
+  const [timeLeft, setTimeLeft] = useState<{ days: number; hours: number; minutes: number; seconds: number }>({
     days: 0,
     hours: 0,
-    minutes: 0
+    minutes: 0,
+    seconds: 0
   });
 
   // Countdown to Midburn (Nov 24th 12pm Israel Time)
@@ -42,13 +43,14 @@ function PublicHome() {
         const days = Math.floor(difference / (1000 * 60 * 60 * 24));
         const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
         const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((difference % (1000 * 60)) / 1000);
         
-        setTimeLeft({ days, hours, minutes });
+        setTimeLeft({ days, hours, minutes, seconds });
       }
     };
 
     updateCountdown();
-    const interval = setInterval(updateCountdown, 60000); // Update every minute
+    const interval = setInterval(updateCountdown, 1000); // Update every second
     
     return () => clearInterval(interval);
   }, []);
@@ -135,25 +137,35 @@ function PublicHome() {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.8, delay: 0.2 }}
-              className="flex justify-center items-center space-x-6 mb-8"
+              className="flex justify-center items-center space-x-4 mb-8"
             >
-              <div className="text-center bg-black/30 rounded-lg p-4 backdrop-blur-sm border border-white/20">
+              <div className="text-center bg-black/30 rounded-lg p-3 backdrop-blur-sm border border-white/20">
                 <div className="text-2xl md:text-3xl font-bold text-yellow-300 drop-shadow-lg">
                   {timeLeft.days}
                 </div>
-                <div className="text-sm text-white/80 drop-shadow-lg">Days</div>
+                <div className="text-xs text-white/80 drop-shadow-lg">Days</div>
               </div>
-              <div className="text-center bg-black/30 rounded-lg p-4 backdrop-blur-sm border border-white/20">
+              <div className="text-center bg-black/30 rounded-lg p-3 backdrop-blur-sm border border-white/20">
                 <div className="text-2xl md:text-3xl font-bold text-yellow-300 drop-shadow-lg">
                   {timeLeft.hours}
                 </div>
-                <div className="text-sm text-white/80 drop-shadow-lg">Hours</div>
+                <div className="text-xs text-white/80 drop-shadow-lg">Hours</div>
               </div>
-              <div className="text-center bg-black/30 rounded-lg p-4 backdrop-blur-sm border border-white/20">
+              <div className="text-center bg-black/30 rounded-lg p-3 backdrop-blur-sm border border-white/20">
                 <div className="text-2xl md:text-3xl font-bold text-yellow-300 drop-shadow-lg">
                   {timeLeft.minutes}
                 </div>
-                <div className="text-sm text-white/80 drop-shadow-lg">Minutes</div>
+                <div className="text-xs text-white/80 drop-shadow-lg">Minutes</div>
+              </div>
+              <div className="text-center bg-black/30 rounded-lg p-3 backdrop-blur-sm border border-white/20">
+                <motion.div 
+                  className="text-2xl md:text-3xl font-bold text-yellow-300 drop-shadow-lg"
+                  animate={{ scale: [1, 1.1, 1] }}
+                  transition={{ duration: 1, repeat: Infinity }}
+                >
+                  {timeLeft.seconds}
+                </motion.div>
+                <div className="text-xs text-white/80 drop-shadow-lg">Seconds</div>
               </div>
             </motion.div>
 

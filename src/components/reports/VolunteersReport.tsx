@@ -132,8 +132,11 @@ export default function VolunteersReport({ token }: VolunteersReportProps) {
       let comparison = 0;
       if (typeof aVal === 'string' && typeof bVal === 'string') {
         comparison = aVal.localeCompare(bVal);
-      } else if (aVal instanceof Date && bVal instanceof Date) {
-        comparison = aVal.getTime() - bVal.getTime();
+      } else if (sortField === 'registeredAt') {
+        // Handle date comparison for registeredAt field
+        const dateA = new Date(aVal as string);
+        const dateB = new Date(bVal as string);
+        comparison = dateA.getTime() - dateB.getTime();
       } else {
         comparison = String(aVal).localeCompare(String(bVal));
       }

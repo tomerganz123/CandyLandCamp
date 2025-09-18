@@ -8,6 +8,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useI18n } from '@/hooks/useI18n';
 import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
+import MeltingTimeSection from '@/components/public/MeltingTimeSection';
+import DesertSoundscape from '@/components/public/DesertSoundscape';
 
 interface PublicStats {
   totalMembers: number;
@@ -172,6 +174,9 @@ function PublicHome() {
         </div>
       </section>
 
+      {/* Time Is Melting Section - First after hero */}
+      <MeltingTimeSection />
+
       {/* Features Section */}
       <section id="features" className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -282,6 +287,9 @@ function PublicHome() {
           </div>
         </section>
       )}
+
+      {/* Desert Soundscape */}
+      <DesertSoundscape />
     </div>
   );
 }

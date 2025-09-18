@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import { TrendingUp, Users, PieChart, BarChart } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useI18n } from '@/hooks/useI18n';
-import { PieChart as RechartsPie, Pie, Cell, ResponsiveContainer, BarChart as RechartsBar, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
+import { PieChart as RechartsPie, Pie, Cell, ResponsiveContainer, BarChart as RechartsBar, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 
 interface PublicStats {
   totalMembers: number;
@@ -63,7 +63,174 @@ function ReportsPageContent() {
     );
   }
 
-  const COLORS = ['#f97316', '#3b82f6', '#10b981', '#8b5cf6', '#f59e0b', '#ef4444'];
+  const COLORS = ['#f97316', '#ec4899', '#10b981', '#8b5cf6', '#f59e0b', '#ef4444']; // Changed second color to pink for female
+
+  // Sort arrival days by day of the week (Saturday to Wednesday)
+  const sortArrivalDays = (arrivalDays: Array<{ day: string; count: number }>) => {
+    const dayOrder = ['Saturday', 'Sunday', 'Monday', 'Tuesday', 'Wednesday'];
+    
+    return arrivalDays.sort((a, b) => {
+      const indexA = dayOrder.indexOf(a.day);
+      const indexB = dayOrder.indexOf(b.day);
+      
+      // If day not found in order, put it at the end
+      if (indexA === -1) return 1;
+      if (indexB === -1) return -1;
+      
+      return indexA - indexB;
+    });
+  };
+
+  // Custom tooltip component for gender chart
+  const GenderTooltip = ({ active, payload }: any) => {
+    if (active && payload && payload.length) {
+      const data = payload[0];
+      const total = stats?.genderBreakdown.reduce((sum, item) => sum + item.count, 0) || 0;
+      const percentage = ((data.value / total) * 100).toFixed(1);
+      
+      return (
+        <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg">
+          <div className="flex items-center gap-2">
+            <div 
+              className="w-3 h-3 rounded-full" 
+              style={{ backgroundColor: data.color }}
+            />
+            <span className="font-medium">{data.payload.gender}</span>
+          </div>
+          <div className="mt-1 text-sm text-gray-600">
+            <div>Count: <span className="font-semibold">{data.value}</span></div>
+            <div>Percentage: <span className="font-semibold">{percentage}%</span></div>
+          </div>
+        </div>
+      );
+    }
+    return null;
+  };
+
+  // Custom legend component with gender icons
+  const GenderLegend = (props: any) => {
+    const { payload } = props;
+    const total = stats?.genderBreakdown.reduce((sum, item) => sum + item.count, 0) || 0;
+    
+    const getGenderIcon = (gender: string) => {
+      switch (gender.toLowerCase()) {
+        case 'male':
+        case 'man':
+        case 'זכר':
+          return '♂️';
+        case 'female':
+        case 'woman':
+        case 'נקבה':
+          return '♀️';
+        case 'non-binary':
+        case 'לא בינארי':
+          return '⚧️';
+        case 'other':
+        case 'אחר':
+          return '🏳️‍🌈';
+        default:
+          return '👤';
+      }
+    };
+    
+    return (
+      <div className="flex flex-wrap justify-center gap-4 mt-4">
+        {payload.map((entry: any, index: number) => {
+          const percentage = ((entry.payload.count / total) * 100).toFixed(1);
+          return (
+            <div key={index} className="flex items-center gap-2 bg-gray-50 px-3 py-2 rounded-lg">
+              <div className="flex items-center gap-1">
+                <span className="text-lg">{getGenderIcon(entry.payload.gender)}</span>
+                <div 
+                  className="w-3 h-3 rounded-full" 
+                  style={{ backgroundColor: entry.color }}
+                />
+              </div>
+              <div className="text-sm">
+                <div className="font-medium">{entry.payload.gender}</div>
+                <div className="text-gray-600">
+                  {entry.payload.count} ({percentage}%)
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    );
+  };
+
+  // Custom tooltip component for roles chart
+  const RolesTooltip = ({ active, payload }: any) => {
+    if (active && payload && payload.length) {
+      const data = payload[0];
+      const total = stats?.roles.reduce((sum, item) => sum + item.count, 0) || 0;
+      const percentage = ((data.value / total) * 100).toFixed(1);
+      
+      return (
+        <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg">
+          <div className="flex items-center gap-2">
+            <div 
+              className="w-3 h-3 rounded-full" 
+              style={{ backgroundColor: data.color }}
+            />
+            <span className="font-medium">{data.payload.role}</span>
+          </div>
+          <div className="mt-1 text-sm text-gray-600">
+            <div>Count: <span className="font-semibold">{data.value}</span></div>
+            <div>Percentage: <span className="font-semibold">{percentage}%</span></div>
+          </div>
+        </div>
+      );
+    }
+    return null;
+  };
+
+  // Custom legend component with role icons
+  const RolesLegend = (props: any) => {
+    const { payload } = props;
+    const total = stats?.roles.reduce((sum, item) => sum + item.count, 0) || 0;
+    
+    const getRoleIcon = (role: string) => {
+      const roleLower = role.toLowerCase();
+      if (roleLower.includes('build') || roleLower.includes('construction')) return '🔨';
+      if (roleLower.includes('kitchen') || roleLower.includes('food') || roleLower.includes('cook')) return '👨‍🍳';
+      if (roleLower.includes('art') || roleLower.includes('creative')) return '🎨';
+      if (roleLower.includes('dj') || roleLower.includes('music') || roleLower.includes('sound')) return '🎵';
+      if (roleLower.includes('safety') || roleLower.includes('security')) return '🛡️';
+      if (roleLower.includes('medical') || roleLower.includes('health')) return '⚕️';
+      if (roleLower.includes('transport') || roleLower.includes('logistics')) return '🚛';
+      if (roleLower.includes('gate') || roleLower.includes('entrance')) return '🚪';
+      if (roleLower.includes('clean') || roleLower.includes('maintenance')) return '🧹';
+      if (roleLower.includes('photo') || roleLower.includes('media')) return '📸';
+      if (roleLower.includes('volunteer') || roleLower.includes('general')) return '🙋‍♀️';
+      return '⭐'; // Default for other roles
+    };
+    
+    return (
+      <div className="flex flex-wrap justify-center gap-3 mt-4">
+        {payload.map((entry: any, index: number) => {
+          const percentage = ((entry.payload.count / total) * 100).toFixed(1);
+          return (
+            <div key={index} className="flex items-center gap-2 bg-gray-50 px-3 py-2 rounded-lg">
+              <div className="flex items-center gap-1">
+                <span className="text-lg">{getRoleIcon(entry.payload.role)}</span>
+                <div 
+                  className="w-3 h-3 rounded-full" 
+                  style={{ backgroundColor: entry.color }}
+                />
+              </div>
+              <div className="text-sm">
+                <div className="font-medium">{entry.payload.role}</div>
+                <div className="text-gray-600">
+                  {entry.payload.count} ({percentage}%)
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    );
+  };
 
   return (
     <div className="min-h-screen bg-white">
@@ -162,7 +329,7 @@ function ReportsPageContent() {
                   {t('reports.charts.genderBreakdown')}
                 </CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="pt-6">
                 <ResponsiveContainer width="100%" height={300}>
                   <RechartsPie>
                     <Pie
@@ -178,7 +345,8 @@ function ReportsPageContent() {
                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                       ))}
                     </Pie>
-                    <Tooltip />
+                    <Tooltip content={<GenderTooltip />} />
+                    <Legend content={<GenderLegend />} />
                   </RechartsPie>
                 </ResponsiveContainer>
               </CardContent>
@@ -225,7 +393,7 @@ function ReportsPageContent() {
               </CardHeader>
               <CardContent>
                 <ResponsiveContainer width="100%" height={300}>
-                  <RechartsBar data={stats.arrivalDays}>
+                  <RechartsBar data={sortArrivalDays([...stats.arrivalDays])}>
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="day" />
                     <YAxis />
@@ -249,7 +417,7 @@ function ReportsPageContent() {
                   {t('reports.charts.rolesBreakdown')}
                 </CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="pt-6">
                 <ResponsiveContainer width="100%" height={300}>
                   <RechartsPie>
                     <Pie
@@ -265,7 +433,8 @@ function ReportsPageContent() {
                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                       ))}
                     </Pie>
-                    <Tooltip />
+                    <Tooltip content={<RolesTooltip />} />
+                    <Legend content={<RolesLegend />} />
                   </RechartsPie>
                 </ResponsiveContainer>
               </CardContent>

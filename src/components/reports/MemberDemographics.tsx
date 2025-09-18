@@ -34,7 +34,86 @@ interface DemographicsData {
   };
 }
 
-const COLORS = ['#f97316', '#ea580c', '#c2410c', '#9a3412', '#7c2d12'];
+const COLORS = ['#f97316', '#ec4899', '#10b981', '#8b5cf6', '#f59e0b']; // Changed second color to pink for female
+
+// Custom tooltip component for gender chart
+const GenderTooltip = ({ active, payload, data }: any) => {
+  if (active && payload && payload.length && data) {
+    const item = payload[0];
+    const total = data.reduce((sum: number, entry: any) => sum + entry.count, 0);
+    const percentage = ((item.value / total) * 100).toFixed(1);
+    
+    return (
+      <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg">
+        <div className="flex items-center gap-2">
+          <div 
+            className="w-3 h-3 rounded-full" 
+            style={{ backgroundColor: item.color }}
+          />
+          <span className="font-medium">{item.payload.gender}</span>
+        </div>
+        <div className="mt-1 text-sm text-gray-600">
+          <div>Count: <span className="font-semibold">{item.value}</span></div>
+          <div>Percentage: <span className="font-semibold">{percentage}%</span></div>
+        </div>
+      </div>
+    );
+  }
+  return null;
+};
+
+// Custom legend component with gender icons
+const GenderLegend = ({ payload, data }: any) => {
+  if (!payload || !data) return null;
+  
+  const total = data.reduce((sum: number, entry: any) => sum + entry.count, 0);
+  
+  const getGenderIcon = (gender: string) => {
+    switch (gender.toLowerCase()) {
+      case 'male':
+      case 'man':
+      case 'זכר':
+        return '♂️';
+      case 'female':
+      case 'woman':
+      case 'נקבה':
+        return '♀️';
+      case 'non-binary':
+      case 'לא בינארי':
+        return '⚧️';
+      case 'other':
+      case 'אחר':
+        return '🏳️‍🌈';
+      default:
+        return '👤';
+    }
+  };
+  
+  return (
+    <div className="flex flex-wrap justify-center gap-3 mt-4">
+      {payload.map((entry: any, index: number) => {
+        const percentage = ((entry.payload.count / total) * 100).toFixed(1);
+        return (
+          <div key={index} className="flex items-center gap-2 bg-gray-50 px-3 py-2 rounded-lg">
+            <div className="flex items-center gap-1">
+              <span className="text-lg">{getGenderIcon(entry.payload.gender)}</span>
+              <div 
+                className="w-3 h-3 rounded-full" 
+                style={{ backgroundColor: entry.color }}
+              />
+            </div>
+            <div className="text-sm">
+              <div className="font-medium">{entry.payload.gender}</div>
+              <div className="text-gray-600">
+                {entry.payload.count} ({percentage}%)
+              </div>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+};
 
 export default function MemberDemographics({ token }: MemberDemographicsProps) {
   const [data, setData] = useState<DemographicsData | null>(null);
@@ -201,7 +280,7 @@ export default function MemberDemographics({ token }: MemberDemographicsProps) {
 
         {/* Gender Breakdown */}
         <div className="bg-white rounded-lg border border-gray-200 p-6">
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">Gender Breakdown</h3>
+          <h3 className="text-lg font-semibold text-gray-800 mb-6">Gender Breakdown</h3>
           <ResponsiveContainer width="100%" height={300}>
             <PieChart>
               <Pie
@@ -212,14 +291,13 @@ export default function MemberDemographics({ token }: MemberDemographicsProps) {
                 fill="#8884d8"
                 dataKey="count"
                 nameKey="gender"
-                label
               >
                 {data.genderBreakdown.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                 ))}
               </Pie>
-              <Tooltip formatter={(value, name) => [value, name]} />
-              <Legend />
+              <Tooltip content={(props) => <GenderTooltip {...props} data={data.genderBreakdown} />} />
+              <Legend content={(props) => <GenderLegend {...props} data={data.genderBreakdown} />} />
             </PieChart>
           </ResponsiveContainer>
         </div>

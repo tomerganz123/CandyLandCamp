@@ -43,6 +43,22 @@ const ARRIVAL_COLORS = {
   'Thursday': '#6b7280'
 };
 
+// Sort arrival days by day of the week (Saturday to Wednesday)
+const sortArrivalData = (arrivalData: { day: string; count: number; members: string[] }[]) => {
+  const dayOrder = ['Saturday', 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday'];
+  
+  return arrivalData.sort((a, b) => {
+    const indexA = dayOrder.indexOf(a.day);
+    const indexB = dayOrder.indexOf(b.day);
+    
+    // If day not found in order, put it at the end
+    if (indexA === -1) return 1;
+    if (indexB === -1) return -1;
+    
+    return indexA - indexB;
+  });
+};
+
 export default function LogisticsArrival({ token }: LogisticsArrivalProps) {
   const [data, setData] = useState<LogisticsData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -194,7 +210,7 @@ export default function LogisticsArrival({ token }: LogisticsArrivalProps) {
       <div className="bg-white rounded-lg border border-gray-200 p-6 mb-8">
         <h3 className="text-lg font-semibold text-gray-800 mb-4">Arrival Schedule by Day</h3>
         <ResponsiveContainer width="100%" height={300}>
-          <RechartsBarChart data={data.arrivalData}>
+          <RechartsBarChart data={sortArrivalData([...data.arrivalData])}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="day" />
             <YAxis />

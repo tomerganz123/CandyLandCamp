@@ -36,6 +36,152 @@ interface SkillsData {
 
 const COLORS = ['#f97316', '#ea580c', '#c2410c', '#9a3412', '#7c2d12', '#10b981', '#3b82f6'];
 
+// Custom tooltip component for roles chart
+const RolesTooltip = ({ active, payload, data }: any) => {
+  if (active && payload && payload.length && data) {
+    const item = payload[0];
+    const total = data.reduce((sum: number, entry: any) => sum + entry.count, 0);
+    const percentage = ((item.value / total) * 100).toFixed(1);
+    
+    return (
+      <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg">
+        <div className="flex items-center gap-2">
+          <div 
+            className="w-3 h-3 rounded-full" 
+            style={{ backgroundColor: item.color }}
+          />
+          <span className="font-medium">{item.payload.role}</span>
+        </div>
+        <div className="mt-1 text-sm text-gray-600">
+          <div>Count: <span className="font-semibold">{item.value}</span></div>
+          <div>Percentage: <span className="font-semibold">{percentage}%</span></div>
+        </div>
+      </div>
+    );
+  }
+  return null;
+};
+
+// Custom legend component with role icons
+const RolesLegend = ({ payload, data }: any) => {
+  if (!payload || !data) return null;
+  
+  const total = data.reduce((sum: number, entry: any) => sum + entry.count, 0);
+  
+  const getRoleIcon = (role: string) => {
+    const roleLower = role.toLowerCase();
+    if (roleLower.includes('build') || roleLower.includes('construction')) return '🔨';
+    if (roleLower.includes('kitchen') || roleLower.includes('food') || roleLower.includes('cook')) return '👨‍🍳';
+    if (roleLower.includes('art') || roleLower.includes('creative')) return '🎨';
+    if (roleLower.includes('dj') || roleLower.includes('music') || roleLower.includes('sound')) return '🎵';
+    if (roleLower.includes('safety') || roleLower.includes('security')) return '🛡️';
+    if (roleLower.includes('medical') || roleLower.includes('health')) return '⚕️';
+    if (roleLower.includes('transport') || roleLower.includes('logistics')) return '🚛';
+    if (roleLower.includes('gate') || roleLower.includes('entrance')) return '🚪';
+    if (roleLower.includes('clean') || roleLower.includes('maintenance')) return '🧹';
+    if (roleLower.includes('photo') || roleLower.includes('media')) return '📸';
+    if (roleLower.includes('volunteer') || roleLower.includes('general')) return '🙋‍♀️';
+    return '⭐'; // Default for other roles
+  };
+  
+  return (
+    <div className="flex flex-wrap justify-center gap-3 mt-4">
+      {payload.map((entry: any, index: number) => {
+        const percentage = ((entry.payload.count / total) * 100).toFixed(1);
+        return (
+          <div key={index} className="flex items-center gap-2 bg-gray-50 px-3 py-2 rounded-lg">
+            <div className="flex items-center gap-1">
+              <span className="text-lg">{getRoleIcon(entry.payload.role)}</span>
+              <div 
+                className="w-3 h-3 rounded-full" 
+                style={{ backgroundColor: entry.color }}
+              />
+            </div>
+            <div className="text-sm">
+              <div className="font-medium">{entry.payload.role}</div>
+              <div className="text-gray-600">
+                {entry.payload.count} ({percentage}%)
+              </div>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+};
+
+// Custom tooltip component for gifts chart
+const GiftsTooltip = ({ active, payload, data }: any) => {
+  if (active && payload && payload.length && data) {
+    const item = payload[0];
+    const total = data.reduce((sum: number, entry: any) => sum + entry.count, 0);
+    const percentage = ((item.value / total) * 100).toFixed(1);
+    
+    return (
+      <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg">
+        <div className="flex items-center gap-2">
+          <div 
+            className="w-3 h-3 rounded-full" 
+            style={{ backgroundColor: item.color }}
+          />
+          <span className="font-medium">{item.payload.gift}</span>
+        </div>
+        <div className="mt-1 text-sm text-gray-600">
+          <div>Count: <span className="font-semibold">{item.value}</span></div>
+          <div>Percentage: <span className="font-semibold">{percentage}%</span></div>
+        </div>
+      </div>
+    );
+  }
+  return null;
+};
+
+// Custom legend component with gift icons
+const GiftsLegend = ({ payload, data }: any) => {
+  if (!payload || !data) return null;
+  
+  const total = data.reduce((sum: number, entry: any) => sum + entry.count, 0);
+  
+  const getGiftIcon = (gift: string) => {
+    const giftLower = gift.toLowerCase();
+    if (giftLower.includes('art') || giftLower.includes('craft')) return '🎨';
+    if (giftLower.includes('music') || giftLower.includes('performance')) return '🎵';
+    if (giftLower.includes('food') || giftLower.includes('meal')) return '🍽️';
+    if (giftLower.includes('workshop') || giftLower.includes('teach')) return '🎓';
+    if (giftLower.includes('massage') || giftLower.includes('healing')) return '💆';
+    if (giftLower.includes('game') || giftLower.includes('activity')) return '🎮';
+    if (giftLower.includes('story') || giftLower.includes('talk')) return '📖';
+    if (giftLower.includes('dance')) return '💃';
+    if (giftLower.includes('meditation') || giftLower.includes('yoga')) return '🧘';
+    return '🎁'; // Default gift icon
+  };
+  
+  return (
+    <div className="flex flex-wrap justify-center gap-3 mt-4">
+      {payload.map((entry: any, index: number) => {
+        const percentage = ((entry.payload.count / total) * 100).toFixed(1);
+        return (
+          <div key={index} className="flex items-center gap-2 bg-gray-50 px-3 py-2 rounded-lg">
+            <div className="flex items-center gap-1">
+              <span className="text-lg">{getGiftIcon(entry.payload.gift)}</span>
+              <div 
+                className="w-3 h-3 rounded-full" 
+                style={{ backgroundColor: entry.color }}
+              />
+            </div>
+            <div className="text-sm">
+              <div className="font-medium">{entry.payload.gift}</div>
+              <div className="text-gray-600">
+                {entry.payload.count} ({percentage}%)
+              </div>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+};
+
 export default function RolesSkillsGifts({ token }: RolesSkillsGiftsProps) {
   const [data, setData] = useState<SkillsData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -168,29 +314,29 @@ export default function RolesSkillsGifts({ token }: RolesSkillsGiftsProps) {
       {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
         <div className="bg-white rounded-lg border border-gray-200 p-6">
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">Camp Roles Distribution</h3>
+          <h3 className="text-lg font-semibold text-gray-800 mb-6">Camp Roles Distribution</h3>
           <ResponsiveContainer width="100%" height={300}>
             <RechartsBarChart data={data.roleData}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="role" angle={-45} textAnchor="end" height={80} />
               <YAxis />
-              <Tooltip />
+              <Tooltip content={(props) => <RolesTooltip {...props} data={data.roleData} />} />
               <Bar dataKey="count" fill="#f97316" />
             </RechartsBarChart>
           </ResponsiveContainer>
         </div>
 
         <div className="bg-white rounded-lg border border-gray-200 p-6">
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">Gift Participation</h3>
+          <h3 className="text-lg font-semibold text-gray-800 mb-6">Gift Participation</h3>
           <ResponsiveContainer width="100%" height={300}>
             <RechartsPieChart>
-              <Pie data={data.giftData} cx="50%" cy="50%" outerRadius={80} fill="#8884d8" dataKey="count" nameKey="gift" label>
+              <Pie data={data.giftData} cx="50%" cy="50%" outerRadius={80} fill="#8884d8" dataKey="count" nameKey="gift">
                 {data.giftData.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                 ))}
               </Pie>
-              <Tooltip />
-              <Legend />
+              <Tooltip content={(props) => <GiftsTooltip {...props} data={data.giftData} />} />
+              <Legend content={(props) => <GiftsLegend {...props} data={data.giftData} />} />
             </RechartsPieChart>
           </ResponsiveContainer>
         </div>

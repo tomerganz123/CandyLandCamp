@@ -109,7 +109,40 @@ export const memberUpdateSchema = memberRegistrationSchema.partial().extend({
   isApproved: z.boolean().optional(),
 });
 
+// Budget expense validation schema
+export const budgetExpenseSchema = z.object({
+  costCategory: z.enum([
+    'Food & Beverages',
+    'Transportation',
+    'Equipment & Supplies',
+    'Art & Decorations',
+    'Infrastructure',
+    'Emergency/Medical',
+    'Gift',
+    'Other'
+  ]),
+  item: z.string().min(1, 'Item description is required').max(200, 'Item description must be less than 200 characters'),
+  quantity: z.number().min(0, 'Quantity cannot be negative').default(1),
+  costAmount: z.number().min(0, 'Cost amount cannot be negative'),
+  alreadyPaid: z.boolean().default(false),
+  whoPaid: z.string().optional(),
+  whoPaidName: z.string().optional(),
+  moneyReturned: z.boolean().default(false),
+  dateOfExpense: z.string().or(z.date()).transform((val) => new Date(val)),
+  notes: z.string().max(500, 'Notes must be less than 500 characters').optional(),
+}).refine((data) => {
+  // If already paid, whoPaid must be provided
+  if (data.alreadyPaid && !data.whoPaid) {
+    return false;
+  }
+  return true;
+}, {
+  message: "Who paid is required when expense is marked as paid",
+  path: ["whoPaid"]
+});
+
 export type VolunteerShiftInput = z.infer<typeof volunteerShiftSchema>;
+export type BudgetExpenseInput = z.infer<typeof budgetExpenseSchema>;
 export type MemberRegistrationInput = z.infer<typeof memberRegistrationSchema>;
 export type AdminLoginInput = z.infer<typeof adminLoginSchema>;
 export type MemberUpdateInput = z.infer<typeof memberUpdateSchema>;

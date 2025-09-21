@@ -10,6 +10,7 @@ import {
   Utensils, 
   Wrench,
   Heart,
+  DollarSign,
   FileText,
   ArrowLeft,
   Download,
@@ -21,6 +22,7 @@ import LogisticsArrival from '@/components/reports/LogisticsArrival';
 import FoodHealth from '@/components/reports/FoodHealth';
 import RolesSkillsGifts from '@/components/reports/RolesSkillsGifts';
 import VolunteersReport from '@/components/reports/VolunteersReport';
+import BudgetReport from '@/components/reports/BudgetReport';
 import AdminViews from '@/components/reports/AdminViews';
 
 const REPORT_CATEGORIES = [
@@ -65,6 +67,13 @@ const REPORT_CATEGORIES = [
     icon: Heart,
     description: 'Volunteer registrations, shift assignments, contact info',
     color: 'bg-pink-500'
+  },
+  {
+    id: 'budget',
+    name: 'Budget Management',
+    icon: DollarSign,
+    description: 'Track expenses, payments, and budget allocation',
+    color: 'bg-emerald-500'
   },
   {
     id: 'admin',
@@ -131,6 +140,8 @@ export default function ReportsPage() {
         return <RolesSkillsGifts token={token} />;
       case 'volunteers':
         return <VolunteersReport token={token} />;
+      case 'budget':
+        return <BudgetReport token={token} />;
       case 'admin':
         return <AdminViews token={token} />;
       default:
@@ -190,7 +201,7 @@ export default function ReportsPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Category Navigation */}
         <div className="mb-8">
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-7 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4">
             {REPORT_CATEGORIES.map((category) => {
               const Icon = category.icon;
               const isActive = activeCategory === category.id;

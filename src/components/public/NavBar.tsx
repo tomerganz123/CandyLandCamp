@@ -37,15 +37,12 @@ export default function NavBar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <Link href="/home" className="flex items-center space-x-3">
+          <Link href="/home" className="flex items-center">
             <img 
               src="/logo.png" 
               alt="BABA ZMAN" 
               className="h-10 w-auto object-contain"
             />
-            <div className="text-2xl font-bold text-orange-600">
-              {isRTL ? 'באבא זמן' : 'BABA ZMAN'}
-            </div>
           </Link>
 
           {/* Desktop Navigation */}

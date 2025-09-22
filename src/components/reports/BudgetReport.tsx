@@ -5,7 +5,8 @@ import { motion } from 'framer-motion';
 import { 
   DollarSign, Calendar, User, Check, X, Plus, 
   Edit, Trash2, Download, Search, Filter,
-  ChevronDown, ChevronUp, AlertCircle, CheckCircle
+  ChevronDown, ChevronUp, AlertCircle, CheckCircle,
+  CreditCard
 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -60,7 +61,10 @@ interface ExpenseFormData {
   notes: string;
 }
 
+import FeeCollectionReport from './FeeCollectionReport';
+
 export default function BudgetReport({ token }: BudgetReportProps) {
+  const [activeTab, setActiveTab] = useState<'expenses' | 'fees'>('expenses');
   const [expenses, setExpenses] = useState<BudgetExpense[]>([]);
   const [statistics, setStatistics] = useState<BudgetStatistics | null>(null);
   const [categoryStats, setCategoryStats] = useState<CategoryStat[]>([]);
@@ -346,19 +350,58 @@ export default function BudgetReport({ token }: BudgetReportProps) {
       <div className="flex justify-between items-start">
         <div>
           <h2 className="text-2xl font-bold text-gray-900">Budget Management</h2>
-          <p className="text-gray-600 mt-1">Track camp expenses and payments</p>
-        </div>
-        <div className="flex gap-3">
-          <Button onClick={exportData} variant="outline" className="bg-green-50 hover:bg-green-100">
-            <Download className="w-4 h-4 mr-2" />
-            Export CSV
-          </Button>
-          <Button onClick={openAddModal} className="bg-blue-600 hover:bg-blue-700">
-            <Plus className="w-4 h-4 mr-2" />
-            Add Expense
-          </Button>
+          <p className="text-gray-600 mt-1">Track camp expenses and fee collection</p>
         </div>
       </div>
+
+      {/* Tab Navigation */}
+      <div className="border-b border-gray-200">
+        <nav className="-mb-px flex space-x-8">
+          <button
+            onClick={() => setActiveTab('expenses')}
+            className={`py-2 px-1 border-b-2 font-medium text-sm ${
+              activeTab === 'expenses'
+                ? 'border-orange-500 text-orange-600'
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+            }`}
+          >
+            <DollarSign className="w-4 h-4 mr-2 inline" />
+            Expenses
+          </button>
+          <button
+            onClick={() => setActiveTab('fees')}
+            className={`py-2 px-1 border-b-2 font-medium text-sm ${
+              activeTab === 'fees'
+                ? 'border-orange-500 text-orange-600'
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+            }`}
+          >
+            <CreditCard className="w-4 h-4 mr-2 inline" />
+            Fee Collection
+          </button>
+        </nav>
+      </div>
+
+      {/* Tab Content */}
+      {activeTab === 'expenses' ? (
+        <div className="space-y-6">
+          {/* Expenses Header */}
+          <div className="flex justify-between items-start">
+            <div>
+              <h3 className="text-xl font-semibold text-gray-900">Camp Expenses</h3>
+              <p className="text-gray-600 mt-1">Track and manage camp expenditures</p>
+            </div>
+            <div className="flex gap-3">
+              <Button onClick={exportData} variant="outline" className="bg-green-50 hover:bg-green-100">
+                <Download className="w-4 h-4 mr-2" />
+                Export CSV
+              </Button>
+              <Button onClick={openAddModal} className="bg-blue-600 hover:bg-blue-700">
+                <Plus className="w-4 h-4 mr-2" />
+                Add Expense
+              </Button>
+            </div>
+          </div>
 
       {/* Statistics Cards */}
       {statistics && (
@@ -856,6 +899,10 @@ export default function BudgetReport({ token }: BudgetReportProps) {
             </div>
           </div>
         </div>
+      )}
+        </div>
+      ) : (
+        <FeeCollectionReport token={token} />
       )}
     </div>
   );

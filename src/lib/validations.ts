@@ -141,8 +141,26 @@ export const budgetExpenseSchema = z.object({
   path: ["whoPaid"]
 });
 
+// Fee payment validation schema
+export const feePaymentSchema = z.object({
+  memberId: z.string().min(1, 'Member ID is required'),
+  memberName: z.string().min(1, 'Member name is required'),
+  memberEmail: z.string().email('Valid email is required'),
+  memberPhone: z.string().min(1, 'Phone number is required'),
+  firstPaymentPaid: z.boolean().default(false),
+  firstPaymentDate: z.string().or(z.date()).optional().transform((val) => val ? new Date(val) : undefined),
+  firstPaymentNotes: z.string().max(200, 'Notes must be less than 200 characters').optional(),
+  secondPaymentPaid: z.boolean().default(false),
+  secondPaymentDate: z.string().or(z.date()).optional().transform((val) => val ? new Date(val) : undefined),
+  secondPaymentNotes: z.string().max(200, 'Notes must be less than 200 characters').optional(),
+  thirdPaymentPaid: z.boolean().default(false),
+  thirdPaymentDate: z.string().or(z.date()).optional().transform((val) => val ? new Date(val) : undefined),
+  thirdPaymentNotes: z.string().max(200, 'Notes must be less than 200 characters').optional(),
+});
+
 export type VolunteerShiftInput = z.infer<typeof volunteerShiftSchema>;
 export type BudgetExpenseInput = z.infer<typeof budgetExpenseSchema>;
+export type FeePaymentInput = z.infer<typeof feePaymentSchema>;
 export type MemberRegistrationInput = z.infer<typeof memberRegistrationSchema>;
 export type AdminLoginInput = z.infer<typeof adminLoginSchema>;
 export type MemberUpdateInput = z.infer<typeof memberUpdateSchema>;

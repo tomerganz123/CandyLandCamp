@@ -148,13 +148,22 @@ export const feePaymentSchema = z.object({
   memberEmail: z.string().email('Valid email is required'),
   memberPhone: z.string().min(1, 'Phone number is required'),
   firstPaymentPaid: z.boolean().default(false),
-  firstPaymentDate: z.string().or(z.date()).optional().transform((val) => val ? new Date(val) : undefined),
+  firstPaymentDate: z.union([z.string(), z.date(), z.null()]).optional().transform((val) => {
+    if (!val || val === null || val === '') return undefined;
+    return new Date(val);
+  }),
   firstPaymentNotes: z.string().max(200, 'Notes must be less than 200 characters').optional(),
   secondPaymentPaid: z.boolean().default(false),
-  secondPaymentDate: z.string().or(z.date()).optional().transform((val) => val ? new Date(val) : undefined),
+  secondPaymentDate: z.union([z.string(), z.date(), z.null()]).optional().transform((val) => {
+    if (!val || val === null || val === '') return undefined;
+    return new Date(val);
+  }),
   secondPaymentNotes: z.string().max(200, 'Notes must be less than 200 characters').optional(),
   thirdPaymentPaid: z.boolean().default(false),
-  thirdPaymentDate: z.string().or(z.date()).optional().transform((val) => val ? new Date(val) : undefined),
+  thirdPaymentDate: z.union([z.string(), z.date(), z.null()]).optional().transform((val) => {
+    if (!val || val === null || val === '') return undefined;
+    return new Date(val);
+  }),
   thirdPaymentNotes: z.string().max(200, 'Notes must be less than 200 characters').optional(),
 });
 

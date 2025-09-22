@@ -31,7 +31,6 @@ const FeePaymentSchema = new Schema<IFeePayment>({
   memberId: {
     type: String,
     required: true,
-    unique: true, // One record per member
     trim: true
   },
   memberName: {

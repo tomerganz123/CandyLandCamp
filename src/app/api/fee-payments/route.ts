@@ -53,9 +53,21 @@ export async function POST(request: NextRequest) {
 
     // Create or update fee payment record
     console.log('Creating/updating fee payment record...');
+    
+    // Calculate totalPaid manually since pre-save hooks don't always run with findOneAndUpdate
+    let totalPaid = 0;
+    if (validationResult.data.firstPaymentPaid) totalPaid += 750;
+    if (validationResult.data.secondPaymentPaid) totalPaid += 1250;
+    if (validationResult.data.thirdPaymentPaid) totalPaid += 0; // TBD amount
+    
+    const updateData = {
+      ...validationResult.data,
+      totalPaid
+    };
+    
     const feePayment = await FeePayment.findOneAndUpdate(
       { memberId: validationResult.data.memberId },
-      validationResult.data,
+      updateData,
       { 
         new: true, 
         upsert: true, // Create if doesn't exist
@@ -64,6 +76,12 @@ export async function POST(request: NextRequest) {
     );
     
     console.log('Fee payment record saved successfully');
+    console.log('Updated payment data:', {
+      memberId: feePayment.memberId,
+      firstPaymentPaid: feePayment.firstPaymentPaid,
+      secondPaymentPaid: feePayment.secondPaymentPaid,
+      totalPaid: feePayment.totalPaid
+    });
 
     return NextResponse.json(
       { 
@@ -149,22 +167,32 @@ export async function GET(request: NextRequest) {
     const memberPayments = members.map(member => {
       const existingPayment = paymentMap.get(member._id.toString());
       
+      // Recalculate totalPaid for display
+      let totalPaid = 0;
+      const firstPaid = existingPayment?.firstPaymentPaid || false;
+      const secondPaid = existingPayment?.secondPaymentPaid || false;
+      const thirdPaid = existingPayment?.thirdPaymentPaid || false;
+      
+      if (firstPaid) totalPaid += 750;
+      if (secondPaid) totalPaid += 1250;
+      if (thirdPaid) totalPaid += 0; // TBD amount
+      
       return {
         _id: member._id,
         memberId: member._id.toString(),
         memberName: `${member.firstName} ${member.lastName}`,
         memberEmail: member.email,
         memberPhone: member.phone,
-        firstPaymentPaid: existingPayment?.firstPaymentPaid || false,
+        firstPaymentPaid: firstPaid,
         firstPaymentDate: existingPayment?.firstPaymentDate || null,
         firstPaymentNotes: existingPayment?.firstPaymentNotes || '',
-        secondPaymentPaid: existingPayment?.secondPaymentPaid || false,
+        secondPaymentPaid: secondPaid,
         secondPaymentDate: existingPayment?.secondPaymentDate || null,
         secondPaymentNotes: existingPayment?.secondPaymentNotes || '',
-        thirdPaymentPaid: existingPayment?.thirdPaymentPaid || false,
+        thirdPaymentPaid: thirdPaid,
         thirdPaymentDate: existingPayment?.thirdPaymentDate || null,
         thirdPaymentNotes: existingPayment?.thirdPaymentNotes || '',
-        totalPaid: existingPayment?.totalPaid || 0,
+        totalPaid,
         createdAt: existingPayment?.createdAt || member.createdAt,
         updatedAt: existingPayment?.updatedAt || member.updatedAt
       };
@@ -188,12 +216,41 @@ export async function GET(request: NextRequest) {
       filteredPayments = memberPayments.filter(p => !p.firstPaymentPaid && !p.secondPaymentPaid);
     }
 
-    // Calculate statistics
-    const totalMembers = memberPayments.length;
-    const firstPaymentPaid = memberPayments.filter(p => p.firstPaymentPaid).length;
-    const secondPaymentPaid = memberPayments.filter(p => p.secondPaymentPaid).length;
-    const fullyPaid = memberPayments.filter(p => p.firstPaymentPaid && p.secondPaymentPaid).length;
-    const totalCollected = memberPayments.reduce((sum, p) => sum + p.totalPaid, 0);
+    // Calculate statistics based on ALL members (not just paginated)
+    const allMembers = await Member.find({ isApproved: true });
+    const allMemberIds = allMembers.map(m => m._id.toString());
+    const allExistingPayments = await FeePayment.find({ 
+      memberId: { $in: allMemberIds } 
+    });
+
+    // Create complete member payments data for statistics
+    const allMemberPayments = allMembers.map(member => {
+      const existingPayment = allExistingPayments.find(p => p.memberId === member._id.toString());
+      
+      // Recalculate totalPaid to ensure accuracy
+      let totalPaid = 0;
+      const firstPaid = existingPayment?.firstPaymentPaid || false;
+      const secondPaid = existingPayment?.secondPaymentPaid || false;
+      const thirdPaid = existingPayment?.thirdPaymentPaid || false;
+      
+      if (firstPaid) totalPaid += 750;
+      if (secondPaid) totalPaid += 1250;
+      if (thirdPaid) totalPaid += 0; // TBD amount
+      
+      return {
+        memberId: member._id.toString(),
+        firstPaymentPaid: firstPaid,
+        secondPaymentPaid: secondPaid,
+        thirdPaymentPaid: thirdPaid,
+        totalPaid
+      };
+    });
+
+    const totalMembers = allMemberPayments.length;
+    const firstPaymentPaid = allMemberPayments.filter(p => p.firstPaymentPaid).length;
+    const secondPaymentPaid = allMemberPayments.filter(p => p.secondPaymentPaid).length;
+    const fullyPaid = allMemberPayments.filter(p => p.firstPaymentPaid && p.secondPaymentPaid).length;
+    const totalCollected = allMemberPayments.reduce((sum, p) => sum + p.totalPaid, 0);
     const expectedTotal = totalMembers * (750 + 1250); // Total if everyone pays both
     const outstandingAmount = expectedTotal - totalCollected;
 

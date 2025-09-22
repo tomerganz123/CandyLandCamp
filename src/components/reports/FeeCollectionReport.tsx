@@ -63,6 +63,7 @@ export default function FeeCollectionReport({ token }: FeeCollectionReportProps)
       if (searchTerm) params.append('search', searchTerm);
       if (filterPaymentStatus) params.append('paymentStatus', filterPaymentStatus);
       params.append('limit', '200'); // Get more records for fee collection
+      params.append('_t', Date.now().toString()); // Cache busting
 
       const response = await fetch(`/api/fee-payments?${params.toString()}`, {
         headers: {
@@ -88,6 +89,11 @@ export default function FeeCollectionReport({ token }: FeeCollectionReportProps)
     fetchPayments();
   }, [token, searchTerm, filterPaymentStatus]);
 
+  // Add a separate effect to refresh data when needed
+  const refreshData = () => {
+    fetchPayments();
+  };
+
   const handlePaymentToggle = async (
     memberId: string, 
     paymentType: 'first' | 'second' | 'third',
@@ -108,7 +114,7 @@ export default function FeeCollectionReport({ token }: FeeCollectionReportProps)
         secondPaymentPaid: member.secondPaymentPaid,
         thirdPaymentPaid: member.thirdPaymentPaid,
         [`${paymentType}PaymentPaid`]: !currentValue,
-        [`${paymentType}PaymentDate`]: !currentValue ? new Date().toISOString() : null,
+        [`${paymentType}PaymentDate`]: !currentValue ? new Date().toISOString() : undefined,
       };
 
       const response = await fetch('/api/fee-payments', {
@@ -126,7 +132,7 @@ export default function FeeCollectionReport({ token }: FeeCollectionReportProps)
       }
 
       // Refresh data
-      fetchPayments();
+      await fetchPayments();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to update payment');
     } finally {

@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import FeeCollectionReport from './FeeCollectionReport';
 
 interface BudgetExpense {
   _id: string;
@@ -60,8 +61,6 @@ interface ExpenseFormData {
   dateOfExpense: string;
   notes: string;
 }
-
-import FeeCollectionReport from './FeeCollectionReport';
 
 export default function BudgetReport({ token }: BudgetReportProps) {
   const [activeTab, setActiveTab] = useState<'expenses' | 'fees'>('expenses');
@@ -902,7 +901,9 @@ export default function BudgetReport({ token }: BudgetReportProps) {
       )}
         </div>
       ) : (
-        <FeeCollectionReport token={token} />
+        <div>
+          <FeeCollectionReport token={token} />
+        </div>
       )}
     </div>
   );

@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { 
   DollarSign, Users, CheckCircle, XCircle, Clock, 
-  Download, Search, Filter, Phone, Mail, Calendar,
+  Download, Search, Filter, MessageCircle, Mail, Calendar,
   TrendingUp, AlertCircle, User
 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -384,8 +384,16 @@ export default function FeeCollectionReport({ token }: FeeCollectionReportProps)
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm text-gray-900">
                         <div className="flex items-center mb-1">
-                          <Phone className="h-3 w-3 text-gray-400 mr-1" />
-                          {payment.memberPhone}
+                          <MessageCircle className="h-3 w-3 text-green-500 mr-1" />
+                          <a
+                            href={`https://wa.me/${payment.memberPhone.replace(/[^0-9]/g, '')}?text=Hi ${payment.memberName.split(' ')[0]}, this is regarding your BABA ZMAN camp fee payment. Please let me know if you have any questions!`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-green-600 hover:text-green-800 hover:underline transition-colors flex items-center"
+                            title="Send WhatsApp message"
+                          >
+                            {payment.memberPhone}
+                          </a>
                         </div>
                         <div className="flex items-center">
                           <Mail className="h-3 w-3 text-gray-400 mr-1" />

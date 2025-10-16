@@ -49,9 +49,9 @@ const REPORT_CATEGORIES = [
   },
   {
     id: 'health',
-    name: 'Food & Health',
+    name: 'Kitchen Management',
     icon: Utensils,
-    description: 'Dietary restrictions, medical conditions, allergies',
+    description: 'Food supply ordering, menu planning, volunteer shifts, kabab gift',
     color: 'bg-red-500'
   },
   {

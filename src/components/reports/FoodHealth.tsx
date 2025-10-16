@@ -63,9 +63,25 @@ interface MenuItem {
   meal: 'breakfast' | 'dinner';
   day: number;
   dish: string;
+  description: string;
+  prepInstructions: string;
   servings: number;
   prepTime: number;
   ingredients: string[];
+}
+
+interface ChecklistItem {
+  id: string;
+  text: string;
+  completed: boolean;
+}
+
+interface ShiftTask {
+  id: string;
+  day: number;
+  shift: 'morning' | 'evening';
+  task: string;
+  completed: boolean;
 }
 
 interface VolunteerShift {
@@ -129,25 +145,163 @@ export default function FoodHealth({ token }: FoodHealthProps) {
   // Menu Planning State
   const [menuItems, setMenuItems] = useState<MenuItem[]>([
     // Day 1 - Arrival Day (Simple, setup-friendly meals)
-    { id: '1', meal: 'breakfast', day: 1, dish: 'Continental Breakfast - Bagels, cream cheese, fruits, coffee', servings: 60, prepTime: 15, ingredients: ['Bagels', 'Cream Cheese', 'Bananas', 'Oranges', 'Coffee', 'Milk'] },
-    { id: '2', meal: 'dinner', day: 1, dish: 'Setup Welcome BBQ - Hot dogs, buns, potato chips, coleslaw', servings: 60, prepTime: 45, ingredients: ['Hot Dogs', 'Hamburger Buns', 'Potato Chips', 'Cabbage', 'Mayo', 'Mustard', 'Ketchup'] },
+    { 
+      id: '1', meal: 'breakfast', day: 1, 
+      dish: 'Continental Breakfast', 
+      description: 'Bagels, cream cheese, fruits, coffee',
+      prepInstructions: 'Set up coffee maker early. Arrange bagels and toppings on serving table. Cut fruit into bite-sized pieces.',
+      servings: 60, prepTime: 15, 
+      ingredients: ['Bagels', 'Cream Cheese', 'Bananas', 'Oranges', 'Coffee', 'Milk'] 
+    },
+    { 
+      id: '2', meal: 'dinner', day: 1, 
+      dish: 'Setup Welcome BBQ', 
+      description: 'Hot dogs, buns, potato chips, coleslaw',
+      prepInstructions: 'Prepare coleslaw 2 hours ahead. Grill hot dogs in batches. Keep warm in chafing dishes.',
+      servings: 60, prepTime: 45, 
+      ingredients: ['Hot Dogs', 'Hamburger Buns', 'Potato Chips', 'Cabbage', 'Mayo', 'Mustard', 'Ketchup'] 
+    },
     
     // Day 2 - Full camp day
-    { id: '3', meal: 'breakfast', day: 2, dish: 'Sunrise Fuel - Pancakes, sausage links, maple syrup, fresh fruit', servings: 60, prepTime: 60, ingredients: ['Pancake Mix', 'Eggs', 'Milk', 'Sausage Links', 'Maple Syrup', 'Strawberries', 'Bananas'] },
-    { id: '4', meal: 'dinner', day: 2, dish: 'Baba Zman Signature - Chicken shawarma, rice pilaf, hummus, pita', servings: 60, prepTime: 90, ingredients: ['Chicken Thighs', 'Rice', 'Hummus', 'Pita Bread', 'Spices', 'Yogurt', 'Lemon'] },
+    { 
+      id: '3', meal: 'breakfast', day: 2, 
+      dish: 'Sunrise Fuel', 
+      description: 'Pancakes, sausage links, maple syrup, fresh fruit',
+      prepInstructions: 'Mix batter night before. Preheat griddles. Cook sausages in parallel. Keep pancakes warm in covered pans.',
+      servings: 60, prepTime: 60, 
+      ingredients: ['Pancake Mix', 'Eggs', 'Milk', 'Sausage Links', 'Maple Syrup', 'Strawberries', 'Bananas'] 
+    },
+    { 
+      id: '4', meal: 'dinner', day: 2, 
+      dish: 'Baba Zman Signature', 
+      description: 'Chicken shawarma, rice pilaf, hummus, pita',
+      prepInstructions: 'Marinate chicken overnight. Start rice 45 min before serving. Grill chicken in batches. Warm pitas last minute.',
+      servings: 60, prepTime: 90, 
+      ingredients: ['Chicken Thighs', 'Rice', 'Hummus', 'Pita Bread', 'Spices', 'Yogurt', 'Lemon'] 
+    },
     
     // Day 3 - Mid-camp energy day
-    { id: '5', meal: 'breakfast', day: 3, dish: 'Energy Boost - Scrambled eggs, bacon, toast, orange juice', servings: 60, prepTime: 45, ingredients: ['Eggs', 'Bacon', 'Bread', 'Butter', 'Orange Juice', 'Coffee'] },
-    { id: '6', meal: 'dinner', day: 3, dish: 'Camp Classic - Spaghetti with meat sauce, garlic bread, salad', servings: 60, prepTime: 75, ingredients: ['Spaghetti', 'Ground Beef', 'Tomato Sauce', 'Garlic', 'Bread', 'Salad Mix', 'Dressing'] },
+    { 
+      id: '5', meal: 'breakfast', day: 3, 
+      dish: 'Energy Boost', 
+      description: 'Scrambled eggs, bacon, toast, orange juice',
+      prepInstructions: 'Cook bacon first, use drippings for eggs. Scramble eggs in large batches. Toast bread continuously.',
+      servings: 60, prepTime: 45, 
+      ingredients: ['Eggs', 'Bacon', 'Bread', 'Butter', 'Orange Juice', 'Coffee'] 
+    },
+    { 
+      id: '6', meal: 'dinner', day: 3, 
+      dish: 'Camp Classic', 
+      description: 'Spaghetti with meat sauce, garlic bread, salad',
+      prepInstructions: 'Make sauce 2 hours ahead. Cook pasta in batches, drain well. Broil garlic bread last 10 minutes.',
+      servings: 60, prepTime: 75, 
+      ingredients: ['Spaghetti', 'Ground Beef', 'Tomato Sauce', 'Garlic', 'Bread', 'Salad Mix', 'Dressing'] 
+    },
     
     // Day 4 - Peak activities day
-    { id: '7', meal: 'breakfast', day: 4, dish: 'Power Breakfast - Oatmeal bar, yogurt parfaits, hard-boiled eggs', servings: 60, prepTime: 30, ingredients: ['Oatmeal', 'Greek Yogurt', 'Eggs', 'Granola', 'Berries', 'Honey', 'Nuts'] },
-    { id: '8', meal: 'dinner', day: 4, dish: 'Desert Special - Grilled salmon, quinoa salad, roasted vegetables', servings: 60, prepTime: 90, ingredients: ['Salmon Fillets', 'Quinoa', 'Bell Peppers', 'Zucchini', 'Cherry Tomatoes', 'Olive Oil', 'Herbs'] },
+    { 
+      id: '7', meal: 'breakfast', day: 4, 
+      dish: 'Power Breakfast', 
+      description: 'Oatmeal bar, yogurt parfaits, hard-boiled eggs',
+      prepInstructions: 'Boil eggs night before. Prepare oatmeal in slow cooker. Set up parfait bar with toppings.',
+      servings: 60, prepTime: 30, 
+      ingredients: ['Oatmeal', 'Greek Yogurt', 'Eggs', 'Granola', 'Berries', 'Honey', 'Nuts'] 
+    },
+    { 
+      id: '8', meal: 'dinner', day: 4, 
+      dish: 'Desert Special', 
+      description: 'Grilled salmon, quinoa salad, roasted vegetables',
+      prepInstructions: 'Start quinoa first. Roast vegetables at 400°F. Grill salmon 4-5 min per side, don\'t overcook.',
+      servings: 60, prepTime: 90, 
+      ingredients: ['Salmon Fillets', 'Quinoa', 'Bell Peppers', 'Zucchini', 'Cherry Tomatoes', 'Olive Oil', 'Herbs'] 
+    },
     
     // Day 5 - Farewell day (easy cleanup)
-    { id: '9', meal: 'breakfast', day: 5, dish: 'Cleanup Friendly - Breakfast burritos, coffee, leftover fruit', servings: 60, prepTime: 30, ingredients: ['Tortillas', 'Eggs', 'Shredded Cheese', 'Salsa', 'Coffee', 'Bananas'] },
-    { id: '10', meal: 'dinner', day: 5, dish: 'Farewell Feast - BBQ pulled pork sandwiches, chips, cookies', servings: 60, prepTime: 120, ingredients: ['Pulled Pork', 'BBQ Sauce', 'Hamburger Buns', 'Potato Chips', 'Cookies', 'Coleslaw'] },
+    { 
+      id: '9', meal: 'breakfast', day: 5, 
+      dish: 'Cleanup Friendly', 
+      description: 'Breakfast burritos, coffee, leftover fruit',
+      prepInstructions: 'Scramble eggs, warm tortillas. Set up burrito bar. Use up remaining fresh ingredients.',
+      servings: 60, prepTime: 30, 
+      ingredients: ['Tortillas', 'Eggs', 'Shredded Cheese', 'Salsa', 'Coffee', 'Bananas'] 
+    },
+    { 
+      id: '10', meal: 'dinner', day: 5, 
+      dish: 'Farewell Feast', 
+      description: 'BBQ pulled pork sandwiches, chips, cookies',
+      prepInstructions: 'Start slow cooker 8+ hours ahead. Shred pork before serving. Warm buns, set up sandwich station.',
+      servings: 60, prepTime: 120, 
+      ingredients: ['Pulled Pork', 'BBQ Sauce', 'Hamburger Buns', 'Potato Chips', 'Cookies', 'Coleslaw'] 
+    },
   ]);
+
+  // Pre-cook and Post-cook Checklists
+  const [preCookChecklist, setPreCookChecklist] = useState<ChecklistItem[]>([
+    { id: 'pre-1', text: 'Check propane levels for all burners', completed: false },
+    { id: 'pre-2', text: 'Inspect all cooking equipment for damage', completed: false },
+    { id: 'pre-3', text: 'Verify food storage temperatures', completed: false },
+    { id: 'pre-4', text: 'Review dietary restrictions list', completed: false },
+    { id: 'pre-5', text: 'Ensure hand-washing stations are stocked', completed: false },
+    { id: 'pre-6', text: 'Check fire extinguisher accessibility', completed: false },
+    { id: 'pre-7', text: 'Confirm ingredient availability for meal', completed: false },
+    { id: 'pre-8', text: 'Set up serving stations and utensils', completed: false },
+  ]);
+
+  const [postCookChecklist, setPostCookChecklist] = useState<ChecklistItem[]>([
+    { id: 'post-1', text: 'Store all perishables properly', completed: false },
+    { id: 'post-2', text: 'Clean and sanitize all cooking surfaces', completed: false },
+    { id: 'post-3', text: 'Wash all utensils and serving dishes', completed: false },
+    { id: 'post-4', text: 'Dispose of trash and compost properly', completed: false },
+    { id: 'post-5', text: 'Turn off all burners and equipment', completed: false },
+    { id: 'post-6', text: 'Wipe down serving areas', completed: false },
+    { id: 'post-7', text: 'Inventory remaining ingredients', completed: false },
+    { id: 'post-8', text: 'Prep ingredients for next meal if needed', completed: false },
+  ]);
+
+  // Shift Tasks for each day
+  const [shiftTasks, setShiftTasks] = useState<ShiftTask[]>([
+    // Day 1
+    { id: 't-1-m-1', day: 1, shift: 'morning', task: 'Unload and organize food supplies', completed: false },
+    { id: 't-1-m-2', day: 1, shift: 'morning', task: 'Set up kitchen infrastructure', completed: false },
+    { id: 't-1-m-3', day: 1, shift: 'morning', task: 'Prepare continental breakfast', completed: false },
+    { id: 't-1-e-1', day: 1, shift: 'evening', task: 'Prep coleslaw for BBQ', completed: false },
+    { id: 't-1-e-2', day: 1, shift: 'evening', task: 'Set up grill stations', completed: false },
+    { id: 't-1-e-3', day: 1, shift: 'evening', task: 'Cook and serve welcome BBQ', completed: false },
+    
+    // Day 2
+    { id: 't-2-m-1', day: 2, shift: 'morning', task: 'Prepare pancake batter from night before', completed: false },
+    { id: 't-2-m-2', day: 2, shift: 'morning', task: 'Cook pancakes and sausages', completed: false },
+    { id: 't-2-m-3', day: 2, shift: 'morning', task: 'Set up breakfast buffet', completed: false },
+    { id: 't-2-e-1', day: 2, shift: 'evening', task: 'Marinate chicken (done night before)', completed: false },
+    { id: 't-2-e-2', day: 2, shift: 'evening', task: 'Cook rice pilaf', completed: false },
+    { id: 't-2-e-3', day: 2, shift: 'evening', task: 'Grill shawarma chicken', completed: false },
+    
+    // Day 3
+    { id: 't-3-m-1', day: 3, shift: 'morning', task: 'Cook bacon in large batches', completed: false },
+    { id: 't-3-m-2', day: 3, shift: 'morning', task: 'Scramble eggs continuously', completed: false },
+    { id: 't-3-m-3', day: 3, shift: 'morning', task: 'Toast bread and serve', completed: false },
+    { id: 't-3-e-1', day: 3, shift: 'evening', task: 'Prepare meat sauce', completed: false },
+    { id: 't-3-e-2', day: 3, shift: 'evening', task: 'Cook pasta in batches', completed: false },
+    { id: 't-3-e-3', day: 3, shift: 'evening', task: 'Prepare garlic bread', completed: false },
+    
+    // Day 4
+    { id: 't-4-m-1', day: 4, shift: 'morning', task: 'Set up oatmeal bar', completed: false },
+    { id: 't-4-m-2', day: 4, shift: 'morning', task: 'Prepare yogurt parfait station', completed: false },
+    { id: 't-4-m-3', day: 4, shift: 'morning', task: 'Serve hard-boiled eggs', completed: false },
+    { id: 't-4-e-1', day: 4, shift: 'evening', task: 'Cook quinoa', completed: false },
+    { id: 't-4-e-2', day: 4, shift: 'evening', task: 'Roast vegetables', completed: false },
+    { id: 't-4-e-3', day: 4, shift: 'evening', task: 'Grill salmon fillets', completed: false },
+    
+    // Day 5
+    { id: 't-5-m-1', day: 5, shift: 'morning', task: 'Scramble eggs for burritos', completed: false },
+    { id: 't-5-m-2', day: 5, shift: 'morning', task: 'Set up burrito bar', completed: false },
+    { id: 't-5-m-3', day: 5, shift: 'morning', task: 'Use remaining fresh ingredients', completed: false },
+    { id: 't-5-e-1', day: 5, shift: 'evening', task: 'Shred pulled pork from slow cooker', completed: false },
+    { id: 't-5-e-2', day: 5, shift: 'evening', task: 'Set up sandwich station', completed: false },
+    { id: 't-5-e-3', day: 5, shift: 'evening', task: 'Begin kitchen breakdown', completed: false },
+  ]);
+
+  const [activeDayTab, setActiveDayTab] = useState<number>(1);
   
   // Volunteer Shifts State
   const [volunteerShifts, setVolunteerShifts] = useState<VolunteerShift[]>([]);
@@ -759,68 +913,234 @@ export default function FoodHealth({ token }: FoodHealthProps) {
     </div>
   );
 
-  const renderMenuPlanning = () => (
-    <div>
-      {/* Equipment & Prep Guidelines */}
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6">
-        <h3 className="text-lg font-semibold text-blue-800 mb-4 flex items-center gap-2">
-          <Utensils className="h-5 w-5" />
-          Equipment & Prep Guidelines
-        </h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <h4 className="font-semibold text-blue-800 mb-2">Essential Equipment Needed:</h4>
-            <ul className="text-sm text-blue-700 space-y-1">
-              <li>• Large propane burners (2-3 units)</li>
-              <li>• Cast iron griddles for pancakes</li>
-              <li>• Large pots (20+ quart capacity)</li>
-              <li>• Deep serving pans with chafing dishes</li>
-              <li>• Industrial coffee makers</li>
-              <li>• Coolers for cold storage</li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="font-semibold text-blue-800 mb-2">Prep Considerations:</h4>
-            <ul className="text-sm text-blue-700 space-y-1">
-              <li>• Shawarma prep: Marinate chicken overnight</li>
-              <li>• Sauce prep: Make hummus sauce day before</li>
-              <li>• Cold storage: 3-4 large coolers needed</li>
-              <li>• Pancake batter: Prepare night before Day 2</li>
-              <li>• Slow cooker: BBQ pork needs 8+ hours</li>
-            </ul>
-          </div>
-        </div>
-      </div>
+  const handleChecklistToggle = (type: 'pre' | 'post', id: string) => {
+    if (type === 'pre') {
+      setPreCookChecklist(prev => 
+        prev.map(item => item.id === id ? { ...item, completed: !item.completed } : item)
+      );
+    } else {
+      setPostCookChecklist(prev => 
+        prev.map(item => item.id === id ? { ...item, completed: !item.completed } : item)
+      );
+    }
+  };
 
-      <div className="bg-white rounded-lg border border-gray-200 p-6 mb-6">
-        <div className="flex justify-between items-center mb-4">
-          <h3 className="text-lg font-semibold text-gray-800">5-Day Menu Plan</h3>
-          <div className="text-sm text-gray-500">60 servings per meal</div>
+  const handleShiftTaskToggle = (id: string) => {
+    setShiftTasks(prev => 
+      prev.map(task => task.id === id ? { ...task, completed: !task.completed } : task)
+    );
+  };
+
+  const handleMenuItemUpdate = (id: string, field: keyof MenuItem, value: string | string[]) => {
+    setMenuItems(prev => 
+      prev.map(item => item.id === id ? { ...item, [field]: value } : item)
+    );
+  };
+
+  const renderMenuPlanning = () => {
+    const dayMeals = menuItems.filter(item => item.day === activeDayTab);
+    const dayTasks = shiftTasks.filter(task => task.day === activeDayTab);
+    const morningTasks = dayTasks.filter(task => task.shift === 'morning');
+    const eveningTasks = dayTasks.filter(task => task.shift === 'evening');
+
+    return (
+      <div>
+        {/* Checklists Section */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+          {/* Pre-Cook Checklist */}
+          <div className="bg-green-50 border border-green-200 rounded-lg p-6">
+            <h3 className="text-lg font-semibold text-green-800 mb-4 flex items-center gap-2">
+              <ChefHat className="h-5 w-5" />
+              Pre-Cook Checklist
+            </h3>
+            <div className="space-y-2">
+              {preCookChecklist.map(item => (
+                <label key={item.id} className="flex items-start gap-3 cursor-pointer group">
+                  <input
+                    type="checkbox"
+                    checked={item.completed}
+                    onChange={() => handleChecklistToggle('pre', item.id)}
+                    className="mt-0.5 h-4 w-4 text-green-600 rounded focus:ring-green-500"
+                  />
+                  <span className={`text-sm ${item.completed ? 'text-green-600 line-through' : 'text-green-800'} group-hover:text-green-900`}>
+                    {item.text}
+                  </span>
+                </label>
+              ))}
+            </div>
+          </div>
+
+          {/* Post-Cook Checklist */}
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
+            <h3 className="text-lg font-semibold text-blue-800 mb-4 flex items-center gap-2">
+              <Shield className="h-5 w-5" />
+              Post-Cook Checklist
+            </h3>
+            <div className="space-y-2">
+              {postCookChecklist.map(item => (
+                <label key={item.id} className="flex items-start gap-3 cursor-pointer group">
+                  <input
+                    type="checkbox"
+                    checked={item.completed}
+                    onChange={() => handleChecklistToggle('post', item.id)}
+                    className="mt-0.5 h-4 w-4 text-blue-600 rounded focus:ring-blue-500"
+                  />
+                  <span className={`text-sm ${item.completed ? 'text-blue-600 line-through' : 'text-blue-800'} group-hover:text-blue-900`}>
+                    {item.text}
+                  </span>
+                </label>
+              ))}
+            </div>
+          </div>
         </div>
-        
-        {[1, 2, 3, 4, 5].map(day => (
-          <div key={day} className="mb-6 p-4 bg-gray-50 rounded border">
-            <h4 className="font-semibold text-gray-900 mb-3">Day {day}</h4>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {menuItems.filter(item => item.day === day).map(item => (
-                <div key={item.id} className="p-3 bg-white rounded border">
-                  <div className="flex justify-between items-start mb-2">
-                    <h5 className="font-medium capitalize text-gray-800">{item.meal}</h5>
-                    <span className="text-sm text-gray-500">{item.prepTime}min</span>
-                  </div>
-                  <div className="text-gray-900 mb-2">{item.dish}</div>
-                  <div className="text-sm text-gray-600 mb-2">{item.servings} servings</div>
-                  <div className="text-sm text-gray-500">
-                    <strong>Ingredients:</strong> {item.ingredients.join(', ')}
+
+        {/* Day Tabs */}
+        <div className="bg-white rounded-lg border border-gray-200 p-6 mb-6">
+          <div className="flex flex-wrap gap-2 mb-6 border-b pb-4">
+            {[1, 2, 3, 4, 5].map(day => (
+              <button
+                key={day}
+                onClick={() => setActiveDayTab(day)}
+                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                  activeDayTab === day
+                    ? 'bg-orange-600 text-white'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                Day {day}
+              </button>
+            ))}
+          </div>
+
+          {/* Meals for Selected Day */}
+          <div className="space-y-6 mb-8">
+            <h3 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
+              <Utensils className="h-5 w-5" />
+              Day {activeDayTab} Menu
+            </h3>
+            
+            {dayMeals.map(item => (
+              <div key={item.id} className="bg-gray-50 rounded-lg border border-gray-200 p-5">
+                <div className="flex justify-between items-start mb-4">
+                  <h4 className="text-lg font-semibold capitalize text-gray-900">
+                    {item.meal}
+                  </h4>
+                  <span className="text-sm text-gray-500 bg-white px-3 py-1 rounded-full border">
+                    {item.prepTime} min prep
+                  </span>
+                </div>
+
+                {/* Section 1: Meal Title and Description */}
+                <div className="bg-white rounded-lg p-4 mb-4 border border-gray-200">
+                  <h5 className="text-sm font-semibold text-gray-700 mb-3">Meal Details</h5>
+                  <div className="space-y-3">
+                    <div>
+                      <label className="block text-xs font-medium text-gray-600 mb-1">
+                        Meal Title
+                      </label>
+                      <input
+                        type="text"
+                        value={item.dish}
+                        onChange={(e) => handleMenuItemUpdate(item.id, 'dish', e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-gray-600 mb-1">
+                        Description
+                      </label>
+                      <textarea
+                        value={item.description}
+                        onChange={(e) => handleMenuItemUpdate(item.id, 'description', e.target.value)}
+                        rows={2}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm"
+                      />
+                    </div>
                   </div>
                 </div>
-              ))}
+
+                {/* Section 2: Prep Instructions */}
+                <div className="bg-white rounded-lg p-4 border border-gray-200">
+                  <h5 className="text-sm font-semibold text-gray-700 mb-3">Prep Instructions</h5>
+                  <textarea
+                    value={item.prepInstructions}
+                    onChange={(e) => handleMenuItemUpdate(item.id, 'prepInstructions', e.target.value)}
+                    rows={3}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm"
+                    placeholder="Enter detailed preparation instructions..."
+                  />
+                </div>
+
+                <div className="mt-4 pt-4 border-t border-gray-200 text-sm text-gray-600">
+                  <strong>Servings:</strong> {item.servings} | <strong>Ingredients:</strong> {item.ingredients.join(', ')}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Shift Tasks */}
+          <div className="space-y-6">
+            <h3 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
+              <Calendar className="h-5 w-5" />
+              Day {activeDayTab} Shift Tasks
+            </h3>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Morning Shift */}
+              <div className="bg-yellow-50 rounded-lg border border-yellow-200 p-5">
+                <h4 className="font-semibold text-yellow-900 mb-4 flex items-center gap-2">
+                  <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clipRule="evenodd" />
+                  </svg>
+                  Morning Shift
+                </h4>
+                <div className="space-y-2">
+                  {morningTasks.map(task => (
+                    <label key={task.id} className="flex items-start gap-3 cursor-pointer group">
+                      <input
+                        type="checkbox"
+                        checked={task.completed}
+                        onChange={() => handleShiftTaskToggle(task.id)}
+                        className="mt-0.5 h-4 w-4 text-yellow-600 rounded focus:ring-yellow-500"
+                      />
+                      <span className={`text-sm ${task.completed ? 'text-yellow-600 line-through' : 'text-yellow-900'} group-hover:text-yellow-700`}>
+                        {task.task}
+                      </span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              {/* Evening Shift */}
+              <div className="bg-purple-50 rounded-lg border border-purple-200 p-5">
+                <h4 className="font-semibold text-purple-900 mb-4 flex items-center gap-2">
+                  <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
+                  </svg>
+                  Evening Shift
+                </h4>
+                <div className="space-y-2">
+                  {eveningTasks.map(task => (
+                    <label key={task.id} className="flex items-start gap-3 cursor-pointer group">
+                      <input
+                        type="checkbox"
+                        checked={task.completed}
+                        onChange={() => handleShiftTaskToggle(task.id)}
+                        className="mt-0.5 h-4 w-4 text-purple-600 rounded focus:ring-purple-500"
+                      />
+                      <span className={`text-sm ${task.completed ? 'text-purple-600 line-through' : 'text-purple-900'} group-hover:text-purple-700`}>
+                        {task.task}
+                      </span>
+                    </label>
+                  ))}
+                </div>
               </div>
             </div>
-          ))}
+          </div>
+        </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   const renderVolunteerShifts = () => (
     <div>

@@ -424,7 +424,7 @@ export default function AdminDashboard({ token, onLogout }: AdminDashboardProps)
               <div className="flex flex-col gap-6">
                 {/* Search and Basic Filters */}
                 <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
-              <div className="flex flex-col sm:flex-row gap-4 flex-1">
+                  <div className="flex flex-col sm:flex-row gap-4 flex-1">
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                   <input
@@ -543,7 +543,7 @@ export default function AdminDashboard({ token, onLogout }: AdminDashboardProps)
             {/* Members Table */}
             <div className="bg-white rounded-lg shadow overflow-hidden">
               <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
+                <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -801,12 +801,12 @@ export default function AdminDashboard({ token, onLogout }: AdminDashboardProps)
                   </tr>
                 ))}
               </tbody>
-            </table>
-          </div>
+                </table>
+              </div>
 
-          {/* Pagination */}
-          {pagination && pagination.totalPages > 1 && (
-            <div className="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
+              {/* Pagination */}
+              {pagination && pagination.totalPages > 1 && (
+                <div className="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
               <div className="flex-1 flex justify-between sm:hidden">
                 <button
                   onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
@@ -868,13 +868,14 @@ export default function AdminDashboard({ token, onLogout }: AdminDashboardProps)
                   </nav>
                 </div>
               </div>
+              </div>
+            )}
             </div>
-          )}
 
-          {/* Member Detail Modal */}
-          {selectedMember && (
-            <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-              <div className="relative top-20 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-1/2 shadow-lg rounded-md bg-white">
+            {/* Member Detail Modal */}
+            {selectedMember && (
+              <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+                <div className="relative top-20 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-1/2 shadow-lg rounded-md bg-white">
                 <div className="flex justify-between items-center mb-4">
                   <h3 className="text-lg font-medium text-gray-900">
                     {selectedMember.firstName} {selectedMember.lastName}
@@ -965,8 +966,8 @@ export default function AdminDashboard({ token, onLogout }: AdminDashboardProps)
                   </button>
                 </div>
               </div>
-            </div>
-          )}
+              </div>
+            )}
           </>
         )}
       </div>

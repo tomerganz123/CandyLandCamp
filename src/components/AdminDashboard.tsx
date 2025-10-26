@@ -870,105 +870,103 @@ export default function AdminDashboard({ token, onLogout }: AdminDashboardProps)
               </div>
             </div>
           )}
-        </div>
-      </div>
 
-      {/* Member Detail Modal */}
-      {selectedMember && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-          <div className="relative top-20 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-1/2 shadow-lg rounded-md bg-white">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-medium text-gray-900">
-                {selectedMember.firstName} {selectedMember.lastName}
-              </h3>
-              <button
-                onClick={() => setSelectedMember(null)}
-                className="text-gray-400 hover:text-gray-600"
-              >
-                <span className="sr-only">Close</span>
-                ✕
-              </button>
-            </div>
-            
-            <div className="space-y-4 max-h-96 overflow-y-auto">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <h4 className="font-medium text-gray-900 mb-2">Contact Information</h4>
-                  <p className="text-sm text-gray-600">Email: {selectedMember.email}</p>
-                  <p className="text-sm text-gray-600">Phone: {selectedMember.phone}</p>
-                  <p className="text-sm text-gray-600">ID/Passport: {selectedMember.idNumber}</p>
-                  <p className="text-sm text-gray-600">Gender: {selectedMember.gender}</p>
-                  <p className="text-sm text-gray-600">Age: {selectedMember.age}</p>
+          {/* Member Detail Modal */}
+          {selectedMember && (
+            <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+              <div className="relative top-20 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-1/2 shadow-lg rounded-md bg-white">
+                <div className="flex justify-between items-center mb-4">
+                  <h3 className="text-lg font-medium text-gray-900">
+                    {selectedMember.firstName} {selectedMember.lastName}
+                  </h3>
+                  <button
+                    onClick={() => setSelectedMember(null)}
+                    className="text-gray-400 hover:text-gray-600"
+                  >
+                    <span className="sr-only">Close</span>
+                    ✕
+                  </button>
                 </div>
                 
-                <div>
-                  <h4 className="font-medium text-gray-900 mb-2">Camp Details</h4>
-                  <p className="text-sm text-gray-600">Role: {selectedMember.campRole}</p>
-                  <p className="text-sm text-gray-600">Previous Burns: {selectedMember.previousBurns}</p>
-                  <p className="text-sm text-gray-600">Ticket Status: {selectedMember.ticketStatus}</p>
-                  <p className="text-sm text-gray-600">Gift Participation: {selectedMember.giftParticipation}</p>
-                  <p className="text-sm text-gray-600">Accepted Camp Fee: {selectedMember.acceptsCampFee ? 'Yes' : 'No'}</p>
+                <div className="space-y-4 max-h-96 overflow-y-auto">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <h4 className="font-medium text-gray-900 mb-2">Contact Information</h4>
+                      <p className="text-sm text-gray-600">Email: {selectedMember.email}</p>
+                      <p className="text-sm text-gray-600">Phone: {selectedMember.phone}</p>
+                      <p className="text-sm text-gray-600">ID/Passport: {selectedMember.idNumber}</p>
+                      <p className="text-sm text-gray-600">Gender: {selectedMember.gender}</p>
+                      <p className="text-sm text-gray-600">Age: {selectedMember.age}</p>
+                    </div>
+                    
+                    <div>
+                      <h4 className="font-medium text-gray-900 mb-2">Camp Details</h4>
+                      <p className="text-sm text-gray-600">Role: {selectedMember.campRole}</p>
+                      <p className="text-sm text-gray-600">Previous Burns: {selectedMember.previousBurns}</p>
+                      <p className="text-sm text-gray-600">Ticket Status: {selectedMember.ticketStatus}</p>
+                      <p className="text-sm text-gray-600">Gift Participation: {selectedMember.giftParticipation}</p>
+                      <p className="text-sm text-gray-600">Accepted Camp Fee: {selectedMember.acceptsCampFee ? 'Yes' : 'No'}</p>
+                    </div>
+                    
+                    
+                    <div>
+                      <h4 className="font-medium text-gray-900 mb-2">Logistics</h4>
+                      <p className="text-sm text-gray-600">
+                        Arrival Day: {selectedMember.arrivalDay}
+                      </p>
+                      <p className="text-sm text-gray-600">
+                        Can arrive early for building: {selectedMember.canArriveEarly ? 'Yes' : 'No'}
+                      </p>
+                      <p className="text-sm text-gray-600">
+                        Agreed to stay till Saturday: {selectedMember.agreesToStayTillSaturday ? 'Yes' : 'No'}
+                      </p>
+                    </div>
+                  </div>
+                  
+                  {selectedMember.dietaryRestrictions.length > 0 && (
+                    <div>
+                      <h4 className="font-medium text-gray-900 mb-2">Dietary Restrictions</h4>
+                      <p className="text-sm text-gray-600">{selectedMember.dietaryRestrictions.join(', ')}</p>
+                    </div>
+                  )}
+                  
+                  {selectedMember.specialSkills.length > 0 && (
+                    <div>
+                      <h4 className="font-medium text-gray-900 mb-2">Special Skills</h4>
+                      <p className="text-sm text-gray-600">{selectedMember.specialSkills.join(', ')}</p>
+                    </div>
+                  )}
+                  
+                  {selectedMember.comments && (
+                    <div>
+                      <h4 className="font-medium text-gray-900 mb-2">Comments</h4>
+                      <p className="text-sm text-gray-600">{selectedMember.comments}</p>
+                    </div>
+                  )}
                 </div>
                 
-                
-                <div>
-                  <h4 className="font-medium text-gray-900 mb-2">Logistics</h4>
-                  <p className="text-sm text-gray-600">
-                    Arrival Day: {selectedMember.arrivalDay}
-                  </p>
-                  <p className="text-sm text-gray-600">
-                    Can arrive early for building: {selectedMember.canArriveEarly ? 'Yes' : 'No'}
-                  </p>
-                  <p className="text-sm text-gray-600">
-                    Agreed to stay till Saturday: {selectedMember.agreesToStayTillSaturday ? 'Yes' : 'No'}
-                  </p>
+                <div className="flex justify-end gap-3 mt-6 pt-4 border-t">
+                  <button
+                    onClick={() => updateMemberApproval(selectedMember._id as string, !selectedMember.isApproved)}
+                    className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                      selectedMember.isApproved
+                        ? 'bg-yellow-100 text-yellow-800 hover:bg-yellow-200'
+                        : 'bg-green-100 text-green-800 hover:bg-green-200'
+                    }`}
+                  >
+                    {selectedMember.isApproved ? 'Mark as Pending' : 'Approve Member'}
+                  </button>
+                  
+                  <button
+                    onClick={() => setSelectedMember(null)}
+                    className="px-4 py-2 bg-gray-100 text-gray-800 rounded-lg hover:bg-gray-200 transition-colors"
+                  >
+                    Close
+                  </button>
                 </div>
               </div>
-              
-              {selectedMember.dietaryRestrictions.length > 0 && (
-                <div>
-                  <h4 className="font-medium text-gray-900 mb-2">Dietary Restrictions</h4>
-                  <p className="text-sm text-gray-600">{selectedMember.dietaryRestrictions.join(', ')}</p>
-                </div>
-              )}
-              
-              {selectedMember.specialSkills.length > 0 && (
-                <div>
-                  <h4 className="font-medium text-gray-900 mb-2">Special Skills</h4>
-                  <p className="text-sm text-gray-600">{selectedMember.specialSkills.join(', ')}</p>
-                </div>
-              )}
-              
-              {selectedMember.comments && (
-                <div>
-                  <h4 className="font-medium text-gray-900 mb-2">Comments</h4>
-                  <p className="text-sm text-gray-600">{selectedMember.comments}</p>
-                </div>
-              )}
             </div>
-            
-            <div className="flex justify-end gap-3 mt-6 pt-4 border-t">
-              <button
-                onClick={() => updateMemberApproval(selectedMember._id as string, !selectedMember.isApproved)}
-                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                  selectedMember.isApproved
-                    ? 'bg-yellow-100 text-yellow-800 hover:bg-yellow-200'
-                    : 'bg-green-100 text-green-800 hover:bg-green-200'
-                }`}
-              >
-                {selectedMember.isApproved ? 'Mark as Pending' : 'Approve Member'}
-              </button>
-              
-              <button
-                onClick={() => setSelectedMember(null)}
-                className="px-4 py-2 bg-gray-100 text-gray-800 rounded-lg hover:bg-gray-200 transition-colors"
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+          )}
           </>
         )}
       </div>

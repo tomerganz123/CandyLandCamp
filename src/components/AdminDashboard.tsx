@@ -354,7 +354,6 @@ export default function AdminDashboard({ token, onLogout }: AdminDashboardProps)
               Additional Info
             </button>
           </div>
-          </div>
         </div>
       </header>
 

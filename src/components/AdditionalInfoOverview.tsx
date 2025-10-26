@@ -43,6 +43,8 @@ interface AdditionalInfoStats {
   drinksCoffee: number;
   wantsMattress: number;
   withDietaryRestriction: number;
+  milkPreferenceBreakdown: Record<string, number>;
+  dietaryRestrictionBreakdown: Record<string, number>;
 }
 
 interface AdditionalInfoOverviewProps {
@@ -55,6 +57,8 @@ export default function AdditionalInfoOverview({ token }: AdditionalInfoOverview
   const [loading, setLoading] = useState(true);
   const [selectedInfo, setSelectedInfo] = useState<AdditionalInfo | null>(null);
   const [error, setError] = useState('');
+  const [showDietaryDetails, setShowDietaryDetails] = useState(false);
+  const [showSharingDetails, setShowSharingDetails] = useState(false);
 
   const fetchAdditionalInfo = async () => {
     try {
@@ -93,11 +97,23 @@ export default function AdditionalInfoOverview({ token }: AdditionalInfoOverview
           drinksCoffee: infoResult.data.filter((info: AdditionalInfo) => info.drinksCoffee).length,
           wantsMattress: infoResult.data.filter((info: AdditionalInfo) => info.wantsMattress).length,
           withDietaryRestriction: infoResult.data.filter((info: AdditionalInfo) => info.hasDietaryRestriction).length,
+          milkPreferenceBreakdown: {},
+          dietaryRestrictionBreakdown: {},
         };
 
         // Count by arrival day
         infoResult.data.forEach((info: AdditionalInfo) => {
           statsData.byArrivalDay[info.arrivalWhen] = (statsData.byArrivalDay[info.arrivalWhen] || 0) + 1;
+          
+          // Count milk preferences
+          if (info.milkPreference) {
+            statsData.milkPreferenceBreakdown[info.milkPreference] = (statsData.milkPreferenceBreakdown[info.milkPreference] || 0) + 1;
+          }
+          
+          // Count dietary restriction types
+          if (info.dietaryRestrictionType) {
+            statsData.dietaryRestrictionBreakdown[info.dietaryRestrictionType] = (statsData.dietaryRestrictionBreakdown[info.dietaryRestrictionType] || 0) + 1;
+          }
         });
 
         setStats(statsData);
@@ -211,6 +227,35 @@ export default function AdditionalInfoOverview({ token }: AdditionalInfoOverview
         </div>
       </div>
 
+      {/* Milk Preference Chart */}
+      {stats && Object.keys(stats.milkPreferenceBreakdown).length > 0 && (
+        <div className="bg-white rounded-lg shadow p-6">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+            <Coffee className="h-5 w-5 text-purple-600" />
+            Milk Preference Breakdown
+          </h3>
+          <div className="space-y-3">
+            {Object.entries(stats.milkPreferenceBreakdown).map(([milk, count]) => {
+              const percentage = stats.totalSubmissions > 0 ? (count / stats.totalSubmissions) * 100 : 0;
+              return (
+                <div key={milk} className="space-y-1">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium text-gray-700">{milk}</span>
+                    <span className="text-sm font-semibold text-gray-900">{count}</span>
+                  </div>
+                  <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div
+                      className="bg-purple-600 h-2 rounded-full transition-all"
+                      style={{ width: `${percentage}%` }}
+                    />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
       {/* Summary Stats */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="bg-white rounded-lg shadow p-6">
@@ -240,12 +285,53 @@ export default function AdditionalInfoOverview({ token }: AdditionalInfoOverview
             </div>
             <div className="flex items-center justify-between">
               <span className="text-sm text-gray-700">Dietary Restrictions</span>
-              <span className="text-sm font-medium text-gray-900">{stats?.withDietaryRestriction || 0}</span>
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-medium text-gray-900">{stats?.withDietaryRestriction || 0}</span>
+                {stats && Object.keys(stats.dietaryRestrictionBreakdown).length > 0 && (
+                  <button
+                    onClick={() => setShowDietaryDetails(!showDietaryDetails)}
+                    className="text-blue-600 hover:text-blue-800 text-xs underline"
+                  >
+                    {showDietaryDetails ? 'Hide' : 'Show'} Details
+                  </button>
+                )}
+              </div>
             </div>
+            {showDietaryDetails && stats && Object.keys(stats.dietaryRestrictionBreakdown).length > 0 && (
+              <div className="ml-4 mt-2 space-y-1 border-l-2 pl-2">
+                {Object.entries(stats.dietaryRestrictionBreakdown).map(([type, count]) => (
+                  <div key={type} className="flex justify-between text-xs">
+                    <span className="text-gray-600">{type}</span>
+                    <span className="text-gray-900 font-medium">{count}</span>
+                  </div>
+                ))}
+              </div>
+            )}
             <div className="flex items-center justify-between">
               <span className="text-sm text-gray-700">Sharing Tents</span>
-              <span className="text-sm font-medium text-gray-900">{stats?.sharingTent || 0}</span>
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-medium text-gray-900">{stats?.sharingTent || 0}</span>
+                {stats && stats.sharingTent > 0 && (
+                  <button
+                    onClick={() => setShowSharingDetails(!showSharingDetails)}
+                    className="text-blue-600 hover:text-blue-800 text-xs underline"
+                  >
+                    {showSharingDetails ? 'Hide' : 'Show'} Details
+                  </button>
+                )}
+              </div>
             </div>
+            {showSharingDetails && stats && stats.sharingTent > 0 && (
+              <div className="ml-4 mt-2 space-y-1 border-l-2 pl-2">
+                {additionalInfoList
+                  .filter(info => info.sharingTent && info.sharingWithMemberName)
+                  .map((info, idx) => (
+                    <div key={idx} className="text-xs text-gray-600">
+                      {info.memberName} → {info.sharingWithMemberName}
+                    </div>
+                  ))}
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -270,6 +356,7 @@ export default function AdditionalInfoOverview({ token }: AdditionalInfoOverview
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Member</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Arrival</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Tent</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Sharing</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Coffee</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Mattress</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
@@ -288,6 +375,16 @@ export default function AdditionalInfoOverview({ token }: AdditionalInfoOverview
                       <div>
                         <CheckCircle className="h-4 w-4 text-green-600 inline mr-1" />
                         <span className="text-gray-900">{info.tentSize}</span>
+                      </div>
+                    ) : (
+                      <XCircle className="h-4 w-4 text-gray-400 inline" />
+                    )}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm">
+                    {info.sharingTent ? (
+                      <div>
+                        <CheckCircle className="h-4 w-4 text-blue-600 inline mr-1" />
+                        <span className="text-gray-900">{info.sharingWithMemberName || 'Yes'}</span>
                       </div>
                     ) : (
                       <XCircle className="h-4 w-4 text-gray-400 inline" />

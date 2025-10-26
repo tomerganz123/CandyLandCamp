@@ -45,3 +45,21 @@ export interface MemberStats {
   byRole: Record<string, number>;
   byDietary: Record<string, number>;
 }
+
+export interface AdditionalInfoFormData {
+  memberId: string;
+  memberName: string;
+  memberEmail: string;
+  arrivalWhen: string;
+  bringingTent: boolean;
+  sharingTent: boolean;
+  sharingWithMemberId?: string;
+  sharingWithMemberName?: string;
+  tentSize?: string;
+  drinksCoffee: boolean;
+  milkPreference?: string;
+  hasDietaryRestriction: boolean;
+  dietaryRestrictionType?: string;
+  wantsMattress: boolean;
+  comments?: string;
+}

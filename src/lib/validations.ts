@@ -167,9 +167,94 @@ export const feePaymentSchema = z.object({
   thirdPaymentNotes: z.string().max(200, 'Notes must be less than 200 characters').optional(),
 });
 
+// Additional member info validation schema
+export const additionalInfoSchema = z.object({
+  memberId: z.string().min(1, 'Please select yourself from the members list'),
+  memberName: z.string().min(1, 'Member name is required'),
+  memberEmail: z.string().email('Valid email is required'),
+  
+  arrivalWhen: z.enum([
+    'מעוניין להגיע להקמות',
+    'יום שני',
+    'יום שלישי',
+    'יום רביעי',
+    'יום חמישי',
+    'עוד לא בטוח'
+  ], {
+    errorMap: () => ({ message: 'Please select when you are coming' })
+  }),
+  
+  bringingTent: z.boolean().default(false),
+  sharingTent: z.boolean().default(false),
+  sharingWithMemberId: z.string().optional(),
+  sharingWithMemberName: z.string().optional(),
+  tentSize: z.enum([
+    'אוהל 2-3 אנשים',
+    'אוהל 4 אנשים',
+    'אוהל 6-8',
+    'אחר'
+  ]).optional(),
+  
+  drinksCoffee: z.boolean().default(false),
+  milkPreference: z.enum([
+    'חלב רגיל',
+    'ללא לקטוז',
+    'חלב שקדים',
+    'אחר'
+  ]).optional(),
+  hasDietaryRestriction: z.boolean().default(false),
+  dietaryRestrictionType: z.enum([
+    'צמחוני',
+    'טבעוני',
+    'פירותני',
+    'אחר'
+  ]).optional(),
+  
+  wantsMattress: z.boolean().default(false),
+  
+  comments: z.string().optional(),
+}).refine((data) => {
+  // If bringing tent is true, tent size is required
+  if (data.bringingTent && !data.tentSize) {
+    return false;
+  }
+  return true;
+}, {
+  message: "Tent size is required when bringing a tent",
+  path: ["tentSize"]
+}).refine((data) => {
+  // If sharing tent is true, sharingWithMemberId must be provided
+  if (data.sharingTent && !data.sharingWithMemberId) {
+    return false;
+  }
+  return true;
+}, {
+  message: "Please select which member you are sharing a tent with",
+  path: ["sharingWithMemberId"]
+}).refine((data) => {
+  // If drinks coffee is true, milk preference is required
+  if (data.drinksCoffee && !data.milkPreference) {
+    return false;
+  }
+  return true;
+}, {
+  message: "Please select your milk preference",
+  path: ["milkPreference"]
+}).refine((data) => {
+  // If has dietary restriction is true, dietary restriction type is required
+  if (data.hasDietaryRestriction && !data.dietaryRestrictionType) {
+    return false;
+  }
+  return true;
+}, {
+  message: "Please select your dietary restriction type",
+  path: ["dietaryRestrictionType"]
+});
+
 export type VolunteerShiftInput = z.infer<typeof volunteerShiftSchema>;
 export type BudgetExpenseInput = z.infer<typeof budgetExpenseSchema>;
 export type FeePaymentInput = z.infer<typeof feePaymentSchema>;
 export type MemberRegistrationInput = z.infer<typeof memberRegistrationSchema>;
 export type AdminLoginInput = z.infer<typeof adminLoginSchema>;
 export type MemberUpdateInput = z.infer<typeof memberUpdateSchema>;
+export type AdditionalInfoInput = z.infer<typeof additionalInfoSchema>;

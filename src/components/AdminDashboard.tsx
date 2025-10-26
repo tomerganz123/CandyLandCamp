@@ -374,9 +374,9 @@ export default function AdminDashboard({ token, onLogout }: AdminDashboardProps)
               </div>
             )}
 
-        {/* Stats Cards */}
-        {stats && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            {/* Stats Cards */}
+            {stats && (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             <div className="bg-white rounded-lg shadow p-6">
               <div className="flex items-center">
                 <Users className="h-8 w-8 text-blue-600" />
@@ -414,14 +414,15 @@ export default function AdminDashboard({ token, onLogout }: AdminDashboardProps)
                   <p className="text-sm font-medium text-gray-600">This Week</p>
                   <p className="text-2xl font-semibold text-gray-900">{stats.recentRegistrations}</p>
                 </div>
+                </div>
               </div>
             </div>
           </div>
         )}
 
-        {/* Controls */}
-        <div className="bg-white rounded-lg shadow p-6 mb-6">
-          <div className="flex flex-col gap-6">
+            {/* Controls */}
+            <div className="bg-white rounded-lg shadow p-6 mb-6">
+              <div className="flex flex-col gap-6">
             {/* Search and Basic Filters */}
             <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
               <div className="flex flex-col sm:flex-row gap-4 flex-1">
@@ -535,14 +536,14 @@ export default function AdminDashboard({ token, onLogout }: AdminDashboardProps)
                     </label>
                   ))}
                 </div>
+                </div>
+              )}
               </div>
-            )}
-          </div>
-        </div>
+            </div>
 
-        {/* Members Table */}
-        <div className="bg-white rounded-lg shadow overflow-hidden">
-          <div className="overflow-x-auto">
+            {/* Members Table */}
+            <div className="bg-white rounded-lg shadow overflow-hidden">
+              <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>

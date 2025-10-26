@@ -25,6 +25,7 @@ export interface IAdditionalInfo extends Document {
   wantsMattress: boolean;
   
   // Comments
+  specialFoodRequests?: string;
   comments?: string;
   
   // System fields
@@ -68,9 +69,10 @@ const AdditionalInfoSchema = new Schema<IAdditionalInfo>({
   milkPreference: {
     type: String,
     enum: [
+      'ללא חלב',
       'חלב רגיל',
-      'ללא לקטוז',
       'חלב שקדים',
+      'חלב שיבולת',
       'אחר'
     ]
   },
@@ -86,6 +88,8 @@ const AdditionalInfoSchema = new Schema<IAdditionalInfo>({
   },
   
   wantsMattress: { type: Boolean, default: false },
+  
+  specialFoodRequests: { type: String, trim: true },
   
   comments: { type: String, trim: true },
 }, {

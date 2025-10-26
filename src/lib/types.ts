@@ -61,5 +61,6 @@ export interface AdditionalInfoFormData {
   hasDietaryRestriction: boolean;
   dietaryRestrictionType?: string;
   wantsMattress: boolean;
+  specialFoodRequests?: string;
   comments?: string;
 }

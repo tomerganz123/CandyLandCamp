@@ -197,9 +197,10 @@ export const additionalInfoSchema = z.object({
   
   drinksCoffee: z.boolean().default(false),
   milkPreference: z.enum([
+    'ללא חלב',
     'חלב רגיל',
-    'ללא לקטוז',
     'חלב שקדים',
+    'חלב שיבולת',
     'אחר'
   ]).optional(),
   hasDietaryRestriction: z.boolean().default(false),
@@ -211,6 +212,8 @@ export const additionalInfoSchema = z.object({
   ]).optional(),
   
   wantsMattress: z.boolean().default(false),
+  
+  specialFoodRequests: z.string().optional(),
   
   comments: z.string().optional(),
 }).refine((data) => {

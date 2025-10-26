@@ -24,9 +24,10 @@ const TENT_SIZES = [
 ];
 
 const MILK_OPTIONS = [
+  'ללא חלב',
   'חלב רגיל',
-  'ללא לקטוז',
   'חלב שקדים',
+  'חלב שיבולת',
   'אחר'
 ];
 
@@ -394,6 +395,18 @@ export default function AdditionalInfoForm({ onSuccess }: AdditionalInfoFormProp
               )}
             </div>
           )}
+
+          <div className="form-field mt-6">
+            <label htmlFor="specialFoodRequests" className="block text-sm font-medium text-gray-700 mb-2">
+              Anything special I'd like to have for snack / food / drink
+            </label>
+            <textarea
+              {...register('specialFoodRequests')}
+              rows={3}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all resize-none"
+              placeholder="Any special requests for snacks, food, or drinks..."
+            />
+          </div>
         </div>
       </div>
 

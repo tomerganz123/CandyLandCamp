@@ -22,6 +22,7 @@ import {
   EyeOff
 } from 'lucide-react';
 import { IMember } from '@/models/Member';
+import AdditionalInfoOverview from './AdditionalInfoOverview';
 
 interface AdminDashboardProps {
   token: string;
@@ -48,6 +49,7 @@ interface MembersResponse {
 }
 
 export default function AdminDashboard({ token, onLogout }: AdminDashboardProps) {
+  const [activeTab, setActiveTab] = useState<'members' | 'additionalInfo'>('members');
   const [members, setMembers] = useState<IMember[]>([]);
   const [stats, setStats] = useState<MemberStats | null>(null);
   const [loading, setLoading] = useState(true);
@@ -326,11 +328,42 @@ export default function AdminDashboard({ token, onLogout }: AdminDashboardProps)
               </button>
             </div>
           </div>
+
+          {/* Tabs */}
+          <div className="flex border-b border-gray-200">
+            <button
+              onClick={() => setActiveTab('members')}
+              className={`px-6 py-3 font-medium text-sm transition-colors ${
+                activeTab === 'members'
+                  ? 'border-b-2 border-orange-600 text-orange-600'
+                  : 'text-gray-600 hover:text-gray-800'
+              }`}
+            >
+              <Users className="h-5 w-5 inline mr-2" />
+              Member Management
+            </button>
+            <button
+              onClick={() => setActiveTab('additionalInfo')}
+              className={`px-6 py-3 font-medium text-sm transition-colors ${
+                activeTab === 'additionalInfo'
+                  ? 'border-b-2 border-orange-600 text-orange-600'
+                  : 'text-gray-600 hover:text-gray-800'
+              }`}
+            >
+              <FileText className="h-5 w-5 inline mr-2" />
+              Additional Info
+            </button>
+          </div>
+          </div>
         </div>
       </header>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {error && (
+        {activeTab === 'additionalInfo' ? (
+          <AdditionalInfoOverview token={token} />
+        ) : (
+          <>
+            {error && (
           <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
             <p className="text-red-800">{error}</p>
             <button
@@ -937,6 +970,9 @@ export default function AdminDashboard({ token, onLogout }: AdminDashboardProps)
           </div>
         </div>
       )}
+          </>
+        )}
+      </div>
     </div>
   );
 }

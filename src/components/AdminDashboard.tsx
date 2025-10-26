@@ -363,16 +363,16 @@ export default function AdminDashboard({ token, onLogout }: AdminDashboardProps)
         ) : (
           <>
             {error && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-            <p className="text-red-800">{error}</p>
-            <button
-              onClick={() => setError('')}
-              className="mt-2 text-sm text-red-600 hover:text-red-800 underline"
-            >
-              Dismiss
-            </button>
-          </div>
-        )}
+              <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+                <p className="text-red-800">{error}</p>
+                <button
+                  onClick={() => setError('')}
+                  className="mt-2 text-sm text-red-600 hover:text-red-800 underline"
+                >
+                  Dismiss
+                </button>
+              </div>
+            )}
 
         {/* Stats Cards */}
         {stats && (

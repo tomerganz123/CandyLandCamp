@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { 
   DollarSign, Calendar, User, Check, X, Plus, 
@@ -62,12 +62,15 @@ interface ExpenseFormData {
   notes: string;
 }
 
+const CAMP_FEE_PER_MEMBER = 2000;
+
 export default function BudgetReport({ token }: BudgetReportProps) {
   const [activeTab, setActiveTab] = useState<'expenses' | 'fees'>('expenses');
   const [expenses, setExpenses] = useState<BudgetExpense[]>([]);
   const [statistics, setStatistics] = useState<BudgetStatistics | null>(null);
   const [categoryStats, setCategoryStats] = useState<CategoryStat[]>([]);
   const [members, setMembers] = useState<any[]>([]);
+  const [approvedMembersCount, setApprovedMembersCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
@@ -75,8 +78,6 @@ export default function BudgetReport({ token }: BudgetReportProps) {
   const [filterPaidStatus, setFilterPaidStatus] = useState<string>('');
   const [filterReturnedStatus, setFilterReturnedStatus] = useState<string>('');
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
-  const [sortField, setSortField] = useState<keyof BudgetExpense>('dateOfExpense');
-  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
   
   // Modal states
   const [showModal, setShowModal] = useState(false);
@@ -109,13 +110,18 @@ export default function BudgetReport({ token }: BudgetReportProps) {
   const fetchExpenses = async () => {
     try {
       setLoading(true);
-      const [expensesResponse, membersResponse] = await Promise.all([
+      const [expensesResponse, membersResponse, approvedMembersResponse] = await Promise.all([
         fetch('/api/budget', {
           headers: {
             'Authorization': `Bearer ${token}`,
           },
         }),
         fetch('/api/members', {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        }),
+        fetch('/api/members?approved=true', {
           headers: {
             'Authorization': `Bearer ${token}`,
           },
@@ -135,6 +141,12 @@ export default function BudgetReport({ token }: BudgetReportProps) {
         const membersData = await membersResponse.json();
         setMembers(membersData.data?.members || []);
       }
+
+      if (approvedMembersResponse.ok) {
+        const approvedMembersData = await approvedMembersResponse.json();
+        const approvedMembers = approvedMembersData.data?.members || [];
+        setApprovedMembersCount(approvedMembers.length);
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load budget data');
     } finally {
@@ -145,15 +157,6 @@ export default function BudgetReport({ token }: BudgetReportProps) {
   useEffect(() => {
     fetchExpenses();
   }, [token]);
-
-  const handleSort = (field: keyof BudgetExpense) => {
-    if (sortField === field) {
-      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
-    } else {
-      setSortField(field);
-      setSortDirection('asc');
-    }
-  };
 
   const toggleRowExpansion = (id: string) => {
     const newExpanded = new Set(expandedRows);
@@ -257,7 +260,7 @@ export default function BudgetReport({ token }: BudgetReportProps) {
   const exportData = () => {
     const csvContent = [
       ['Category', 'Item', 'Quantity', 'Amount (NIS)', 'Paid', 'Who Paid', 'Money Returned', 'Date', 'Notes'].join(','),
-      ...filteredAndSortedExpenses.map(expense => [
+      ...filteredExpenses.map(expense => [
         expense.costCategory,
         expense.item,
         expense.quantity,
@@ -280,43 +283,52 @@ export default function BudgetReport({ token }: BudgetReportProps) {
   };
 
   // Filter and sort expenses
-  const filteredAndSortedExpenses = expenses
-    .filter(expense => {
-      const matchesSearch = expense.item.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           expense.costCategory.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           (expense.whoPaidName?.toLowerCase().includes(searchTerm.toLowerCase())) ||
-                           (expense.notes?.toLowerCase().includes(searchTerm.toLowerCase()));
-      
-      const matchesCategory = !filterCategory || expense.costCategory === filterCategory;
-      const matchesPaidStatus = !filterPaidStatus || 
-        (filterPaidStatus === 'paid' && expense.alreadyPaid) ||
-        (filterPaidStatus === 'unpaid' && !expense.alreadyPaid);
-      const matchesReturnedStatus = !filterReturnedStatus ||
-        (filterReturnedStatus === 'returned' && expense.moneyReturned) ||
-        (filterReturnedStatus === 'not-returned' && !expense.moneyReturned);
-      
-      return matchesSearch && matchesCategory && matchesPaidStatus && matchesReturnedStatus;
-    })
-    .sort((a, b) => {
-      const aVal = a[sortField];
-      const bVal = b[sortField];
-      
-      if (aVal === undefined || aVal === null) return 1;
-      if (bVal === undefined || bVal === null) return -1;
-      
-      let comparison = 0;
-      if (typeof aVal === 'string' && typeof bVal === 'string') {
-        comparison = aVal.localeCompare(bVal);
-      } else if (sortField === 'dateOfExpense' || sortField === 'createdAt' || sortField === 'updatedAt') {
-        const dateA = new Date(aVal as string);
-        const dateB = new Date(bVal as string);
-        comparison = dateA.getTime() - dateB.getTime();
-      } else {
-        comparison = String(aVal).localeCompare(String(bVal));
-      }
-      
-      return sortDirection === 'asc' ? comparison : -comparison;
-    });
+  const filteredExpenses = expenses.filter(expense => {
+    const matchesSearch = expense.item.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         expense.costCategory.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         (expense.whoPaidName?.toLowerCase().includes(searchTerm.toLowerCase())) ||
+                         (expense.notes?.toLowerCase().includes(searchTerm.toLowerCase()));
+    
+    const matchesCategory = !filterCategory || expense.costCategory === filterCategory;
+    const matchesPaidStatus = !filterPaidStatus || 
+      (filterPaidStatus === 'paid' && expense.alreadyPaid) ||
+      (filterPaidStatus === 'unpaid' && !expense.alreadyPaid);
+    const matchesReturnedStatus = !filterReturnedStatus ||
+      (filterReturnedStatus === 'returned' && expense.moneyReturned) ||
+      (filterReturnedStatus === 'not-returned' && !expense.moneyReturned);
+    
+    return matchesSearch && matchesCategory && matchesPaidStatus && matchesReturnedStatus;
+  });
+
+  // Group expenses by category
+  const expensesByCategory = filteredExpenses.reduce((acc, expense) => {
+    if (!acc[expense.costCategory]) {
+      acc[expense.costCategory] = [];
+    }
+    acc[expense.costCategory].push(expense);
+    return acc;
+  }, {} as Record<string, BudgetExpense[]>);
+
+  // Sort categories by total amount (highest first)
+  const sortedCategories = Object.keys(expensesByCategory).sort((a, b) => {
+    const totalA = expensesByCategory[a].reduce((sum, exp) => sum + exp.costAmount, 0);
+    const totalB = expensesByCategory[b].reduce((sum, exp) => sum + exp.costAmount, 0);
+    return totalB - totalA;
+  });
+
+  // Sort expenses within each category by amount (highest first by default)
+  Object.keys(expensesByCategory).forEach(category => {
+    expensesByCategory[category].sort((a, b) => b.costAmount - a.costAmount);
+  });
+
+  // Calculate total count
+  const totalCount = filteredExpenses.length;
+
+  // Calculate total budget and percentage spent
+  const totalBudget = approvedMembersCount * CAMP_FEE_PER_MEMBER;
+  const percentageSpent = statistics && totalBudget > 0 
+    ? (statistics.totalAmount / totalBudget) * 100 
+    : 0;
 
   if (loading) {
     return (
@@ -409,9 +421,14 @@ export default function BudgetReport({ token }: BudgetReportProps) {
             <CardContent className="p-4">
               <div className="flex items-center space-x-2">
                 <DollarSign className="h-5 w-5 text-blue-600" />
-                <div>
+                <div className="flex-1">
                   <p className="text-2xl font-bold text-blue-600">₪{statistics.totalAmount.toLocaleString()}</p>
-                  <p className="text-sm text-gray-600">Total Budget</p>
+                  <p className="text-sm text-gray-600">Total Expenses</p>
+                  {totalBudget > 0 && (
+                    <p className="text-xs text-gray-500 mt-1">
+                      Budget: ₪{totalBudget.toLocaleString()} ({percentageSpent.toFixed(1)}%)
+                    </p>
+                  )}
                 </div>
               </div>
             </CardContent>
@@ -529,7 +546,7 @@ export default function BudgetReport({ token }: BudgetReportProps) {
       <Card>
         <CardHeader>
           <CardTitle>
-            Expenses ({filteredAndSortedExpenses.length} items)
+            Expenses ({totalCount} items)
           </CardTitle>
         </CardHeader>
         <CardContent className="p-0">
@@ -538,54 +555,19 @@ export default function BudgetReport({ token }: BudgetReportProps) {
               <thead className="bg-gray-50">
                 <tr>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    <button
-                      onClick={() => handleSort('item')}
-                      className="flex items-center space-x-1 hover:text-gray-700"
-                    >
-                      <span>Item</span>
-                      {sortField === 'item' && (
-                        sortDirection === 'asc' ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />
-                      )}
-                    </button>
+                    Item
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Category
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    <button
-                      onClick={() => handleSort('costAmount')}
-                      className="flex items-center space-x-1 hover:text-gray-700"
-                    >
-                      <span>Amount</span>
-                      {sortField === 'costAmount' && (
-                        sortDirection === 'asc' ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />
-                      )}
-                    </button>
+                    Amount
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Status
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    <button
-                      onClick={() => handleSort('whoPaidName')}
-                      className="flex items-center space-x-1 hover:text-gray-700"
-                    >
-                      <span>Who Paid</span>
-                      {sortField === 'whoPaidName' && (
-                        sortDirection === 'asc' ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />
-                      )}
-                    </button>
+                    Who Paid
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    <button
-                      onClick={() => handleSort('dateOfExpense')}
-                      className="flex items-center space-x-1 hover:text-gray-700"
-                    >
-                      <span>Date</span>
-                      {sortField === 'dateOfExpense' && (
-                        sortDirection === 'asc' ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />
-                      )}
-                    </button>
+                    Date
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Actions
@@ -593,114 +575,134 @@ export default function BudgetReport({ token }: BudgetReportProps) {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {filteredAndSortedExpenses.map((expense) => (
-                  <React.Fragment key={expense._id}>
-                    <tr className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div>
-                          <div className="text-sm font-medium text-gray-900">
-                            {expense.item}
-                          </div>
-                          <div className="text-sm text-gray-500">
-                            Qty: {expense.quantity}
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
-                          {expense.costCategory}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                        ₪{expense.costAmount.toLocaleString()}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex flex-col space-y-1">
-                          <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                            expense.alreadyPaid 
-                              ? 'bg-green-100 text-green-800' 
-                              : 'bg-red-100 text-red-800'
-                          }`}>
-                            {expense.alreadyPaid ? 'Paid' : 'Unpaid'}
-                          </span>
-                          {expense.alreadyPaid && (
-                            <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                              expense.moneyReturned 
-                                ? 'bg-purple-100 text-purple-800' 
-                                : 'bg-yellow-100 text-yellow-800'
-                            }`}>
-                              {expense.moneyReturned ? 'Returned' : 'Not Returned'}
-                            </span>
-                          )}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">
-                          {expense.whoPaidName || (expense.alreadyPaid ? 'Unknown' : '-')}
-                        </div>
-                        {expense.alreadyPaid && !expense.whoPaidName && (
-                          <div className="text-xs text-red-500">Missing info</div>
-                        )}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {new Date(expense.dateOfExpense).toLocaleDateString()}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <div className="flex space-x-2">
-                          <button
-                            onClick={() => toggleRowExpansion(expense._id)}
-                            className="text-orange-600 hover:text-orange-900"
-                          >
-                            {expandedRows.has(expense._id) ? (
-                              <ChevronUp className="w-4 h-4" />
-                            ) : (
-                              <ChevronDown className="w-4 h-4" />
-                            )}
-                          </button>
-                          <button
-                            onClick={() => openEditModal(expense)}
-                            className="text-blue-600 hover:text-blue-900"
-                          >
-                            <Edit className="w-4 h-4" />
-                          </button>
-                          <button
-                            onClick={() => handleDelete(expense)}
-                            className="text-red-600 hover:text-red-900"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                    {expandedRows.has(expense._id) && (
-                      <tr>
-                        <td colSpan={7} className="px-6 py-4 bg-gray-50">
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                            <div>
-                              <h4 className="font-semibold text-gray-900 mb-2">Payment Details</h4>
-                              {expense.whoPaidName && (
-                                <p><strong>Paid by:</strong> {expense.whoPaidName}</p>
-                              )}
-                              <p><strong>Payment Status:</strong> {expense.alreadyPaid ? 'Paid' : 'Unpaid'}</p>
-                              <p><strong>Money Returned:</strong> {expense.moneyReturned ? 'Yes' : 'No'}</p>
+                {sortedCategories.map((category) => {
+                  const categoryExpenses = expensesByCategory[category];
+                  const categoryTotal = categoryExpenses.reduce((sum, exp) => sum + exp.costAmount, 0);
+                  
+                  return (
+                    <React.Fragment key={category}>
+                      {/* Category Header */}
+                      <tr className="bg-orange-50 border-b-2 border-orange-200">
+                        <td colSpan={6} className="px-6 py-3">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center space-x-2">
+                              <span className="text-base font-bold text-orange-900">{category}</span>
+                              <span className="text-sm text-gray-600">({categoryExpenses.length} items)</span>
                             </div>
-                            <div>
-                              <h4 className="font-semibold text-gray-900 mb-2">Additional Info</h4>
-                              <p><strong>Date:</strong> {new Date(expense.dateOfExpense).toLocaleDateString()}</p>
-                              <p><strong>Created:</strong> {new Date(expense.createdAt).toLocaleDateString()}</p>
-                              {expense.notes && (
-                                <p><strong>Notes:</strong> {expense.notes}</p>
-                              )}
+                            <div className="text-lg font-bold text-orange-900">
+                              Total: ₪{categoryTotal.toLocaleString()}
                             </div>
                           </div>
                         </td>
                       </tr>
-                    )}
-                  </React.Fragment>
-                ))}
+                      
+                      {/* Expenses in this category */}
+                      {categoryExpenses.map((expense) => (
+                        <React.Fragment key={expense._id}>
+                          <tr className="hover:bg-gray-50">
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <div>
+                                <div className="text-sm font-medium text-gray-900">
+                                  {expense.item}
+                                </div>
+                                <div className="text-sm text-gray-500">
+                                  Qty: {expense.quantity}
+                                </div>
+                              </div>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                              ₪{expense.costAmount.toLocaleString()}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <div className="flex flex-col space-y-1">
+                                <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                                  expense.alreadyPaid 
+                                    ? 'bg-green-100 text-green-800' 
+                                    : 'bg-red-100 text-red-800'
+                                }`}>
+                                  {expense.alreadyPaid ? 'Paid' : 'Unpaid'}
+                                </span>
+                                {expense.alreadyPaid && (
+                                  <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                                    expense.moneyReturned 
+                                      ? 'bg-purple-100 text-purple-800' 
+                                      : 'bg-yellow-100 text-yellow-800'
+                                  }`}>
+                                    {expense.moneyReturned ? 'Returned' : 'Not Returned'}
+                                  </span>
+                                )}
+                              </div>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <div className="text-sm text-gray-900">
+                                {expense.whoPaidName || (expense.alreadyPaid ? 'Unknown' : '-')}
+                              </div>
+                              {expense.alreadyPaid && !expense.whoPaidName && (
+                                <div className="text-xs text-red-500">Missing info</div>
+                              )}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                              {new Date(expense.dateOfExpense).toLocaleDateString()}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                              <div className="flex space-x-2">
+                                <button
+                                  onClick={() => toggleRowExpansion(expense._id)}
+                                  className="text-orange-600 hover:text-orange-900"
+                                >
+                                  {expandedRows.has(expense._id) ? (
+                                    <ChevronUp className="w-4 h-4" />
+                                  ) : (
+                                    <ChevronDown className="w-4 h-4" />
+                                  )}
+                                </button>
+                                <button
+                                  onClick={() => openEditModal(expense)}
+                                  className="text-blue-600 hover:text-blue-900"
+                                >
+                                  <Edit className="w-4 h-4" />
+                                </button>
+                                <button
+                                  onClick={() => handleDelete(expense)}
+                                  className="text-red-600 hover:text-red-900"
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                          {expandedRows.has(expense._id) && (
+                            <tr>
+                              <td colSpan={6} className="px-6 py-4 bg-gray-50">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                                  <div>
+                                    <h4 className="font-semibold text-gray-900 mb-2">Payment Details</h4>
+                                    {expense.whoPaidName && (
+                                      <p><strong>Paid by:</strong> {expense.whoPaidName}</p>
+                                    )}
+                                    <p><strong>Payment Status:</strong> {expense.alreadyPaid ? 'Paid' : 'Unpaid'}</p>
+                                    <p><strong>Money Returned:</strong> {expense.moneyReturned ? 'Yes' : 'No'}</p>
+                                  </div>
+                                  <div>
+                                    <h4 className="font-semibold text-gray-900 mb-2">Additional Info</h4>
+                                    <p><strong>Date:</strong> {new Date(expense.dateOfExpense).toLocaleDateString()}</p>
+                                    <p><strong>Created:</strong> {new Date(expense.createdAt).toLocaleDateString()}</p>
+                                    {expense.notes && (
+                                      <p><strong>Notes:</strong> {expense.notes}</p>
+                                    )}
+                                  </div>
+                                </div>
+                              </td>
+                            </tr>
+                          )}
+                        </React.Fragment>
+                      ))}
+                    </React.Fragment>
+                  );
+                })}
               </tbody>
             </table>
-            {filteredAndSortedExpenses.length === 0 && (
+            {totalCount === 0 && (
               <div className="text-center py-8 text-gray-500">
                 No expenses found matching your criteria.
               </div>
@@ -908,6 +910,3 @@ export default function BudgetReport({ token }: BudgetReportProps) {
     </div>
   );
 }
-
-// Add React import for Fragment
-import React from 'react';

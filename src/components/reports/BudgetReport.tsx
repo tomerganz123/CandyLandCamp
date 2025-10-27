@@ -144,8 +144,9 @@ export default function BudgetReport({ token }: BudgetReportProps) {
 
       if (approvedMembersResponse.ok) {
         const approvedMembersData = await approvedMembersResponse.json();
-        const approvedMembers = approvedMembersData.data?.members || [];
-        setApprovedMembersCount(approvedMembers.length);
+        // Use pagination total count if available, otherwise use the length of returned members
+        const count = approvedMembersData.data?.pagination?.total || approvedMembersData.data?.members?.length || 0;
+        setApprovedMembersCount(count);
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load budget data');

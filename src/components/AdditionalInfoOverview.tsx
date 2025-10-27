@@ -45,6 +45,8 @@ interface AdditionalInfoStats {
   withDietaryRestriction: number;
   milkPreferenceBreakdown: Record<string, number>;
   dietaryRestrictionBreakdown: Record<string, number>;
+  tentSizeBreakdown: Record<string, number>;
+  allComments: Array<{ memberName: string; comment: string }>;
 }
 
 interface AdditionalInfoOverviewProps {
@@ -59,6 +61,7 @@ export default function AdditionalInfoOverview({ token }: AdditionalInfoOverview
   const [error, setError] = useState('');
   const [showDietaryDetails, setShowDietaryDetails] = useState(false);
   const [showSharingDetails, setShowSharingDetails] = useState(false);
+  const [showCommentsModal, setShowCommentsModal] = useState(false);
 
   const fetchAdditionalInfo = async () => {
     try {
@@ -99,6 +102,8 @@ export default function AdditionalInfoOverview({ token }: AdditionalInfoOverview
           withDietaryRestriction: infoResult.data.filter((info: AdditionalInfo) => info.hasDietaryRestriction).length,
           milkPreferenceBreakdown: {},
           dietaryRestrictionBreakdown: {},
+          tentSizeBreakdown: {},
+          allComments: [],
         };
 
         // Count by arrival day
@@ -113,6 +118,16 @@ export default function AdditionalInfoOverview({ token }: AdditionalInfoOverview
           // Count dietary restriction types
           if (info.dietaryRestrictionType) {
             statsData.dietaryRestrictionBreakdown[info.dietaryRestrictionType] = (statsData.dietaryRestrictionBreakdown[info.dietaryRestrictionType] || 0) + 1;
+          }
+          
+          // Count tent sizes
+          if (info.tentSize) {
+            statsData.tentSizeBreakdown[info.tentSize] = (statsData.tentSizeBreakdown[info.tentSize] || 0) + 1;
+          }
+          
+          // Collect all comments
+          if (info.comments) {
+            statsData.allComments.push({ memberName: info.memberName, comment: info.comments });
           }
         });
 
@@ -227,34 +242,66 @@ export default function AdditionalInfoOverview({ token }: AdditionalInfoOverview
         </div>
       </div>
 
-      {/* Milk Preference Chart */}
-      {stats && Object.keys(stats.milkPreferenceBreakdown).length > 0 && (
-        <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-            <Coffee className="h-5 w-5 text-purple-600" />
-            Milk Preference Breakdown
-          </h3>
-          <div className="space-y-3">
-            {Object.entries(stats.milkPreferenceBreakdown).map(([milk, count]) => {
-              const percentage = stats.totalSubmissions > 0 ? (count / stats.totalSubmissions) * 100 : 0;
-              return (
-                <div key={milk} className="space-y-1">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium text-gray-700">{milk}</span>
-                    <span className="text-sm font-semibold text-gray-900">{count}</span>
+      {/* Charts Row */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Milk Preference Chart */}
+        {stats && Object.keys(stats.milkPreferenceBreakdown).length > 0 && (
+          <div className="bg-white rounded-lg shadow p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+              <Coffee className="h-5 w-5 text-purple-600" />
+              Milk Preference Breakdown
+            </h3>
+            <div className="space-y-3">
+              {Object.entries(stats.milkPreferenceBreakdown).map(([milk, count]) => {
+                const percentage = stats.totalSubmissions > 0 ? (count / stats.totalSubmissions) * 100 : 0;
+                return (
+                  <div key={milk} className="space-y-1">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium text-gray-700">{milk}</span>
+                      <span className="text-sm font-semibold text-gray-900">{count}</span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div
+                        className="bg-purple-600 h-2 rounded-full transition-all"
+                        style={{ width: `${percentage}%` }}
+                      />
+                    </div>
                   </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div
-                      className="bg-purple-600 h-2 rounded-full transition-all"
-                      style={{ width: `${percentage}%` }}
-                    />
-                  </div>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
-        </div>
-      )}
+        )}
+
+        {/* Tent Size Chart */}
+        {stats && Object.keys(stats.tentSizeBreakdown).length > 0 && (
+          <div className="bg-white rounded-lg shadow p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+              <Tent className="h-5 w-5 text-orange-600" />
+              Tent Size Distribution
+            </h3>
+            <div className="space-y-3">
+              {Object.entries(stats.tentSizeBreakdown).map(([size, count]) => {
+                const percentage = stats.bringingTent > 0 ? (count / stats.bringingTent) * 100 : 0;
+                return (
+                  <div key={size} className="space-y-1">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium text-gray-700">{size}</span>
+                      <span className="text-sm font-semibold text-gray-900">{count}</span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div
+                        className="bg-orange-600 h-2 rounded-full transition-all"
+                        style={{ width: `${percentage}%` }}
+                      />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+      </div>
 
       {/* Summary Stats */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -340,13 +387,24 @@ export default function AdditionalInfoOverview({ token }: AdditionalInfoOverview
       <div className="bg-white rounded-lg shadow">
         <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
           <h3 className="text-lg font-semibold text-gray-900">Individual Submissions</h3>
-          <button
-            onClick={exportAdditionalInfo}
-            className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
-          >
-            <Download className="h-4 w-4" />
-            Export CSV
-          </button>
+          <div className="flex items-center gap-2">
+            {stats && stats.allComments.length > 0 && (
+              <button
+                onClick={() => setShowCommentsModal(true)}
+                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                <FileText className="h-4 w-4" />
+                View All Comments ({stats.allComments.length})
+              </button>
+            )}
+            <button
+              onClick={exportAdditionalInfo}
+              className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+            >
+              <Download className="h-4 w-4" />
+              Export CSV
+            </button>
+          </div>
         </div>
 
         <div className="overflow-x-auto">
@@ -508,6 +566,41 @@ export default function AdditionalInfoOverview({ token }: AdditionalInfoOverview
             <div className="flex justify-end mt-6 pt-4 border-t">
               <button
                 onClick={() => setSelectedInfo(null)}
+                className="px-4 py-2 bg-gray-100 text-gray-800 rounded-lg hover:bg-gray-200 transition-colors"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Comments Modal */}
+      {showCommentsModal && stats && stats.allComments.length > 0 && (
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+          <div className="relative top-20 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-2/3 shadow-lg rounded-md bg-white">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-medium text-gray-900">All Additional Comments</h3>
+              <button
+                onClick={() => setShowCommentsModal(false)}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                ✕
+              </button>
+            </div>
+            
+            <div className="space-y-4 max-h-96 overflow-y-auto">
+              {stats.allComments.map((item, index) => (
+                <div key={index} className="border-b border-gray-200 pb-3 last:border-b-0">
+                  <p className="text-sm font-medium text-gray-900 mb-1">{item.memberName}</p>
+                  <p className="text-sm text-gray-600">{item.comment}</p>
+                </div>
+              ))}
+            </div>
+            
+            <div className="flex justify-end mt-6 pt-4 border-t">
+              <button
+                onClick={() => setShowCommentsModal(false)}
                 className="px-4 py-2 bg-gray-100 text-gray-800 rounded-lg hover:bg-gray-200 transition-colors"
               >
                 Close

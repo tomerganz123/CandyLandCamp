@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { ChefHat, CheckCircle, ArrowRight } from 'lucide-react';
 import KitchenShiftForm from '@/components/KitchenShiftForm';
-import { I18nProvider } from '@/components/I18nProvider';
+import I18nProvider from '@/components/I18nProvider';
 
 function KitchenShiftsPageContent() {
   const [showSuccess, setShowSuccess] = useState(false);

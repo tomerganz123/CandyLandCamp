@@ -1150,129 +1150,133 @@ export default function BudgetReport({ token }: BudgetReportProps) {
                     </div>
                   )}
 
-                  {/* Add New Payment Form */}
-                  {getRemainingAmount(selectedExpenseForPayments) > 0 && (
-                    <div>
-                      <h3 className="text-lg font-semibold mb-3">Add New Payment</h3>
-                      <form onSubmit={handleAddPayment} className="space-y-4">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                              Amount (NIS) *
-                            </label>
-                            <input
-                              type="number"
-                              min="0"
-                              max={getRemainingAmount(selectedExpenseForPayments)}
-                              step="0.01"
-                              required
-                              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                              placeholder={`Max: ₪${getRemainingAmount(selectedExpenseForPayments).toLocaleString()}`}
-                              value={paymentFormData.amount || ''}
-                              onChange={(e) => setPaymentFormData({ ...paymentFormData, amount: parseFloat(e.target.value) || 0 })}
-                            />
-                          </div>
-
-                          <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                              Date Paid *
-                            </label>
-                            <input
-                              type="date"
-                              required
-                              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                              value={paymentFormData.datePaid}
-                              onChange={(e) => setPaymentFormData({ ...paymentFormData, datePaid: e.target.value })}
-                            />
-                          </div>
+                  {/* Payment Status Alert */}
+                  {getRemainingAmount(selectedExpenseForPayments) <= 0 && (
+                    <div className="mb-6 bg-green-50 border border-green-200 rounded-lg p-4">
+                      <div className="flex items-center">
+                        <CheckCircle className="w-6 h-6 text-green-600 mr-2" />
+                        <div>
+                          <p className="font-semibold text-green-800">Fully Paid!</p>
+                          <p className="text-sm text-green-700">This expense has been completely paid. You can still edit or add payments below.</p>
                         </div>
+                      </div>
+                    </div>
+                  )}
 
+                  {/* Add New Payment Form - Always visible */}
+                  <div>
+                    <h3 className="text-lg font-semibold mb-3">Add New Payment</h3>
+                    {getRemainingAmount(selectedExpenseForPayments) < 0 && (
+                      <div className="mb-3 text-sm text-orange-600 bg-orange-50 border border-orange-200 rounded p-2">
+                        ⚠️ Warning: Total payments exceed expense amount by ₪{Math.abs(getRemainingAmount(selectedExpenseForPayments)).toLocaleString()}
+                      </div>
+                    )}
+                    <form onSubmit={handleAddPayment} className="space-y-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                           <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Who Paid *
+                            Amount (NIS) *
                           </label>
-                          <select
+                          <input
+                            type="number"
+                            min="0"
+                            step="0.01"
                             required
                             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                            value={paymentFormData.whoPaid}
-                            onChange={(e) => {
-                              const selectedMember = members.find(m => m._id === e.target.value);
-                              setPaymentFormData({ 
-                                ...paymentFormData, 
-                                whoPaid: e.target.value,
-                                whoPaidName: selectedMember ? `${selectedMember.firstName} ${selectedMember.lastName}` : ''
-                              });
-                            }}
-                          >
-                            <option value="">Select member...</option>
-                            {members.map(member => (
-                              <option key={member._id} value={member._id}>
-                                {member.firstName} {member.lastName}
-                              </option>
-                            ))}
-                          </select>
-                        </div>
-
-                        <div className="flex items-center">
-                          <input
-                            type="checkbox"
-                            id="paymentMoneyReturned"
-                            className="rounded border-gray-300 text-purple-600 focus:ring-purple-500"
-                            checked={paymentFormData.moneyReturned}
-                            onChange={(e) => setPaymentFormData({ ...paymentFormData, moneyReturned: e.target.checked })}
+                            placeholder={getRemainingAmount(selectedExpenseForPayments) > 0 
+                              ? `Suggested: ₪${getRemainingAmount(selectedExpenseForPayments).toLocaleString()}`
+                              : 'Enter amount'}
+                            value={paymentFormData.amount || ''}
+                            onChange={(e) => setPaymentFormData({ ...paymentFormData, amount: parseFloat(e.target.value) || 0 })}
                           />
-                          <label htmlFor="paymentMoneyReturned" className="ml-2 text-sm text-gray-700">Money Returned</label>
+                          {getRemainingAmount(selectedExpenseForPayments) > 0 && (
+                            <p className="text-xs text-gray-500 mt-1">Remaining: ₪{getRemainingAmount(selectedExpenseForPayments).toLocaleString()}</p>
+                          )}
                         </div>
 
                         <div>
                           <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Notes (Optional)
+                            Date Paid *
                           </label>
-                          <textarea
+                          <input
+                            type="date"
+                            required
                             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                            rows={2}
-                            placeholder="Optional notes about this payment..."
-                            value={paymentFormData.notes}
-                            onChange={(e) => setPaymentFormData({ ...paymentFormData, notes: e.target.value })}
+                            value={paymentFormData.datePaid}
+                            onChange={(e) => setPaymentFormData({ ...paymentFormData, datePaid: e.target.value })}
                           />
                         </div>
+                      </div>
 
-                        <div className="flex justify-end space-x-3 pt-4">
-                          <Button
-                            type="button"
-                            variant="outline"
-                            onClick={() => setShowPaymentsModal(false)}
-                            disabled={isSubmitting}
-                          >
-                            Close
-                          </Button>
-                          <Button
-                            type="submit"
-                            className="bg-green-600 hover:bg-green-700"
-                            disabled={isSubmitting}
-                          >
-                            {isSubmitting ? 'Adding...' : 'Add Payment'}
-                          </Button>
-                        </div>
-                      </form>
-                    </div>
-                  )}
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Who Paid *
+                        </label>
+                        <select
+                          required
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                          value={paymentFormData.whoPaid}
+                          onChange={(e) => {
+                            const selectedMember = members.find(m => m._id === e.target.value);
+                            setPaymentFormData({ 
+                              ...paymentFormData, 
+                              whoPaid: e.target.value,
+                              whoPaidName: selectedMember ? `${selectedMember.firstName} ${selectedMember.lastName}` : ''
+                            });
+                          }}
+                        >
+                          <option value="">Select member...</option>
+                          {members.map(member => (
+                            <option key={member._id} value={member._id}>
+                              {member.firstName} {member.lastName}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
 
-                  {getRemainingAmount(selectedExpenseForPayments) <= 0 && (
-                    <div className="text-center py-4">
-                      <CheckCircle className="w-12 h-12 text-green-600 mx-auto mb-2" />
-                      <p className="text-lg font-semibold text-green-800">Fully Paid!</p>
-                      <p className="text-sm text-gray-600">This expense has been completely paid.</p>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        onClick={() => setShowPaymentsModal(false)}
-                        className="mt-4"
-                      >
-                        Close
-                      </Button>
-                    </div>
-                  )}
+                      <div className="flex items-center">
+                        <input
+                          type="checkbox"
+                          id="paymentMoneyReturned"
+                          className="rounded border-gray-300 text-purple-600 focus:ring-purple-500"
+                          checked={paymentFormData.moneyReturned}
+                          onChange={(e) => setPaymentFormData({ ...paymentFormData, moneyReturned: e.target.checked })}
+                        />
+                        <label htmlFor="paymentMoneyReturned" className="ml-2 text-sm text-gray-700">Money Returned</label>
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Notes (Optional)
+                        </label>
+                        <textarea
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                          rows={2}
+                          placeholder="Optional notes about this payment..."
+                          value={paymentFormData.notes}
+                          onChange={(e) => setPaymentFormData({ ...paymentFormData, notes: e.target.value })}
+                        />
+                      </div>
+
+                      <div className="flex justify-end space-x-3 pt-4">
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() => setShowPaymentsModal(false)}
+                          disabled={isSubmitting}
+                        >
+                          Close
+                        </Button>
+                        <Button
+                          type="submit"
+                          className="bg-green-600 hover:bg-green-700"
+                          disabled={isSubmitting}
+                        >
+                          {isSubmitting ? 'Adding...' : 'Add Payment'}
+                        </Button>
+                      </div>
+                    </form>
+                  </div>
                 </CardContent>
               </Card>
             </div>

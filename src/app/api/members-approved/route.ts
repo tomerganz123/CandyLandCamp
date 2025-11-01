@@ -10,10 +10,14 @@ export async function GET(request: NextRequest) {
   try {
     await connectDB();
 
-    // Get all approved members
+    // Get all approved members (no limit - will return all)
+    // Explicitly set limit high enough to handle growth
     const allMembers = await Member.find({ isApproved: true })
       .select('_id firstName lastName email')
-      .sort({ lastName: 1, firstName: 1 });
+      .sort({ lastName: 1, firstName: 1 })
+      .limit(200); // High limit to ensure we get all members (currently ~65, allows for growth)
+
+    console.log(`Fetched ${allMembers.length} approved members for form dropdown`);
 
     // Transform to simple format
     const members = allMembers.map(member => ({

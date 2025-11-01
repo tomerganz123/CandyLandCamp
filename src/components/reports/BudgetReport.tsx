@@ -118,6 +118,7 @@ export default function BudgetReport({ token }: BudgetReportProps) {
     moneyReturned: false,
     notes: ''
   });
+  const [editingPayment, setEditingPayment] = useState<Payment | null>(null);
 
   const costCategories = [
     'Food & Beverages',
@@ -296,6 +297,7 @@ export default function BudgetReport({ token }: BudgetReportProps) {
   // Payment management functions
   const openPaymentsModal = (expense: BudgetExpense) => {
     setSelectedExpenseForPayments(expense);
+    setEditingPayment(null);
     setPaymentFormData({
       amount: getRemainingAmount(expense),
       whoPaid: '',
@@ -307,27 +309,69 @@ export default function BudgetReport({ token }: BudgetReportProps) {
     setShowPaymentsModal(true);
   };
 
+  const startEditingPayment = (payment: Payment) => {
+    setEditingPayment(payment);
+    setPaymentFormData({
+      amount: payment.amount,
+      whoPaid: payment.whoPaid,
+      whoPaidName: payment.whoPaidName,
+      datePaid: new Date(payment.datePaid).toISOString().split('T')[0],
+      moneyReturned: payment.moneyReturned,
+      notes: payment.notes || ''
+    });
+  };
+
+  const cancelEditingPayment = () => {
+    setEditingPayment(null);
+    if (selectedExpenseForPayments) {
+      setPaymentFormData({
+        amount: getRemainingAmount(selectedExpenseForPayments),
+        whoPaid: '',
+        whoPaidName: '',
+        datePaid: new Date().toISOString().split('T')[0],
+        moneyReturned: false,
+        notes: ''
+      });
+    }
+  };
+
   const handleAddPayment = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedExpenseForPayments) return;
 
     setIsSubmitting(true);
     try {
-      const response = await fetch(`/api/budget/${selectedExpenseForPayments._id}/payments`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-        body: JSON.stringify(paymentFormData),
-      });
+      let response;
+      
+      if (editingPayment && editingPayment._id) {
+        // Update existing payment
+        response = await fetch(`/api/budget/${selectedExpenseForPayments._id}/payments/${editingPayment._id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+          body: JSON.stringify(paymentFormData),
+        });
+      } else {
+        // Add new payment
+        response = await fetch(`/api/budget/${selectedExpenseForPayments._id}/payments`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+          body: JSON.stringify(paymentFormData),
+        });
+      }
 
       if (!response.ok) {
         const data = await response.json();
-        throw new Error(data.error || 'Failed to add payment');
+        throw new Error(data.error || `Failed to ${editingPayment ? 'update' : 'add'} payment`);
       }
 
       // Reset form and refresh
+      setEditingPayment(null);
       setPaymentFormData({
         amount: 0,
         whoPaid: '',
@@ -354,7 +398,7 @@ export default function BudgetReport({ token }: BudgetReportProps) {
         }));
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to add payment');
+      setError(err instanceof Error ? err.message : `Failed to ${editingPayment ? 'update' : 'add'} payment`);
     } finally {
       setIsSubmitting(false);
     }
@@ -1094,22 +1138,37 @@ export default function BudgetReport({ token }: BudgetReportProps) {
                       <h3 className="text-lg font-semibold mb-3">Existing Payments</h3>
                       <div className="space-y-2">
                         {selectedExpenseForPayments.payments.map((payment, idx) => (
-                          <div key={payment._id || idx} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border">
+                          <div key={payment._id || idx} className={`flex items-center justify-between p-3 rounded-lg border ${
+                            editingPayment?._id === payment._id ? 'bg-blue-50 border-blue-300' : 'bg-gray-50 border-gray-200'
+                          }`}>
                             <div className="flex-1">
                               <div className="font-medium">{payment.whoPaidName}</div>
                               <div className="text-sm text-gray-600">
                                 ₪{payment.amount.toLocaleString()} • {new Date(payment.datePaid).toLocaleDateString()}
-                                {payment.moneyReturned && ' • Money Returned'}
+                                {payment.moneyReturned && ' • ✓ Money Returned'}
                               </div>
                               {payment.notes && <div className="text-xs text-gray-500 italic mt-1">{payment.notes}</div>}
+                              {editingPayment?._id === payment._id && (
+                                <div className="text-xs text-blue-600 font-medium mt-1">Editing this payment below ↓</div>
+                              )}
                             </div>
-                            <button
-                              onClick={() => handleDeletePayment(payment._id!)}
-                              className="ml-4 text-red-600 hover:text-red-800"
-                              title="Delete payment"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </button>
+                            <div className="flex space-x-2 ml-4">
+                              <button
+                                onClick={() => startEditingPayment(payment)}
+                                className="text-blue-600 hover:text-blue-800"
+                                title="Edit payment"
+                                disabled={editingPayment?._id === payment._id}
+                              >
+                                <Edit className="w-4 h-4" />
+                              </button>
+                              <button
+                                onClick={() => handleDeletePayment(payment._id!)}
+                                className="text-red-600 hover:text-red-800"
+                                title="Delete payment"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </div>
                           </div>
                         ))}
                       </div>
@@ -1129,10 +1188,12 @@ export default function BudgetReport({ token }: BudgetReportProps) {
                     </div>
                   )}
 
-                  {/* Add New Payment Form - Always visible */}
+                  {/* Add/Edit Payment Form - Always visible */}
                   <div>
-                    <h3 className="text-lg font-semibold mb-3">Add New Payment</h3>
-                    {getRemainingAmount(selectedExpenseForPayments) < 0 && (
+                    <h3 className="text-lg font-semibold mb-3">
+                      {editingPayment ? 'Edit Payment' : 'Add New Payment'}
+                    </h3>
+                    {!editingPayment && getRemainingAmount(selectedExpenseForPayments) < 0 && (
                       <div className="mb-3 text-sm text-orange-600 bg-orange-50 border border-orange-200 rounded p-2">
                         ⚠️ Warning: Total payments exceed expense amount by ₪{Math.abs(getRemainingAmount(selectedExpenseForPayments)).toLocaleString()}
                       </div>
@@ -1225,6 +1286,16 @@ export default function BudgetReport({ token }: BudgetReportProps) {
                       </div>
 
                       <div className="flex justify-end space-x-3 pt-4">
+                        {editingPayment && (
+                          <Button
+                            type="button"
+                            variant="outline"
+                            onClick={cancelEditingPayment}
+                            disabled={isSubmitting}
+                          >
+                            Cancel Edit
+                          </Button>
+                        )}
                         <Button
                           type="button"
                           variant="outline"
@@ -1235,10 +1306,13 @@ export default function BudgetReport({ token }: BudgetReportProps) {
                         </Button>
                         <Button
                           type="submit"
-                          className="bg-green-600 hover:bg-green-700"
+                          className={editingPayment ? "bg-blue-600 hover:bg-blue-700" : "bg-green-600 hover:bg-green-700"}
                           disabled={isSubmitting}
                         >
-                          {isSubmitting ? 'Adding...' : 'Add Payment'}
+                          {isSubmitting 
+                            ? (editingPayment ? 'Updating...' : 'Adding...') 
+                            : (editingPayment ? 'Update Payment' : 'Add Payment')
+                          }
                         </Button>
                       </div>
                     </form>

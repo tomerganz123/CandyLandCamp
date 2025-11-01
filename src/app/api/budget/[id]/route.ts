@@ -46,9 +46,25 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       );
     }
 
+    // Convert legacy data to new payment structure for display
+    const expenseObj = expense.toObject({ virtuals: true });
+    
+    // If this is legacy data (has alreadyPaid but no payments array)
+    if (expenseObj.alreadyPaid && expenseObj.whoPaid && (!expenseObj.payments || expenseObj.payments.length === 0)) {
+      expenseObj.payments = [{
+        _id: `legacy-${expenseObj._id}`,
+        amount: expenseObj.costAmount,
+        whoPaid: expenseObj.whoPaid,
+        whoPaidName: expenseObj.whoPaidName || 'Unknown',
+        datePaid: expenseObj.dateOfExpense,
+        moneyReturned: expenseObj.moneyReturned,
+        notes: 'Legacy payment (before split payments feature)'
+      }];
+    }
+
     return NextResponse.json({
       success: true,
-      data: expense,
+      data: expenseObj,
     });
 
   } catch (error) {

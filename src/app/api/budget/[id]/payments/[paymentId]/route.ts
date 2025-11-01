@@ -77,9 +77,12 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 
     await expense.save();
 
+    // Convert to object with virtuals
+    const expenseObj = expense.toObject({ virtuals: true });
+
     return NextResponse.json({
       success: true,
-      data: expense,
+      data: expenseObj,
       message: 'Payment updated successfully'
     });
 
@@ -138,9 +141,12 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
 
     await expense.save();
 
+    // Convert to object with virtuals
+    const expenseObj = expense.toObject({ virtuals: true });
+
     return NextResponse.json({
       success: true,
-      data: expense,
+      data: expenseObj,
       message: 'Payment deleted successfully'
     });
 

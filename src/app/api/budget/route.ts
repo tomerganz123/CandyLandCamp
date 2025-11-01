@@ -147,6 +147,26 @@ export async function GET(request: NextRequest) {
       .limit(limit * 1)
       .skip((page - 1) * limit);
 
+    // Convert legacy data to new payment structure for display
+    const expensesWithPayments = expenses.map(expense => {
+      const expenseObj = expense.toObject({ virtuals: true });
+      
+      // If this is legacy data (has alreadyPaid but no payments array)
+      if (expenseObj.alreadyPaid && expenseObj.whoPaid && (!expenseObj.payments || expenseObj.payments.length === 0)) {
+        expenseObj.payments = [{
+          _id: `legacy-${expenseObj._id}`,
+          amount: expenseObj.costAmount,
+          whoPaid: expenseObj.whoPaid,
+          whoPaidName: expenseObj.whoPaidName || 'Unknown',
+          datePaid: expenseObj.dateOfExpense,
+          moneyReturned: expenseObj.moneyReturned,
+          notes: 'Legacy payment (before split payments feature)'
+        }];
+      }
+      
+      return expenseObj;
+    });
+
     // Get total count for pagination
     const total = await BudgetExpense.countDocuments(query);
 
@@ -244,7 +264,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      data: expenses,
+      data: expensesWithPayments,
       pagination: {
         current: page,
         pages: Math.ceil(total / limit),

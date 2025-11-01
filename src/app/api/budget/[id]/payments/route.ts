@@ -91,9 +91,12 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
     expense.payments.push(payment);
     await expense.save();
 
+    // Convert to object with virtuals
+    const expenseObj = expense.toObject({ virtuals: true });
+
     return NextResponse.json({
       success: true,
-      data: expense,
+      data: expenseObj,
       message: 'Payment added successfully'
     });
 
@@ -152,9 +155,12 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       );
     }
 
+    // Convert to object with virtuals
+    const expenseObj = expense.toObject({ virtuals: true });
+
     return NextResponse.json({
       success: true,
-      data: expense,
+      data: expenseObj,
       message: 'Payments updated successfully'
     });
 

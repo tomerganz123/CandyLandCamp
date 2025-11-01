@@ -87,7 +87,8 @@ interface ShiftTask {
 interface VolunteerShift {
   id: string;
   meal: 'breakfast' | 'dinner';
-  day: number;
+  day: number | string;
+  dayName?: string;
   timeSlot: string;
   volunteersNeeded: number;
   volunteersAssigned: string[];
@@ -356,34 +357,41 @@ export default function FoodHealth({ token }: FoodHealthProps) {
   };
 
   const initializeVolunteerShifts = async () => {
-    const members = await fetchMembers();
-    const shifts: VolunteerShift[] = [];
-    
-    // Create shifts for 5 days, 2 meals per day (breakfast & dinner)
-    for (let day = 1; day <= 5; day++) {
-      shifts.push(
-        {
-          id: `breakfast-${day}`,
-          meal: 'breakfast',
-          day,
-          timeSlot: '7:00 AM - 10:00 AM',
-          volunteersNeeded: 8,
-          volunteersAssigned: [],
-          memberNames: []
-        },
-        {
-          id: `dinner-${day}`,
-          meal: 'dinner',
-          day,
-          timeSlot: '6:00 PM - 9:00 PM',
-          volunteersNeeded: 10,
-          volunteersAssigned: [],
-          memberNames: []
-        }
-      );
+    try {
+      // Fetch kitchen shift registrations from the API
+      const response = await fetch('/api/kitchen-shifts?availability=true');
+      const result = await response.json();
+      
+      if (result.success) {
+        // Transform API data to VolunteerShift format
+        const shifts: VolunteerShift[] = result.data.map((shift: any) => {
+          const dayNames: { [key: string]: string } = {
+            'Monday': 'Monday',
+            'Tuesday': 'Tuesday',
+            'Wednesday': 'Wednesday',
+            'Thursday': 'Thursday',
+            'Friday': 'Friday'
+          };
+          
+          return {
+            id: `${shift.day}-${shift.shiftTime}`,
+            meal: shift.shiftTime === 'morning' ? 'breakfast' : 'dinner',
+            day: shift.day,
+            dayName: dayNames[shift.day] || shift.day,
+            timeSlot: shift.shiftTime === 'morning' ? '7:00 AM - 10:00 AM' : '6:00 PM - 9:00 PM',
+            volunteersNeeded: shift.capacity,
+            volunteersAssigned: shift.registeredMembers.map((m: any) => m.name),
+            memberNames: shift.registeredMembers.map((m: any) => `${m.name} (${m.role})`)
+          };
+        });
+        
+        setVolunteerShifts(shifts);
+      }
+    } catch (error) {
+      console.error('Failed to fetch kitchen shifts:', error);
+      // Fallback to empty shifts if API fails
+      setVolunteerShifts([]);
     }
-    
-    setVolunteerShifts(shifts);
   };
 
   const initializeGroceryList = () => {
@@ -1147,42 +1155,81 @@ export default function FoodHealth({ token }: FoodHealthProps) {
       <div className="bg-white rounded-lg border border-gray-200 p-6 mb-6">
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-lg font-semibold text-gray-800">Volunteer Kitchen Shifts</h3>
-          <div className="text-sm text-gray-500">Target: 1 shift per member during the week</div>
+          <div className="text-sm text-gray-500">
+            Target: 1 shift per member during the week | Morning: 5 volunteers | Evening: 6 volunteers
+          </div>
+        </div>
+        
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+          <div className="flex items-center gap-2 mb-2">
+            <Users className="h-5 w-5 text-blue-600" />
+            <span className="font-semibold text-blue-800">Shift Requirements</span>
+          </div>
+          <div className="text-sm text-blue-700 space-y-1">
+            <p>• Morning shifts (7:00 AM - 10:00 AM): <strong>5 volunteers</strong> including 1 shift manager</p>
+            <p>• Evening shifts (6:00 PM - 9:00 PM): <strong>6 volunteers</strong> including 1 shift manager</p>
+            <p>• Each shift must have a manager assigned before volunteers can register</p>
+          </div>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {volunteerShifts.map(shift => (
-            <div key={shift.id} className="p-4 bg-gray-50 rounded border">
-              <div className="flex justify-between items-start mb-3">
-                <div>
-                  <h4 className="font-semibold text-gray-900 capitalize">Day {shift.day} - {shift.meal}</h4>
-                  <div className="text-sm text-gray-500">{shift.timeSlot}</div>
+          {volunteerShifts.map(shift => {
+            const displayDay = shift.dayName || `Day ${shift.day}`;
+            const shiftLabel = shift.meal === 'breakfast' ? 'Morning' : 'Evening';
+            
+            return (
+              <div key={shift.id} className="p-4 bg-gray-50 rounded border">
+                <div className="flex justify-between items-start mb-3">
+                  <div>
+                    <h4 className="font-semibold text-gray-900">{displayDay} - {shiftLabel}</h4>
+                    <div className="text-sm text-gray-500">{shift.timeSlot}</div>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-lg font-semibold text-gray-900">
+                      {shift.volunteersAssigned.length}/{shift.volunteersNeeded}
+                    </div>
+                    <div className="text-xs text-gray-500">volunteers</div>
+                  </div>
                 </div>
-                <div className="text-right">
-                  <div className="text-lg font-semibold text-gray-900">{shift.volunteersAssigned.length}/{shift.volunteersNeeded}</div>
-                  <div className="text-xs text-gray-500">volunteers</div>
+                
+                <div className="w-full bg-gray-200 rounded-full h-2 mb-3">
+                  <div 
+                    className={`h-2 rounded-full ${
+                      shift.volunteersAssigned.length >= shift.volunteersNeeded 
+                        ? 'bg-green-600' 
+                        : shift.volunteersAssigned.length > 0 
+                          ? 'bg-yellow-500' 
+                          : 'bg-red-400'
+                    }`}
+                    style={{ width: `${Math.min((shift.volunteersAssigned.length / shift.volunteersNeeded) * 100, 100)}%` }}
+                  ></div>
+                </div>
+                
+                <div className="text-sm text-gray-600">
+                  {shift.volunteersAssigned.length > 0 ? (
+                    <div>
+                      <strong>Assigned:</strong>
+                      <div className="mt-1 space-y-1">
+                        {shift.memberNames.map((name, idx) => (
+                          <div key={idx} className="text-xs">• {name}</div>
+                        ))}
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="text-red-600 font-medium">⚠️ Need volunteers</div>
+                  )}
                 </div>
               </div>
-              
-              <div className="w-full bg-gray-200 rounded-full h-2 mb-3">
-                <div 
-                  className="bg-green-600 h-2 rounded-full" 
-                  style={{ width: `${Math.min((shift.volunteersAssigned.length / shift.volunteersNeeded) * 100, 100)}%` }}
-                ></div>
+            );
+          })}
         </div>
         
-              <div className="text-sm text-gray-600">
-                {shift.volunteersAssigned.length > 0 ? (
-                  <div>
-                    <strong>Assigned:</strong> {shift.memberNames.join(', ')}
-                  </div>
-                ) : (
-                  <div className="text-red-600">Need volunteers</div>
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
+        {volunteerShifts.length === 0 && (
+          <div className="text-center py-8 text-gray-500">
+            <p>No kitchen shift data available yet.</p>
+            <p className="text-sm mt-2">Members can register for shifts at the Kitchen Shifts page.</p>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -4,6 +4,8 @@
     "event": "Event",
     "camp": "Camp", 
     "gift": "The Gift",
+    "kitchenShifts": "Kitchen Shifts",
+    "additionalInfo": "Additional Info",
     "reports": "Reports",
     "contact": "Contact",
     "register": "Register Now"

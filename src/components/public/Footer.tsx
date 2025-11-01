@@ -11,6 +11,8 @@ export default function Footer() {
     { href: '/event', label: t('nav.event') },
     { href: '/camp', label: t('nav.camp') },
     { href: '/gift', label: t('nav.gift') },
+    { href: '/kitchen-shifts', label: t('nav.kitchenShifts') },
+    { href: '/additional-info', label: t('nav.additionalInfo') },
     { href: '/reports', label: t('nav.reports') },
     { href: '/contact', label: t('nav.contact') },
   ];

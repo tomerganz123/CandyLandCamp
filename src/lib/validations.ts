@@ -262,6 +262,22 @@ export const additionalInfoSchema = z.object({
   path: ["dietaryRestrictionType"]
 });
 
+// Kitchen shift validation schema
+export const kitchenShiftSchema = z.object({
+  memberId: z.string().min(1, 'Please select yourself from the members list'),
+  memberName: z.string().min(1, 'Member name is required'),
+  memberEmail: z.string().email('Valid email is required'),
+  day: z.enum(['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'], {
+    errorMap: () => ({ message: 'Please select a day' })
+  }),
+  shiftTime: z.enum(['morning', 'evening'], {
+    errorMap: () => ({ message: 'Please select a shift time' })
+  }),
+  role: z.enum(['manager', 'volunteer'], {
+    errorMap: () => ({ message: 'Please select a role' })
+  }),
+});
+
 export type VolunteerShiftInput = z.infer<typeof volunteerShiftSchema>;
 export type BudgetExpenseInput = z.infer<typeof budgetExpenseSchema>;
 export type FeePaymentInput = z.infer<typeof feePaymentSchema>;
@@ -269,3 +285,4 @@ export type MemberRegistrationInput = z.infer<typeof memberRegistrationSchema>;
 export type AdminLoginInput = z.infer<typeof adminLoginSchema>;
 export type MemberUpdateInput = z.infer<typeof memberUpdateSchema>;
 export type AdditionalInfoInput = z.infer<typeof additionalInfoSchema>;
+export type KitchenShiftInput = z.infer<typeof kitchenShiftSchema>;

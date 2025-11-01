@@ -64,17 +64,11 @@ export default function KitchenShiftForm({ onSuccess }: KitchenShiftFormProps) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Fetch all approved members (not just those who haven't filled additional info)
-        const membersResponse = await fetch('/api/members?approved=true');
+        // Fetch all approved members
+        const membersResponse = await fetch('/api/members-approved');
         const membersResult = await membersResponse.json();
         if (membersResult.success) {
-          // Transform member data to match the expected format
-          const transformedMembers = membersResult.data.members.map((member: any) => ({
-            id: member._id,
-            name: `${member.firstName} ${member.lastName}`,
-            email: member.email
-          }));
-          setMembers(transformedMembers);
+          setMembers(membersResult.data);
         }
 
         // Fetch availability

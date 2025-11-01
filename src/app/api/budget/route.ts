@@ -150,54 +150,93 @@ export async function GET(request: NextRequest) {
     // Get total count for pagination
     const total = await BudgetExpense.countDocuments(query);
 
-    // Calculate statistics
+    // Calculate statistics with new payment structure
     const stats = await BudgetExpense.aggregate([
+      {
+        $addFields: {
+          // Calculate total paid from payments array
+          totalPaidAmount: {
+            $cond: {
+              if: { $gt: [{ $size: { $ifNull: ['$payments', []] } }, 0] },
+              then: { $sum: '$payments.amount' },
+              else: { $cond: ['$alreadyPaid', '$costAmount', 0] } // Legacy fallback
+            }
+          },
+          // Calculate total returned from payments array
+          totalReturnedAmount: {
+            $cond: {
+              if: { $gt: [{ $size: { $ifNull: ['$payments', []] } }, 0] },
+              then: { 
+                $sum: {
+                  $map: {
+                    input: '$payments',
+                    as: 'payment',
+                    in: { $cond: ['$$payment.moneyReturned', '$$payment.amount', 0] }
+                  }
+                }
+              },
+              else: { $cond: ['$moneyReturned', '$costAmount', 0] } // Legacy fallback
+            }
+          },
+          // Check if fully paid
+          isFullyPaid: {
+            $cond: {
+              if: { $gt: [{ $size: { $ifNull: ['$payments', []] } }, 0] },
+              then: { $gte: [{ $sum: '$payments.amount' }, '$costAmount'] },
+              else: '$alreadyPaid' // Legacy fallback
+            }
+          }
+        }
+      },
       {
         $group: {
           _id: null,
           totalExpenses: { $sum: 1 },
           totalAmount: { $sum: '$costAmount' },
-          paidAmount: { 
-            $sum: { 
-              $cond: ['$alreadyPaid', '$costAmount', 0] 
-            } 
-          },
-          unpaidAmount: { 
-            $sum: { 
-              $cond: ['$alreadyPaid', 0, '$costAmount'] 
-            } 
-          },
-          returnedAmount: { 
-            $sum: { 
-              $cond: ['$moneyReturned', '$costAmount', 0] 
-            } 
-          },
+          paidAmount: { $sum: '$totalPaidAmount' },
+          unpaidAmount: { $sum: { $subtract: ['$costAmount', '$totalPaidAmount'] } },
+          returnedAmount: { $sum: '$totalReturnedAmount' },
           paidExpenses: { 
-            $sum: { 
-              $cond: ['$alreadyPaid', 1, 0] 
-            } 
+            $sum: { $cond: ['$isFullyPaid', 1, 0] }
           },
           unpaidExpenses: { 
-            $sum: { 
-              $cond: ['$alreadyPaid', 0, 1] 
-            } 
+            $sum: { $cond: ['$isFullyPaid', 0, 1] }
+          },
+          partiallyPaidExpenses: {
+            $sum: {
+              $cond: [
+                { $and: [
+                  { $gt: ['$totalPaidAmount', 0] },
+                  { $lt: ['$totalPaidAmount', '$costAmount'] }
+                ]},
+                1,
+                0
+              ]
+            }
           }
         }
       }
     ]);
 
-    // Category breakdown
+    // Category breakdown with new payment structure
     const categoryStats = await BudgetExpense.aggregate([
+      {
+        $addFields: {
+          totalPaidAmount: {
+            $cond: {
+              if: { $gt: [{ $size: { $ifNull: ['$payments', []] } }, 0] },
+              then: { $sum: '$payments.amount' },
+              else: { $cond: ['$alreadyPaid', '$costAmount', 0] }
+            }
+          }
+        }
+      },
       {
         $group: {
           _id: '$costCategory',
           count: { $sum: 1 },
           totalAmount: { $sum: '$costAmount' },
-          paidAmount: { 
-            $sum: { 
-              $cond: ['$alreadyPaid', '$costAmount', 0] 
-            } 
-          }
+          paidAmount: { $sum: '$totalPaidAmount' }
         }
       },
       { $sort: { totalAmount: -1 } }
@@ -219,7 +258,8 @@ export async function GET(request: NextRequest) {
         unpaidAmount: 0,
         returnedAmount: 0,
         paidExpenses: 0,
-        unpaidExpenses: 0
+        unpaidExpenses: 0,
+        partiallyPaidExpenses: 0
       },
       categoryStats
     });

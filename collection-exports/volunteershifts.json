@@ -1,0 +1,47 @@
+[
+  {
+    "_id": "68cc4c8ff8098ef19a550d19",
+    "name": "tineas asdask",
+    "email": "tomer@asdak.com",
+    "campName": "asdasd",
+    "shiftType": "gift",
+    "giftName": "סדנאות יוגה ומדיטציה",
+    "role": "Certified instructors",
+    "timeSlot": "Tuesday & Thursday 09:00 (1 hour)",
+    "location": "Yoga Dome",
+    "registeredAt": "2025-09-18T18:16:47.578Z",
+    "createdAt": "2025-09-18T18:16:47.583Z",
+    "updatedAt": "2025-09-18T18:16:47.583Z",
+    "__v": 0
+  },
+  {
+    "_id": "68cc51c7c2fa0f397633fcf8",
+    "name": "Jkg",
+    "email": "tomerganz@gmail.com",
+    "campName": "Wkwkd",
+    "shiftType": "gift",
+    "giftName": "קבאב הזמן (Kabab HaZman)",
+    "role": "Prep cook",
+    "timeSlot": "Wednesday 06:00 (2 hours)",
+    "location": "Exactly where you are",
+    "registeredAt": "2025-09-18T18:39:03.977Z",
+    "createdAt": "2025-09-18T18:39:03.981Z",
+    "updatedAt": "2025-09-18T18:39:03.981Z",
+    "__v": 0
+  },
+  {
+    "_id": "68cc5a2c93b1d23ab89047d9",
+    "name": "רוצה להיות מלצר",
+    "email": "babaganosh@g.com",
+    "campName": "כריסטופר נולאן",
+    "shiftType": "gift",
+    "giftName": "קבאב הזמן (Kabab HaZman)",
+    "role": "Server",
+    "timeSlot": "Wednesday 06:00 (2 hours)",
+    "location": "Exactly where you are",
+    "registeredAt": "2025-09-18T19:14:52.736Z",
+    "createdAt": "2025-09-18T19:14:52.741Z",
+    "updatedAt": "2025-09-18T19:14:52.741Z",
+    "__v": 0
+  }
+]

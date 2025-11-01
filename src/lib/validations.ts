@@ -109,6 +109,17 @@ export const memberUpdateSchema = memberRegistrationSchema.partial().extend({
   isApproved: z.boolean().optional(),
 });
 
+// Payment validation schema
+export const paymentSchema = z.object({
+  _id: z.string().optional(),
+  amount: z.number().min(0, 'Payment amount cannot be negative'),
+  whoPaid: z.string().min(1, 'Who paid is required'),
+  whoPaidName: z.string().min(1, 'Payer name is required'),
+  datePaid: z.string().or(z.date()).transform((val) => new Date(val)),
+  moneyReturned: z.boolean().default(false),
+  notes: z.string().max(200, 'Payment notes must be less than 200 characters').optional(),
+});
+
 // Budget expense validation schema
 export const budgetExpenseSchema = z.object({
   costCategory: z.enum([
@@ -124,21 +135,18 @@ export const budgetExpenseSchema = z.object({
   item: z.string().min(1, 'Item description is required').max(200, 'Item description must be less than 200 characters'),
   quantity: z.number().min(0, 'Quantity cannot be negative').default(1),
   costAmount: z.number().min(0, 'Cost amount cannot be negative'),
-  alreadyPaid: z.boolean().default(false),
+  
+  // New payment structure
+  payments: z.array(paymentSchema).optional().default([]),
+  
+  // Legacy fields (kept for backward compatibility)
+  alreadyPaid: z.boolean().optional().default(false),
   whoPaid: z.string().optional(),
   whoPaidName: z.string().optional(),
-  moneyReturned: z.boolean().default(false),
+  moneyReturned: z.boolean().optional().default(false),
+  
   dateOfExpense: z.string().or(z.date()).transform((val) => new Date(val)),
   notes: z.string().max(500, 'Notes must be less than 500 characters').optional(),
-}).refine((data) => {
-  // If already paid, whoPaid must be provided
-  if (data.alreadyPaid && !data.whoPaid) {
-    return false;
-  }
-  return true;
-}, {
-  message: "Who paid is required when expense is marked as paid",
-  path: ["whoPaid"]
 });
 
 // Fee payment validation schema

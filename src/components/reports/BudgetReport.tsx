@@ -12,16 +12,34 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import FeeCollectionReport from './FeeCollectionReport';
 
+interface Payment {
+  _id?: string;
+  amount: number;
+  whoPaid: string;
+  whoPaidName: string;
+  datePaid: string;
+  moneyReturned: boolean;
+  notes?: string;
+}
+
 interface BudgetExpense {
   _id: string;
   costCategory: string;
   item: string;
   quantity: number;
   costAmount: number;
+  
+  // New payment structure
+  payments?: Payment[];
+  totalPaid?: number;
+  remainingAmount?: number;
+  
+  // Legacy fields
   alreadyPaid: boolean;
   whoPaid?: string;
   whoPaidName?: string;
   moneyReturned: boolean;
+  
   dateOfExpense: string;
   notes?: string;
   createdAt: string;
@@ -36,6 +54,7 @@ interface BudgetStatistics {
   returnedAmount: number;
   paidExpenses: number;
   unpaidExpenses: number;
+  partiallyPaidExpenses?: number;
 }
 
 interface CategoryStat {
@@ -81,7 +100,9 @@ export default function BudgetReport({ token }: BudgetReportProps) {
   
   // Modal states
   const [showModal, setShowModal] = useState(false);
+  const [showPaymentsModal, setShowPaymentsModal] = useState(false);
   const [editingExpense, setEditingExpense] = useState<BudgetExpense | null>(null);
+  const [selectedExpenseForPayments, setSelectedExpenseForPayments] = useState<BudgetExpense | null>(null);
   const [formData, setFormData] = useState<ExpenseFormData>({
     costCategory: 'Food & Beverages',
     item: '',
@@ -95,6 +116,16 @@ export default function BudgetReport({ token }: BudgetReportProps) {
     notes: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  // Payment form state
+  const [paymentFormData, setPaymentFormData] = useState({
+    amount: 0,
+    whoPaid: '',
+    whoPaidName: '',
+    datePaid: new Date().toISOString().split('T')[0],
+    moneyReturned: false,
+    notes: ''
+  });
 
   const costCategories = [
     'Food & Beverages',
@@ -106,6 +137,26 @@ export default function BudgetReport({ token }: BudgetReportProps) {
     'Gift',
     'Other'
   ];
+
+  // Helper functions for payment calculations
+  const getTotalPaid = (expense: BudgetExpense): number => {
+    if (expense.payments && expense.payments.length > 0) {
+      return expense.payments.reduce((sum, payment) => sum + payment.amount, 0);
+    }
+    // Legacy: if using old structure
+    return expense.alreadyPaid ? expense.costAmount : 0;
+  };
+
+  const getRemainingAmount = (expense: BudgetExpense): number => {
+    return expense.costAmount - getTotalPaid(expense);
+  };
+
+  const getPaymentStatus = (expense: BudgetExpense): 'paid' | 'partial' | 'unpaid' => {
+    const totalPaid = getTotalPaid(expense);
+    if (totalPaid >= expense.costAmount) return 'paid';
+    if (totalPaid > 0) return 'partial';
+    return 'unpaid';
+  };
 
   const fetchExpenses = async () => {
     try {
@@ -255,6 +306,106 @@ export default function BudgetReport({ token }: BudgetReportProps) {
       fetchExpenses(); // Refresh the data
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to delete expense');
+    }
+  };
+
+  // Payment management functions
+  const openPaymentsModal = (expense: BudgetExpense) => {
+    setSelectedExpenseForPayments(expense);
+    setPaymentFormData({
+      amount: getRemainingAmount(expense),
+      whoPaid: '',
+      whoPaidName: '',
+      datePaid: new Date().toISOString().split('T')[0],
+      moneyReturned: false,
+      notes: ''
+    });
+    setShowPaymentsModal(true);
+  };
+
+  const handleAddPayment = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedExpenseForPayments) return;
+
+    setIsSubmitting(true);
+    try {
+      const response = await fetch(`/api/budget/${selectedExpenseForPayments._id}/payments`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify(paymentFormData),
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || 'Failed to add payment');
+      }
+
+      // Reset form and refresh
+      setPaymentFormData({
+        amount: 0,
+        whoPaid: '',
+        whoPaidName: '',
+        datePaid: new Date().toISOString().split('T')[0],
+        moneyReturned: false,
+        notes: ''
+      });
+      
+      await fetchExpenses();
+      
+      // Update the selected expense in the modal
+      const updatedExpenses = await fetch('/api/budget', {
+        headers: { 'Authorization': `Bearer ${token}` },
+      }).then(res => res.json());
+      
+      const updatedExpense = updatedExpenses.data.find((e: BudgetExpense) => e._id === selectedExpenseForPayments._id);
+      if (updatedExpense) {
+        setSelectedExpenseForPayments(updatedExpense);
+        // Set next payment amount to remaining
+        setPaymentFormData(prev => ({
+          ...prev,
+          amount: getRemainingAmount(updatedExpense)
+        }));
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to add payment');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleDeletePayment = async (paymentId: string) => {
+    if (!selectedExpenseForPayments) return;
+    if (!confirm('Are you sure you want to delete this payment?')) return;
+
+    try {
+      const response = await fetch(`/api/budget/${selectedExpenseForPayments._id}/payments/${paymentId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || 'Failed to delete payment');
+      }
+
+      await fetchExpenses();
+      
+      // Update the selected expense
+      const updatedExpenses = await fetch('/api/budget', {
+        headers: { 'Authorization': `Bearer ${token}` },
+      }).then(res => res.json());
+      
+      const updatedExpense = updatedExpenses.data.find((e: BudgetExpense) => e._id === selectedExpenseForPayments._id);
+      if (updatedExpense) {
+        setSelectedExpenseForPayments(updatedExpense);
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to delete payment');
     }
   };
 
@@ -611,35 +762,58 @@ export default function BudgetReport({ token }: BudgetReportProps) {
                                 </div>
                               </div>
                             </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                              ₪{expense.costAmount.toLocaleString()}
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <div className="text-sm font-medium text-gray-900">
+                                ₪{expense.costAmount.toLocaleString()}
+                              </div>
+                              {expense.payments && expense.payments.length > 0 && (
+                                <div className="text-xs text-gray-500">
+                                  Paid: ₪{getTotalPaid(expense).toLocaleString()}
+                                </div>
+                              )}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">
                               <div className="flex flex-col space-y-1">
-                                <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                                  expense.alreadyPaid 
-                                    ? 'bg-green-100 text-green-800' 
-                                    : 'bg-red-100 text-red-800'
-                                }`}>
-                                  {expense.alreadyPaid ? 'Paid' : 'Unpaid'}
-                                </span>
-                                {expense.alreadyPaid && (
-                                  <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                                    expense.moneyReturned 
-                                      ? 'bg-purple-100 text-purple-800' 
-                                      : 'bg-yellow-100 text-yellow-800'
-                                  }`}>
-                                    {expense.moneyReturned ? 'Returned' : 'Not Returned'}
-                                  </span>
-                                )}
+                                {(() => {
+                                  const status = getPaymentStatus(expense);
+                                  const totalPaid = getTotalPaid(expense);
+                                  const remaining = getRemainingAmount(expense);
+                                  
+                                  return (
+                                    <>
+                                      <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                                        status === 'paid' 
+                                          ? 'bg-green-100 text-green-800' 
+                                          : status === 'partial'
+                                          ? 'bg-yellow-100 text-yellow-800'
+                                          : 'bg-red-100 text-red-800'
+                                      }`}>
+                                        {status === 'paid' ? 'Fully Paid' : status === 'partial' ? `Partial (₪${remaining})` : 'Unpaid'}
+                                      </span>
+                                      {expense.payments && expense.payments.length > 0 && (
+                                        <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                                          {expense.payments.length} payment{expense.payments.length > 1 ? 's' : ''}
+                                        </span>
+                                      )}
+                                    </>
+                                  );
+                                })()}
                               </div>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">
                               <div className="text-sm text-gray-900">
-                                {expense.whoPaidName || (expense.alreadyPaid ? 'Unknown' : '-')}
+                                {expense.payments && expense.payments.length > 0 ? (
+                                  expense.payments.length === 1 ? (
+                                    expense.payments[0].whoPaidName
+                                  ) : (
+                                    `${expense.payments.length} payers`
+                                  )
+                                ) : (
+                                  expense.whoPaidName || (expense.alreadyPaid ? 'Unknown' : '-')
+                                )}
                               </div>
-                              {expense.alreadyPaid && !expense.whoPaidName && (
-                                <div className="text-xs text-red-500">Missing info</div>
+                              {expense.payments && expense.payments.length > 1 && (
+                                <div className="text-xs text-gray-500">Click to see details</div>
                               )}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -650,6 +824,7 @@ export default function BudgetReport({ token }: BudgetReportProps) {
                                 <button
                                   onClick={() => toggleRowExpansion(expense._id)}
                                   className="text-orange-600 hover:text-orange-900"
+                                  title="Expand details"
                                 >
                                   {expandedRows.has(expense._id) ? (
                                     <ChevronUp className="w-4 h-4" />
@@ -658,14 +833,23 @@ export default function BudgetReport({ token }: BudgetReportProps) {
                                   )}
                                 </button>
                                 <button
+                                  onClick={() => openPaymentsModal(expense)}
+                                  className="text-green-600 hover:text-green-900"
+                                  title="Manage payments"
+                                >
+                                  <DollarSign className="w-4 h-4" />
+                                </button>
+                                <button
                                   onClick={() => openEditModal(expense)}
                                   className="text-blue-600 hover:text-blue-900"
+                                  title="Edit expense"
                                 >
                                   <Edit className="w-4 h-4" />
                                 </button>
                                 <button
                                   onClick={() => handleDelete(expense)}
                                   className="text-red-600 hover:text-red-900"
+                                  title="Delete expense"
                                 >
                                   <Trash2 className="w-4 h-4" />
                                 </button>
@@ -678,11 +862,27 @@ export default function BudgetReport({ token }: BudgetReportProps) {
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                                   <div>
                                     <h4 className="font-semibold text-gray-900 mb-2">Payment Details</h4>
-                                    {expense.whoPaidName && (
-                                      <p><strong>Paid by:</strong> {expense.whoPaidName}</p>
+                                    <p><strong>Total Amount:</strong> ₪{expense.costAmount.toLocaleString()}</p>
+                                    <p><strong>Total Paid:</strong> ₪{getTotalPaid(expense).toLocaleString()}</p>
+                                    <p><strong>Remaining:</strong> ₪{getRemainingAmount(expense).toLocaleString()}</p>
+                                    
+                                    {expense.payments && expense.payments.length > 0 && (
+                                      <div className="mt-3">
+                                        <h5 className="font-medium text-gray-800 mb-1">Payments ({expense.payments.length}):</h5>
+                                        <div className="space-y-1">
+                                          {expense.payments.map((payment, idx) => (
+                                            <div key={payment._id || idx} className="text-xs bg-white p-2 rounded border">
+                                              <div><strong>{payment.whoPaidName}</strong> - ₪{payment.amount.toLocaleString()}</div>
+                                              <div className="text-gray-500">
+                                                {new Date(payment.datePaid).toLocaleDateString()}
+                                                {payment.moneyReturned && ' • Returned'}
+                                              </div>
+                                              {payment.notes && <div className="text-gray-600 italic">{payment.notes}</div>}
+                                            </div>
+                                          ))}
+                                        </div>
+                                      </div>
                                     )}
-                                    <p><strong>Payment Status:</strong> {expense.alreadyPaid ? 'Paid' : 'Unpaid'}</p>
-                                    <p><strong>Money Returned:</strong> {expense.moneyReturned ? 'Yes' : 'No'}</p>
                                   </div>
                                   <div>
                                     <h4 className="font-semibold text-gray-900 mb-2">Additional Info</h4>
@@ -896,6 +1096,183 @@ export default function BudgetReport({ token }: BudgetReportProps) {
                       </Button>
                     </div>
                   </form>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Payments Management Modal */}
+      {showPaymentsModal && selectedExpenseForPayments && (
+        <div className="fixed inset-0 z-[9999] overflow-y-auto">
+          <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm" onClick={() => setShowPaymentsModal(false)} />
+          
+          <div className="flex min-h-full items-center justify-center p-4">
+            <div className="relative w-full max-w-3xl mx-auto z-10">
+              <Card className="w-full bg-white shadow-2xl border-0">
+                <CardHeader>
+                  <CardTitle>
+                    Manage Payments - {selectedExpenseForPayments.item}
+                  </CardTitle>
+                  <CardDescription>
+                    Total: ₪{selectedExpenseForPayments.costAmount.toLocaleString()} | 
+                    Paid: ₪{getTotalPaid(selectedExpenseForPayments).toLocaleString()} | 
+                    Remaining: ₪{getRemainingAmount(selectedExpenseForPayments).toLocaleString()}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  {/* Existing Payments */}
+                  {selectedExpenseForPayments.payments && selectedExpenseForPayments.payments.length > 0 && (
+                    <div className="mb-6">
+                      <h3 className="text-lg font-semibold mb-3">Existing Payments</h3>
+                      <div className="space-y-2">
+                        {selectedExpenseForPayments.payments.map((payment, idx) => (
+                          <div key={payment._id || idx} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border">
+                            <div className="flex-1">
+                              <div className="font-medium">{payment.whoPaidName}</div>
+                              <div className="text-sm text-gray-600">
+                                ₪{payment.amount.toLocaleString()} • {new Date(payment.datePaid).toLocaleDateString()}
+                                {payment.moneyReturned && ' • Money Returned'}
+                              </div>
+                              {payment.notes && <div className="text-xs text-gray-500 italic mt-1">{payment.notes}</div>}
+                            </div>
+                            <button
+                              onClick={() => handleDeletePayment(payment._id!)}
+                              className="ml-4 text-red-600 hover:text-red-800"
+                              title="Delete payment"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Add New Payment Form */}
+                  {getRemainingAmount(selectedExpenseForPayments) > 0 && (
+                    <div>
+                      <h3 className="text-lg font-semibold mb-3">Add New Payment</h3>
+                      <form onSubmit={handleAddPayment} className="space-y-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                              Amount (NIS) *
+                            </label>
+                            <input
+                              type="number"
+                              min="0"
+                              max={getRemainingAmount(selectedExpenseForPayments)}
+                              step="0.01"
+                              required
+                              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                              placeholder={`Max: ₪${getRemainingAmount(selectedExpenseForPayments).toLocaleString()}`}
+                              value={paymentFormData.amount || ''}
+                              onChange={(e) => setPaymentFormData({ ...paymentFormData, amount: parseFloat(e.target.value) || 0 })}
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                              Date Paid *
+                            </label>
+                            <input
+                              type="date"
+                              required
+                              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                              value={paymentFormData.datePaid}
+                              onChange={(e) => setPaymentFormData({ ...paymentFormData, datePaid: e.target.value })}
+                            />
+                          </div>
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Who Paid *
+                          </label>
+                          <select
+                            required
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                            value={paymentFormData.whoPaid}
+                            onChange={(e) => {
+                              const selectedMember = members.find(m => m._id === e.target.value);
+                              setPaymentFormData({ 
+                                ...paymentFormData, 
+                                whoPaid: e.target.value,
+                                whoPaidName: selectedMember ? `${selectedMember.firstName} ${selectedMember.lastName}` : ''
+                              });
+                            }}
+                          >
+                            <option value="">Select member...</option>
+                            {members.map(member => (
+                              <option key={member._id} value={member._id}>
+                                {member.firstName} {member.lastName}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+
+                        <div className="flex items-center">
+                          <input
+                            type="checkbox"
+                            id="paymentMoneyReturned"
+                            className="rounded border-gray-300 text-purple-600 focus:ring-purple-500"
+                            checked={paymentFormData.moneyReturned}
+                            onChange={(e) => setPaymentFormData({ ...paymentFormData, moneyReturned: e.target.checked })}
+                          />
+                          <label htmlFor="paymentMoneyReturned" className="ml-2 text-sm text-gray-700">Money Returned</label>
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Notes (Optional)
+                          </label>
+                          <textarea
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                            rows={2}
+                            placeholder="Optional notes about this payment..."
+                            value={paymentFormData.notes}
+                            onChange={(e) => setPaymentFormData({ ...paymentFormData, notes: e.target.value })}
+                          />
+                        </div>
+
+                        <div className="flex justify-end space-x-3 pt-4">
+                          <Button
+                            type="button"
+                            variant="outline"
+                            onClick={() => setShowPaymentsModal(false)}
+                            disabled={isSubmitting}
+                          >
+                            Close
+                          </Button>
+                          <Button
+                            type="submit"
+                            className="bg-green-600 hover:bg-green-700"
+                            disabled={isSubmitting}
+                          >
+                            {isSubmitting ? 'Adding...' : 'Add Payment'}
+                          </Button>
+                        </div>
+                      </form>
+                    </div>
+                  )}
+
+                  {getRemainingAmount(selectedExpenseForPayments) <= 0 && (
+                    <div className="text-center py-4">
+                      <CheckCircle className="w-12 h-12 text-green-600 mx-auto mb-2" />
+                      <p className="text-lg font-semibold text-green-800">Fully Paid!</p>
+                      <p className="text-sm text-gray-600">This expense has been completely paid.</p>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => setShowPaymentsModal(false)}
+                        className="mt-4"
+                      >
+                        Close
+                      </Button>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             </div>

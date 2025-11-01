@@ -14,7 +14,8 @@ import {
   FileText,
   ArrowLeft,
   Download,
-  RefreshCw
+  RefreshCw,
+  ClipboardCheck
 } from 'lucide-react';
 import MemberDemographics from '@/components/reports/MemberDemographics';
 import TicketsAndFees from '@/components/reports/TicketsAndFees';
@@ -25,6 +26,8 @@ import VolunteersReport from '@/components/reports/VolunteersReport';
 import BudgetReport from '@/components/reports/BudgetReport';
 import AdminViews from '@/components/reports/AdminViews';
 
+import MemberCompletionStatus from '@/components/reports/MemberCompletionStatus';
+
 const REPORT_CATEGORIES = [
   {
     id: 'demographics',
@@ -32,6 +35,13 @@ const REPORT_CATEGORIES = [
     icon: Users,
     description: 'Member roster, age distribution, gender breakdown',
     color: 'bg-blue-500'
+  },
+  {
+    id: 'completion',
+    name: 'Form Completion Status',
+    icon: ClipboardCheck,
+    description: 'Track which members completed additional info and kitchen shifts',
+    color: 'bg-indigo-500'
   },
   {
     id: 'tickets',
@@ -130,6 +140,8 @@ export default function ReportsPage() {
     switch (activeCategory) {
       case 'demographics':
         return <MemberDemographics token={token} />;
+      case 'completion':
+        return <MemberCompletionStatus token={token} />;
       case 'tickets':
         return <TicketsAndFees token={token} />;
       case 'logistics':

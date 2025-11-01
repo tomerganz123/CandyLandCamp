@@ -116,7 +116,7 @@ export default function BudgetReport({ token }: BudgetReportProps) {
             'Authorization': `Bearer ${token}`,
           },
         }),
-        fetch('/api/members', {
+        fetch('/api/members?approved=true&limit=9999', {
           headers: {
             'Authorization': `Bearer ${token}`,
           },

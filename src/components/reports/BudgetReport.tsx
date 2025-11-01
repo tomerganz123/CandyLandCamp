@@ -73,10 +73,6 @@ interface ExpenseFormData {
   item: string;
   quantity: number;
   costAmount: number;
-  alreadyPaid: boolean;
-  whoPaid: string;
-  whoPaidName: string;
-  moneyReturned: boolean;
   dateOfExpense: string;
   notes: string;
 }
@@ -108,10 +104,6 @@ export default function BudgetReport({ token }: BudgetReportProps) {
     item: '',
     quantity: 1,
     costAmount: 0,
-    alreadyPaid: false,
-    whoPaid: '',
-    whoPaidName: '',
-    moneyReturned: false,
     dateOfExpense: new Date().toISOString().split('T')[0],
     notes: ''
   });
@@ -227,10 +219,6 @@ export default function BudgetReport({ token }: BudgetReportProps) {
       item: '',
       quantity: 1,
       costAmount: 0,
-      alreadyPaid: false,
-      whoPaid: '',
-      whoPaidName: '',
-      moneyReturned: false,
       dateOfExpense: new Date().toISOString().split('T')[0],
       notes: ''
     });
@@ -244,10 +232,6 @@ export default function BudgetReport({ token }: BudgetReportProps) {
       item: expense.item,
       quantity: expense.quantity,
       costAmount: expense.costAmount,
-      alreadyPaid: expense.alreadyPaid,
-      whoPaid: expense.whoPaid || '',
-      whoPaidName: expense.whoPaidName || '',
-      moneyReturned: expense.moneyReturned,
       dateOfExpense: expense.dateOfExpense.split('T')[0],
       notes: expense.notes || ''
     });
@@ -1008,60 +992,42 @@ export default function BudgetReport({ token }: BudgetReportProps) {
                       </div>
                     </div>
 
-                    <div className="flex items-center space-x-4">
-                      <label className="flex items-center">
-                        <input
-                          type="checkbox"
-                          className="rounded border-gray-300 text-orange-600 focus:ring-orange-500"
-                          checked={formData.alreadyPaid}
-                          onChange={(e) => setFormData({ 
-                            ...formData, 
-                            alreadyPaid: e.target.checked,
-                            whoPaid: e.target.checked ? formData.whoPaid : '',
-                            whoPaidName: e.target.checked ? formData.whoPaidName : ''
-                          })}
-                        />
-                        <span className="ml-2 text-sm text-gray-700">Already Paid</span>
-                      </label>
+                    {/* Payment Status Info - Read Only */}
+                    {editingExpense && (
+                      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                        <div className="flex items-start">
+                          <DollarSign className="w-5 h-5 text-blue-600 mr-2 mt-0.5" />
+                          <div className="flex-1">
+                            <h4 className="font-semibold text-blue-900 text-sm mb-1">Payment Information</h4>
+                            <div className="text-sm text-blue-800 space-y-1">
+                              <p>Total: ₪{editingExpense.costAmount.toLocaleString()}</p>
+                              <p>Paid: ₪{getTotalPaid(editingExpense).toLocaleString()}</p>
+                              <p>Remaining: ₪{getRemainingAmount(editingExpense).toLocaleString()}</p>
+                              {editingExpense.payments && editingExpense.payments.length > 0 && (
+                                <p className="font-medium">{editingExpense.payments.length} payment(s) recorded</p>
+                              )}
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setShowModal(false);
+                                setTimeout(() => openPaymentsModal(editingExpense), 100);
+                              }}
+                              className="mt-2 text-sm text-blue-700 hover:text-blue-900 underline font-medium"
+                            >
+                              → Manage Payments
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    )}
 
-                      {formData.alreadyPaid && (
-                        <label className="flex items-center">
-                          <input
-                            type="checkbox"
-                            className="rounded border-gray-300 text-purple-600 focus:ring-purple-500"
-                            checked={formData.moneyReturned}
-                            onChange={(e) => setFormData({ ...formData, moneyReturned: e.target.checked })}
-                          />
-                          <span className="ml-2 text-sm text-gray-700">Money Returned</span>
-                        </label>
-                      )}
-                    </div>
-
-                    {formData.alreadyPaid && (
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Who Paid *
-                        </label>
-                        <select
-                          required={formData.alreadyPaid}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                          value={formData.whoPaid}
-                          onChange={(e) => {
-                            const selectedMember = members.find(m => m._id === e.target.value);
-                            setFormData({ 
-                              ...formData, 
-                              whoPaid: e.target.value,
-                              whoPaidName: selectedMember ? `${selectedMember.firstName} ${selectedMember.lastName}` : ''
-                            });
-                          }}
-                        >
-                          <option value="">Select member...</option>
-                          {members.map(member => (
-                            <option key={member._id} value={member._id}>
-                              {member.firstName} {member.lastName}
-                            </option>
-                          ))}
-                        </select>
+                    {/* Info box for new expenses */}
+                    {!editingExpense && (
+                      <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
+                        <p className="text-sm text-gray-700">
+                          <span className="font-medium">💡 Tip:</span> After creating this expense, you can add payments using the <DollarSign className="w-3 h-3 inline" /> (Manage Payments) button.
+                        </p>
                       </div>
                     )}
 

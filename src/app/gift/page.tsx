@@ -160,7 +160,9 @@ function GiftPageContent() {
         {/* Gifts Section */}
         <section>
           <div className="grid grid-cols-1 gap-12">
-            {giftData.gifts.map((gift, index) => (
+            {giftData.gifts.map((gift, index) => {
+              const isSunsetParty = gift.name === 'מסיבת שקיעה';
+              return (
               <motion.div
                 key={gift.name}
                 initial={{ opacity: 0, y: 20 }}
@@ -168,8 +170,17 @@ function GiftPageContent() {
                 transition={{ duration: 0.6, delay: index * 0.2 }}
               >
                 <Card className="overflow-hidden">
-                  <CardHeader className="bg-gradient-to-r from-orange-50 to-purple-50 pb-8">
-                    <div className="flex items-center space-x-4">
+                  <CardHeader 
+                    className="bg-gradient-to-r from-orange-50 to-purple-50 pb-8 relative"
+                    style={isSunsetParty ? {
+                      backgroundImage: 'url(/7B.jpg)',
+                      backgroundSize: 'cover',
+                      backgroundPosition: 'center',
+                      backgroundBlendMode: 'overlay',
+                      backgroundColor: 'rgba(255, 255, 255, 0.85)'
+                    } : {}}
+                  >
+                    <div className="flex items-center space-x-4 relative z-10">
                       <div className="text-4xl">
                         {giftIcons[gift.name as keyof typeof giftIcons] || '✨'}
                       </div>
@@ -177,7 +188,7 @@ function GiftPageContent() {
                         <CardTitle className="text-2xl md:text-3xl text-gray-900">
                           {isRTL ? gift.name : gift.nameEn}
                         </CardTitle>
-                        <CardDescription className="text-lg mt-2">
+                        <CardDescription className="text-lg mt-2 font-semibold" style={isSunsetParty ? {color: '#1f2937'} : {}}>
                           {isRTL && gift.descriptionHe ? gift.descriptionHe : gift.description}
                         </CardDescription>
                       </div>
@@ -258,7 +269,8 @@ function GiftPageContent() {
                   </CardContent>
                 </Card>
               </motion.div>
-            ))}
+              );
+            })}
           </div>
         </section>
 

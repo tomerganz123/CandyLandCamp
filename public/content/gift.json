@@ -57,14 +57,14 @@
     {
       "name": "מסיבת שקיעה",
       "nameEn": "Sunset Party",
-      "description": "A celebration of music, dance, and community as day transitions to night. Join us for an uplifting experience that honors the beauty of the desert sunset.",
-      "descriptionHe": "חגיגה של מוזיקה, ריקוד וקהילה כשהיום עובר ללילה. הצטרפו אלינו לחוויה מרוממת שמכבדת את יופי השקיעה במדבר.",
+      "description": "A crazy party on the Kikar with all the camps living there including יצאת ציפס, toast mania, and ברנפלקס! Join us for an epic celebration of music, dance, and community as day transitions to night.",
+      "descriptionHe": "מסיבה מטורפת בכיכר עם כל הקמפים שחיים שם כולל יצאת ציפס, toast mania, וברנפלקס! הצטרפו אלינו לחגיגה אפית של מוזיקה, ריקוד וקהילה כשהיום עובר ללילה.",
       "times": [
         {
-          "day": "Thursday",
-          "time": "18:30",
-          "duration": "3 hours", 
-          "location": "BABA ZMAN Dance Floor"
+          "day": "Wednesday",
+          "time": "16:00",
+          "duration": "7 hours", 
+          "location": "Kikar 7b"
         }
       ],
       "volunteering": {

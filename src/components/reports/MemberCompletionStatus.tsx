@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { 
   CheckCircle, XCircle, Users, ClipboardList, ChefHat, 
-  Filter, Download, Search, AlertCircle
+  Filter, Download, Search, AlertCircle, Trash2
 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -47,6 +47,7 @@ export default function MemberCompletionStatus({ token }: MemberCompletionStatus
   const [error, setError] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState<FilterType>('all');
+  const [clearingMemberId, setClearingMemberId] = useState<string | null>(null);
 
   const fetchData = async () => {
     try {
@@ -97,6 +98,37 @@ export default function MemberCompletionStatus({ token }: MemberCompletionStatus
     link.download = `member-completion-status-${new Date().toISOString().split('T')[0]}.csv`;
     link.click();
     window.URL.revokeObjectURL(url);
+  };
+
+  const clearKitchenShifts = async (memberId: string, memberName: string) => {
+    if (!confirm(`Are you sure you want to clear all kitchen shift registrations for ${memberName}? This will allow them to re-register for shifts.`)) {
+      return;
+    }
+
+    try {
+      setClearingMemberId(memberId);
+      const response = await fetch(`/api/kitchen-shifts/clear-member?memberId=${memberId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        // Refresh the data to show updated status
+        await fetchData();
+        alert(`Successfully cleared ${result.deletedCount} kitchen shift registration(s) for ${memberName}`);
+      } else {
+        alert(`Failed to clear kitchen shifts: ${result.error}`);
+      }
+    } catch (err) {
+      alert('Error clearing kitchen shifts. Please try again.');
+      console.error('Error clearing kitchen shifts:', err);
+    } finally {
+      setClearingMemberId(null);
+    }
   };
 
   const filteredMembers = members
@@ -296,6 +328,9 @@ export default function MemberCompletionStatus({ token }: MemberCompletionStatus
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Kitchen Shift Details
                   </th>
+                  <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Actions
+                  </th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
@@ -341,6 +376,30 @@ export default function MemberCompletionStatus({ token }: MemberCompletionStatus
                         </div>
                       ) : (
                         <span className="text-xs text-gray-400 italic">Not registered</span>
+                      )}
+                    </td>
+                    <td className="px-6 py-4 text-center whitespace-nowrap">
+                      {member.hasFilledKitchenShift && (
+                        <Button
+                          onClick={() => clearKitchenShifts(member.id, member.name)}
+                          disabled={clearingMemberId === member.id}
+                          variant="outline"
+                          size="sm"
+                          className="text-red-600 hover:text-red-700 hover:bg-red-50 border-red-300 hover:border-red-400"
+                          title="Clear all kitchen shift registrations for this member"
+                        >
+                          {clearingMemberId === member.id ? (
+                            <>
+                              <span className="animate-spin mr-1">⏳</span>
+                              Clearing...
+                            </>
+                          ) : (
+                            <>
+                              <Trash2 className="h-4 w-4 mr-1" />
+                              Clear Shifts
+                            </>
+                          )}
+                        </Button>
                       )}
                     </td>
                   </tr>

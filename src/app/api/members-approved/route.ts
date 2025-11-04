@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import Member from '@/models/Member';
+import KitchenShift from '@/models/KitchenShift';
 
 // Force dynamic rendering
 export const dynamic = 'force-dynamic';
@@ -19,8 +20,21 @@ export async function GET(request: NextRequest) {
 
     console.log(`Fetched ${allMembers.length} approved members for form dropdown`);
 
+    // Get all members who have already registered for kitchen shifts
+    const kitchenShiftRegistrations = await KitchenShift.find({}).distinct('memberId');
+    const registeredMemberIds = new Set(kitchenShiftRegistrations.map(id => id.toString()));
+
+    console.log(`Found ${registeredMemberIds.size} members who already registered for kitchen shifts`);
+
+    // Filter out members who have already registered for kitchen shifts
+    const availableMembers = allMembers.filter(member => 
+      !registeredMemberIds.has(member._id.toString())
+    );
+
+    console.log(`${availableMembers.length} members available for kitchen shift registration`);
+
     // Transform to simple format
-    const members = allMembers.map(member => ({
+    const members = availableMembers.map(member => ({
       id: member._id.toString(),
       name: `${member.firstName} ${member.lastName}`,
       email: member.email

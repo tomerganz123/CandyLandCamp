@@ -52,11 +52,9 @@ const KitchenShiftSchema = new Schema<IKitchenShift>({
   timestamps: true
 });
 
-// Compound unique index - one member can't register for the same shift twice
+// Unique index - one member can only register for one shift total
 KitchenShiftSchema.index({ 
-  memberId: 1, 
-  day: 1, 
-  shiftTime: 1
+  memberId: 1
 }, { 
   unique: true
 });

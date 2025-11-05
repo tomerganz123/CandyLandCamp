@@ -23,7 +23,7 @@ interface ShiftAvailability {
   needsManager: boolean;
   canRegisterVolunteer: boolean;
   canRegisterManager: boolean;
-  registeredMembers: { name: string; role: string }[];
+  registeredMembers: { memberId: string; name: string; role: string }[];
 }
 
 interface KitchenShiftFormProps {
@@ -67,14 +67,28 @@ export default function KitchenShiftForm({ onSuccess }: KitchenShiftFormProps) {
         // Fetch all approved members
         const membersResponse = await fetch('/api/members-approved');
         const membersResult = await membersResponse.json();
-        if (membersResult.success) {
-          setMembers(membersResult.data);
-        }
-
-        // Fetch availability
+        
+        // Fetch availability and get registered member IDs
         const availabilityResponse = await fetch('/api/kitchen-shifts?availability=true');
         const availabilityResult = await availabilityResponse.json();
-        if (availabilityResult.success) {
+        
+        if (membersResult.success && availabilityResult.success) {
+          // Get all registered member IDs (members who have already signed up for any shift)
+          const registeredMemberIds = new Set<string>();
+          availabilityResult.data.forEach((shift: ShiftAvailability) => {
+            shift.registeredMembers.forEach((member: any) => {
+              if (member.memberId) {
+                registeredMemberIds.add(member.memberId);
+              }
+            });
+          });
+          
+          // Filter out members who have already registered for any shift
+          const availableMembers = membersResult.data.filter(
+            (member: MemberOption) => !registeredMemberIds.has(member.id)
+          );
+          
+          setMembers(availableMembers);
           setAvailability(availabilityResult.data);
         }
       } catch (error) {
@@ -127,10 +141,30 @@ export default function KitchenShiftForm({ onSuccess }: KitchenShiftFormProps) {
         onSuccess(result);
         reset();
         
-        // Refresh availability
+        // Refresh both members list and availability
+        const membersResponse = await fetch('/api/members-approved');
+        const membersResult = await membersResponse.json();
+        
         const availabilityResponse = await fetch('/api/kitchen-shifts?availability=true');
         const availabilityResult = await availabilityResponse.json();
-        if (availabilityResult.success) {
+        
+        if (membersResult.success && availabilityResult.success) {
+          // Get all registered member IDs
+          const registeredMemberIds = new Set<string>();
+          availabilityResult.data.forEach((shift: ShiftAvailability) => {
+            shift.registeredMembers.forEach((member: any) => {
+              if (member.memberId) {
+                registeredMemberIds.add(member.memberId);
+              }
+            });
+          });
+          
+          // Filter out members who have already registered
+          const availableMembers = membersResult.data.filter(
+            (member: MemberOption) => !registeredMemberIds.has(member.id)
+          );
+          
+          setMembers(availableMembers);
           setAvailability(availabilityResult.data);
         }
       } else {

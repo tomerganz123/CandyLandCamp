@@ -46,16 +46,15 @@ export async function POST(request: NextRequest) {
 
     const { memberId, memberName, memberEmail, day, shiftTime, role } = validationResult.data;
 
-    // Check if member already registered for this shift
-    const existingShift = await KitchenShift.findOne({
-      memberId,
-      day,
-      shiftTime
-    });
+    // Check if member already registered for ANY shift (limit: 1 registration per member)
+    const existingShift = await KitchenShift.findOne({ memberId });
 
     if (existingShift) {
       return NextResponse.json(
-        { success: false, error: 'You are already registered for this shift' },
+        { 
+          success: false, 
+          error: `You are already registered for ${existingShift.day} ${existingShift.shiftTime} shift. Each member can only register for one shift.` 
+        },
         { status: 409 }
       );
     }
@@ -185,6 +184,7 @@ export async function GET(request: NextRequest) {
             canRegisterVolunteer: managerCount > 0 && availableSpots > 0,
             canRegisterManager: managerCount === 0 && availableSpots > 0,
             registeredMembers: shifts.map(s => ({
+              memberId: s.memberId,
               name: s.memberName,
               role: s.role
             }))

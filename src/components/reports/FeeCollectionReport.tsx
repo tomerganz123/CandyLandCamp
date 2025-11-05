@@ -25,6 +25,7 @@ interface FeePaymentData {
   thirdPaymentPaid: boolean;
   thirdPaymentDate?: string;
   thirdPaymentNotes?: string;
+  wantsMattress: boolean;
   totalPaid: number;
   createdAt: string;
   updatedAt: string;
@@ -142,7 +143,7 @@ export default function FeeCollectionReport({ token }: FeeCollectionReportProps)
 
   const exportData = () => {
     const csvContent = [
-      ['Name', 'Phone', 'Email', '1st Payment (750₪)', '1st Payment Date', '2nd Payment (1250₪)', '2nd Payment Date', 'Total Paid', 'Outstanding'].join(','),
+      ['Name', 'Phone', 'Email', '1st Payment (750₪)', '1st Payment Date', '2nd Payment (1250₪)', '2nd Payment Date', 'Ordered Mattress', 'Paid for Mattress', 'Mattress Payment Date', 'Total Paid', 'Outstanding'].join(','),
       ...payments.map(payment => [
         payment.memberName,
         payment.memberPhone,
@@ -151,6 +152,9 @@ export default function FeeCollectionReport({ token }: FeeCollectionReportProps)
         payment.firstPaymentDate ? new Date(payment.firstPaymentDate).toLocaleDateString() : '',
         payment.secondPaymentPaid ? 'Yes' : 'No',
         payment.secondPaymentDate ? new Date(payment.secondPaymentDate).toLocaleDateString() : '',
+        payment.wantsMattress ? 'Yes' : 'No',
+        payment.thirdPaymentPaid ? 'Yes' : 'No',
+        payment.thirdPaymentDate ? new Date(payment.thirdPaymentDate).toLocaleDateString() : '',
         `₪${payment.totalPaid}`,
         `₪${2000 - payment.totalPaid}` // 750 + 1250 = 2000 total expected
       ].map(field => `"${field}"`).join(','))
@@ -367,7 +371,10 @@ export default function FeeCollectionReport({ token }: FeeCollectionReportProps)
                     2nd Payment<br />(1250₪)
                   </th>
                   <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    3rd Payment<br />(TBD)
+                    Ordered<br />Mattress
+                  </th>
+                  <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Paid for<br />Mattress
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Total Paid
@@ -452,22 +459,39 @@ export default function FeeCollectionReport({ token }: FeeCollectionReportProps)
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-center">
+                      <div className="flex items-center justify-center">
+                        {payment.wantsMattress ? (
+                          <CheckCircle className="h-5 w-5 text-green-600" />
+                        ) : (
+                          <XCircle className="h-5 w-5 text-gray-300" />
+                        )}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-center">
                       <div className="flex flex-col items-center space-y-1">
                         <label className="flex items-center cursor-pointer">
                           <input
                             type="checkbox"
                             checked={payment.thirdPaymentPaid}
                             onChange={() => handlePaymentToggle(payment.memberId, 'third', payment.thirdPaymentPaid)}
-                            disabled={updatingPayment === `${payment.memberId}-third`}
-                            className="rounded border-gray-300 text-gray-400 focus:ring-gray-400 h-5 w-5"
+                            disabled={updatingPayment === `${payment.memberId}-third` || !payment.wantsMattress}
+                            className="rounded border-gray-300 text-green-600 focus:ring-green-500 h-5 w-5 disabled:opacity-50"
                           />
                           {updatingPayment === `${payment.memberId}-third` && (
-                            <div className="ml-2 animate-spin rounded-full h-4 w-4 border-b-2 border-gray-600"></div>
+                            <div className="ml-2 animate-spin rounded-full h-4 w-4 border-b-2 border-green-600"></div>
                           )}
                         </label>
-                        <div className="text-xs text-gray-400">
-                          (Future)
-                        </div>
+                        {payment.thirdPaymentPaid && payment.thirdPaymentDate && (
+                          <div className="text-xs text-gray-500 flex items-center">
+                            <Calendar className="h-3 w-3 mr-1" />
+                            {new Date(payment.thirdPaymentDate).toLocaleDateString()}
+                          </div>
+                        )}
+                        {!payment.wantsMattress && (
+                          <div className="text-xs text-gray-400">
+                            N/A
+                          </div>
+                        )}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">

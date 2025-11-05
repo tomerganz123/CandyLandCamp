@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import FeePayment from '@/models/FeePayment';
 import Member from '@/models/Member';
+import AdditionalInfo from '@/models/AdditionalInfo';
 import { feePaymentSchema } from '@/lib/validations';
 import { verifyAdminToken } from '@/lib/auth';
 
@@ -157,15 +158,27 @@ export async function GET(request: NextRequest) {
       memberId: { $in: memberIds } 
     });
 
+    // Get additional info records (including mattress information)
+    const additionalInfoRecords = await AdditionalInfo.find({
+      memberId: { $in: memberIds }
+    });
+
     // Create a map for quick lookup
     const paymentMap = new Map();
     existingPayments.forEach(payment => {
       paymentMap.set(payment.memberId, payment);
     });
 
+    // Create a map for additional info
+    const additionalInfoMap = new Map();
+    additionalInfoRecords.forEach(info => {
+      additionalInfoMap.set(info.memberId, info);
+    });
+
     // Combine member data with payment data
     const memberPayments = members.map(member => {
       const existingPayment = paymentMap.get(member._id.toString());
+      const additionalInfo = additionalInfoMap.get(member._id.toString());
       
       // Recalculate totalPaid for display
       let totalPaid = 0;
@@ -192,6 +205,7 @@ export async function GET(request: NextRequest) {
         thirdPaymentPaid: thirdPaid,
         thirdPaymentDate: existingPayment?.thirdPaymentDate || null,
         thirdPaymentNotes: existingPayment?.thirdPaymentNotes || '',
+        wantsMattress: additionalInfo?.wantsMattress || false,
         totalPaid,
         createdAt: existingPayment?.createdAt || member.createdAt,
         updatedAt: existingPayment?.updatedAt || member.updatedAt

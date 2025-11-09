@@ -151,6 +151,35 @@ export default function BudgetReport({ token }: BudgetReportProps) {
     return 'unpaid';
   };
 
+  const hasUnreturnedPayments = (expense: BudgetExpense): boolean => {
+    // Check if there are any payments where money hasn't been returned
+    if (expense.payments && expense.payments.length > 0) {
+      return expense.payments.some(payment => !payment.moneyReturned);
+    }
+    // Legacy: check old structure
+    return expense.alreadyPaid && !expense.moneyReturned;
+  };
+
+  const getUnreturnedPaymentsInfo = (expense: BudgetExpense): { count: number; total: number } => {
+    let count = 0;
+    let total = 0;
+    
+    if (expense.payments && expense.payments.length > 0) {
+      expense.payments.forEach(payment => {
+        if (!payment.moneyReturned) {
+          count++;
+          total += payment.amount;
+        }
+      });
+    } else if (expense.alreadyPaid && !expense.moneyReturned) {
+      // Legacy structure
+      count = 1;
+      total = expense.costAmount;
+    }
+    
+    return { count, total };
+  };
+
   const fetchExpenses = async () => {
     try {
       setLoading(true);
@@ -806,6 +835,8 @@ export default function BudgetReport({ token }: BudgetReportProps) {
                                   const status = getPaymentStatus(expense);
                                   const totalPaid = getTotalPaid(expense);
                                   const remaining = getRemainingAmount(expense);
+                                  const hasUnreturned = hasUnreturnedPayments(expense);
+                                  const unreturnedInfo = hasUnreturned ? getUnreturnedPaymentsInfo(expense) : null;
                                   
                                   return (
                                     <>
@@ -821,6 +852,11 @@ export default function BudgetReport({ token }: BudgetReportProps) {
                                       {expense.payments && expense.payments.length > 0 && (
                                         <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
                                           {expense.payments.length} payment{expense.payments.length > 1 ? 's' : ''}
+                                        </span>
+                                      )}
+                                      {hasUnreturned && unreturnedInfo && (
+                                        <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-orange-100 text-orange-800" title={`${unreturnedInfo.count} payment${unreturnedInfo.count > 1 ? 's' : ''} need${unreturnedInfo.count === 1 ? 's' : ''} to be reimbursed`}>
+                                          ⚠️ Not Returned (₪{unreturnedInfo.total})
                                         </span>
                                       )}
                                     </>
@@ -899,11 +935,15 @@ export default function BudgetReport({ token }: BudgetReportProps) {
                                         <h5 className="font-medium text-gray-800 mb-1">Payments ({expense.payments.length}):</h5>
                                         <div className="space-y-1">
                                           {expense.payments.map((payment, idx) => (
-                                            <div key={payment._id || idx} className="text-xs bg-white p-2 rounded border">
+                                            <div key={payment._id || idx} className={`text-xs p-2 rounded border ${!payment.moneyReturned ? 'bg-orange-50 border-orange-200' : 'bg-white'}`}>
                                               <div><strong>{payment.whoPaidName}</strong> - ₪{payment.amount.toLocaleString()}</div>
                                               <div className="text-gray-500">
                                                 {new Date(payment.datePaid).toLocaleDateString()}
-                                                {payment.moneyReturned && ' • Returned'}
+                                                {payment.moneyReturned ? (
+                                                  <span className="text-green-600"> • ✓ Returned</span>
+                                                ) : (
+                                                  <span className="text-orange-600 font-semibold"> • ⚠️ Not Returned</span>
+                                                )}
                                               </div>
                                               {payment.notes && <div className="text-gray-600 italic">{payment.notes}</div>}
                                             </div>

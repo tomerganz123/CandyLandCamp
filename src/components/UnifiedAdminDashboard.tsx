@@ -268,7 +268,7 @@ export default function UnifiedAdminDashboard({ token, onLogout }: UnifiedAdminD
           
           <div className="flex items-center gap-2">
             <TrendingUp className="h-6 w-6 text-orange-600" />
-            <h1 className="font-semibold text-gray-800">BABA ZMAN Admin</h1>
+            <h1 className="font-semibold text-gray-800">Candy Land Admin</h1>
           </div>
           
           <button
@@ -293,7 +293,7 @@ export default function UnifiedAdminDashboard({ token, onLogout }: UnifiedAdminD
                   <TrendingUp className="h-6 w-6 text-white" />
                 </div>
                 <div>
-                  <h1 className="font-bold text-gray-800">BABA ZMAN</h1>
+                  <h1 className="font-bold text-gray-800">Candy Land</h1>
                   <p className="text-xs text-gray-500">Admin Dashboard</p>
                 </div>
               </div>

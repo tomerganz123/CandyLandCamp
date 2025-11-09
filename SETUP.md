@@ -13,10 +13,10 @@ npm install
 Create `.env.local` file:
 ```env
 # MongoDB (use your own connection string)
-MONGODB_URI=mongodb://localhost:27017/midburn-camp
+MONGODB_URI=mongodb://localhost:27017/CandyLandCamp
 
 # Admin access (change this password!)
-ADMIN_PASSWORD=midburn2024
+ADMIN_PASSWORD=CandyLand2025
 
 # Security key (generate a random string)
 JWT_SECRET=your-super-secret-jwt-key-change-this
@@ -38,7 +38,7 @@ Visit:
 
 ### Option A: Local MongoDB
 1. Install MongoDB locally
-2. Use: `MONGODB_URI=mongodb://localhost:27017/midburn-camp`
+2. Use: `MONGODB_URI=mongodb://localhost:27017/CandyLandCamp`
 
 ### Option B: MongoDB Atlas (Recommended)
 1. Create free account at [MongoDB Atlas](https://cloud.mongodb.com)
@@ -52,7 +52,7 @@ docker run -d -p 27017:27017 --name mongo mongo:latest
 
 ## 🔐 Admin Access
 
-**Default Admin Password**: `midburn2024`
+**Default Admin Password**: `CandyLand2025`
 
 ⚠️ **IMPORTANT**: Change this password before deployment!
 

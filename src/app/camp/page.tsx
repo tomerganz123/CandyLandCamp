@@ -308,7 +308,7 @@ function CampPageContent() {
               Ready to Join Our Camp?
             </h2>
             <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-              Become part of the BABA ZMAN family and help create magic in the desert.
+              Become part of the Candy Land family and help create magic in the desert.
             </p>
             <Button asChild size="lg" className="bg-orange-600 hover:bg-orange-700 text-lg px-8 py-3">
               <a href="/" target="_blank" rel="noopener noreferrer">

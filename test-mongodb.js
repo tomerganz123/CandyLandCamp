@@ -1,7 +1,7 @@
 // Test MongoDB connection locally
 const mongoose = require('mongoose');
 
-const MONGODB_URI = 'mongodb+srv://tomerganz_db_user:RhEqhWorpJ6zCAAx@cluster0.dxihaof.mongodb.net/midburn-camp?retryWrites=true&w=majority&appName=Cluster0';
+const MONGODB_URI = 'mongodb+srv://tomerganz_db_user:RhEqhWorpJ6zCAAx@cluster0.dxihaof.mongodb.net/CandyLandCamp?retryWrites=true&w=majority&appName=Cluster0';
 
 console.log('Testing MongoDB connection...');
 console.log('Connection string:', MONGODB_URI);

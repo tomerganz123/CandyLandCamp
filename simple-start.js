@@ -9,8 +9,8 @@ console.log('📁 Project directory:', __dirname);
 const fs = require('fs');
 if (!fs.existsSync('.env.local')) {
     console.log('⚠️  Creating .env.local file...');
-    const envContent = `MONGODB_URI=mongodb://localhost:27017/midburn-camp
-ADMIN_PASSWORD=midburn2024
+    const envContent = `MONGODB_URI=mongodb://localhost:27017/CandyLandCamp
+ADMIN_PASSWORD=CandyLand2025
 JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
 NEXTAUTH_URL=http://localhost:3023`;
     fs.writeFileSync('.env.local', envContent);
@@ -19,7 +19,7 @@ NEXTAUTH_URL=http://localhost:3023`;
 
 console.log('🚀 Starting Next.js development server...');
 console.log('🌐 App will be available at: http://localhost:3023');
-console.log('🔐 Admin dashboard: http://localhost:3023/admin (password: midburn2024)');
+console.log('🔐 Admin dashboard: http://localhost:3023/admin (password: CandyLand2025)');
 console.log('');
 
 const nextDev = spawn('npx', ['next', 'dev', '--port', '3023'], {

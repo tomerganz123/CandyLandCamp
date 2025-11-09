@@ -24,7 +24,7 @@ export default function Footer() {
           {/* Brand */}
           <div className="space-y-4">
             <div className="text-2xl font-bold text-orange-400">
-              {isRTL ? 'באבא זמן' : 'BABA ZMAN'}
+              {isRTL ? 'קנדי לנד' : 'Candy Land'}
             </div>
             <p className="text-gray-300 text-sm">
               {t('footer.description')}
@@ -83,7 +83,7 @@ export default function Footer() {
         <div className="mt-8 pt-8 border-t border-gray-800">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <div className="text-gray-400 text-sm">
-              © 2025 BABA ZMAN. Midburn 2025 Camp.
+              © 2025 Candy Land. Midburn 2025 Camp.
             </div>
             <div className="text-gray-400 text-sm">
               Built with ❤️ for the Midburn community

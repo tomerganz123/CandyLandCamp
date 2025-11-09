@@ -87,7 +87,7 @@ function ContactPageContent() {
               <div>
                 <h2 className="text-3xl font-bold text-gray-900 mb-6">Get in Touch</h2>
                 <p className="text-lg text-gray-600 mb-8">
-                  Have questions about joining BABA ZMAN? Want to volunteer? Need more information about our camp? 
+                  Have questions about joining Candy Land? Want to volunteer? Need more information about our camp? 
                   We'd love to hear from you!
                 </p>
               </div>
@@ -267,7 +267,7 @@ function ContactPageContent() {
                 Ready to Join Our Camp?
               </h2>
               <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-                Don't wait! Register now to secure your spot in the BABA ZMAN family for Midburn 2025.
+                Don't wait! Register now to secure your spot in the Candy Land family for Midburn 2025.
               </p>
               <Button asChild size="lg" className="bg-orange-600 hover:bg-orange-700 text-lg px-8 py-3">
                 <a href="/" target="_blank" rel="noopener noreferrer">

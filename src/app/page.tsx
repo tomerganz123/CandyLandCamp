@@ -24,7 +24,7 @@ export default function HomePage() {
                 Registration Successful! 🎉
               </h1>
               <p className="text-lg text-gray-600">
-                Welcome to the BABA ZMAN family!
+                Welcome to the Candy Land family!
               </p>
             </div>
 
@@ -108,7 +108,7 @@ export default function HomePage() {
           </div>
           
           <h1 className="text-4xl md:text-6xl font-bold mb-6 drop-shadow-2xl">
-            BABA ZMAN Midburn 2025
+            Candy Land Midburn 2025
           </h1>
           
           <p className="text-xl md:text-2xl mb-8 opacity-90 drop-shadow-lg">
@@ -137,10 +137,10 @@ export default function HomePage() {
         <div className="max-w-4xl mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">
-              BABA ZMAN Registration Form
+              Candy Land Registration Form
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Fill out the form below to join BABA ZMAN. We'll review your application and get back to you within 24 hours.
+              Fill out the form below to join Candy Land. We'll review your application and get back to you within 24 hours.
             </p>
           </div>
 

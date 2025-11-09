@@ -1,6 +1,6 @@
 # Copy this to .env.local to run the app
 
-MONGODB_URI=mongodb+srv://tomerganz_db_user:RhEqhWorpJ6zCAAx@cluster0.dxihaof.mongodb.net/midburn-camp?retryWrites=true&w=majority&appName=Cluster0
-ADMIN_PASSWORD=midburn2024
+MONGODB_URI=mongodb+srv://tomerganz_db_user:RhEqhWorpJ6zCAAx@cluster0.dxihaof.mongodb.net/CandyLandCamp?retryWrites=true&w=majority&appName=Cluster0
+ADMIN_PASSWORD=CandyLand2025
 JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
 NEXTAUTH_URL=http://localhost:3023

@@ -63,7 +63,7 @@ export default function AdditionalInfoPage() {
                 </div>
                 <div>
                   <p className="font-medium text-gray-800">See You Soon!</p>
-                  <p className="text-sm text-gray-600">We can't wait to see you at BABA ZMAN!</p>
+                  <p className="text-sm text-gray-600">We can't wait to see you at Candy Land!</p>
                 </div>
               </div>
             </div>
@@ -104,7 +104,7 @@ export default function AdditionalInfoPage() {
           </div>
           
           <h1 className="text-4xl md:text-6xl font-bold mb-6 drop-shadow-2xl">
-            BABA ZMAN Additional Information
+            Candy Land Additional Information
           </h1>
           
           <p className="text-xl md:text-2xl mb-8 opacity-90 drop-shadow-lg">

@@ -174,7 +174,7 @@ export default function FoodHealth({ token }: FoodHealthProps) {
     },
     { 
       id: '4', meal: 'dinner', day: 2, 
-      dish: 'Baba Zman Signature', 
+      dish: 'Candy Land Signature', 
       description: 'Chicken shawarma, rice pilaf, hummus, pita',
       prepInstructions: 'Marinate chicken overnight. Start rice 45 min before serving. Grill chicken in batches. Warm pitas last minute.',
       servings: 60, prepTime: 90, 

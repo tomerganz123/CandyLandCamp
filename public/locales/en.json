@@ -20,7 +20,7 @@
   },
   "home": {
     "hero": {
-      "title": "BABA ZMAN",
+      "title": "Candy Land",
       "subtitle": "Midburn 2025 Camp",
       "tagline": "Where time becomes magic in the desert",
       "dates": "November 24-29, 2025",
@@ -33,7 +33,7 @@
       },
       "camp": {
         "title": "Our Camp",
-        "description": "Discover the BABA ZMAN community and values"
+        "description": "Discover the Candy Land community and values"
       },
       "gift": {
         "title": "The Gift",
@@ -59,7 +59,7 @@
     }
   },
   "camp": {
-    "title": "BABA ZMAN Camp",
+    "title": "Candy Land Camp",
     "subtitle": "Our community, values, and way of life",
     "sections": {
       "about": "About Us",
@@ -87,7 +87,7 @@
   },
   "contact": {
     "title": "Contact Us",
-    "subtitle": "Get in touch with the BABA ZMAN team",
+    "subtitle": "Get in touch with the Candy Land team",
     "form": {
       "name": "Name",
       "email": "Email",
@@ -97,7 +97,7 @@
     }
   },
   "footer": {
-    "description": "BABA ZMAN - Creating magic in the desert since 2025",
+    "description": "Candy Land - Creating magic in the desert since 2025",
     "quickLinks": "Quick Links",
     "privacy": "Privacy Statement",
     "privacyText": "We respect your privacy. Personal information is never shared publicly."

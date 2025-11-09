@@ -1,4 +1,4 @@
-# 🏠 Local Development Setup - BABA ZMAN
+# 🏠 Local Development Setup - Candy Land
 
 This branch is configured for local desktop development on port **3030**.
 
@@ -56,14 +56,14 @@ npm run local
 net start MongoDB
 
 # Set in .env.local:
-MONGODB_URI=mongodb://localhost:27017/baba-zman-local
+MONGODB_URI=mongodb://localhost:27017/candy-land-local
 ```
 
 ### Option 2: MongoDB Atlas (Cloud)
 ```bash
 # Create free cluster at https://cloud.mongodb.com
 # Get connection string and set in .env.local:
-MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/baba-zman?retryWrites=true&w=majority
+MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/CandyLandCamp?retryWrites=true&w=majority
 ```
 
 ## 🔧 Local Development Features

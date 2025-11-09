@@ -399,7 +399,7 @@ export default function FeeCollectionReport({ token }: FeeCollectionReportProps)
                         <div className="flex items-center mb-1">
                           <MessageCircle className="h-3 w-3 text-green-500 mr-1" />
                           <a
-                            href={`https://wa.me/${payment.memberPhone.replace(/[^0-9]/g, '')}?text=Hi ${payment.memberName.split(' ')[0]}, this is regarding your BABA ZMAN camp fee payment. Please let me know if you have any questions!`}
+                            href={`https://wa.me/${payment.memberPhone.replace(/[^0-9]/g, '')}?text=Hi ${payment.memberName.split(' ')[0]}, this is regarding your Candy Land camp fee payment. Please let me know if you have any questions!`}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="text-green-600 hover:text-green-800 hover:underline transition-colors flex items-center"

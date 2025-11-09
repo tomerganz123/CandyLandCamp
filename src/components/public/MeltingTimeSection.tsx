@@ -45,8 +45,8 @@ export default function MeltingTimeSection() {
           </h2>
           <p className="text-lg text-purple-200 max-w-3xl mx-auto">
             {isRTL 
-              ? 'במדבר, הזמן מקבל משמעות חדשה. כאן באבא זמן, אנחנו יוצרים רגעים שנצרבים בזיכרון לנצח'
-              : 'In the desert, time takes on new meaning. Here at BABA ZMAN, we create moments that burn into memory forever'
+              ? 'במדבר, הזמן מקבל משמעות חדשה. כאן בקנדי לנד, אנחנו יוצרים רגעים שנצרבים בזיכרון לנצח'
+              : 'In the desert, time takes on new meaning. Here at Candy Land, we create moments that burn into memory forever'
             }
           </p>
         </motion.div>
@@ -140,7 +140,7 @@ export default function MeltingTimeSection() {
             </p>
           </motion.div>
 
-          {/* Clock 2 - Present (BABA ZMAN) */}
+          {/* Clock 2 - Present (Candy Land) */}
           <motion.div
             initial={{ opacity: 0, y: 100 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -236,7 +236,7 @@ export default function MeltingTimeSection() {
                 </svg>
               </motion.div>
             </div>
-            <h3 className="text-xl font-bold text-yellow-300 mb-1">BABA ZMAN</h3>
+            <h3 className="text-xl font-bold text-yellow-300 mb-1">Candy Land</h3>
             <p className="text-purple-200 text-sm">
               {isRTL ? 'הרגע הנוכחי נמס לקסם' : 'The present moment melts into magic'}
             </p>
@@ -360,7 +360,7 @@ export default function MeltingTimeSection() {
             }
           </blockquote>
           <cite className="text-purple-300">
-            — {isRTL ? 'פילוסופיית באבא זמן' : 'BABA ZMAN Philosophy'}
+            — {isRTL ? 'פילוסופיית קנדי לנד' : 'Candy Land Philosophy'}
           </cite>
         </motion.div>
 

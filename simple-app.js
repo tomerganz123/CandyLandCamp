@@ -194,7 +194,7 @@ const registrationHTML = `
 
         <div class="admin-link">
             <p><strong>Camp Organizers:</strong> <a href="/admin">Access Admin Dashboard</a></p>
-            <p><small>Password: midburn2024</small></p>
+            <p><small>Password: CandyLand2025</small></p>
         </div>
     </div>
 

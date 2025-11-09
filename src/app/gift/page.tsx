@@ -132,7 +132,7 @@ function GiftPageContent() {
               <div className="relative">
                 <img 
                   src="/gift.png" 
-                  alt="BABA ZMAN Gifts" 
+                  alt="Candy Land Gifts" 
                   className="max-w-sm md:max-w-md lg:max-w-lg w-full h-auto object-contain rounded-2xl shadow-2xl"
                 />
                 <div className="absolute -top-3 -right-3">

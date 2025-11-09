@@ -665,7 +665,7 @@ export default function AdminDashboard({ token, onLogout }: AdminDashboardProps)
                       <div className="text-sm text-gray-900 flex items-center gap-1">
                         <MessageCircle className="h-3 w-3 text-green-500" />
                         <a
-                          href={`https://wa.me/${member.phone.replace(/[^0-9]/g, '')}?text=Hi ${member.firstName}, this is regarding BABA ZMAN camp. Please let me know if you have any questions!`}
+                          href={`https://wa.me/${member.phone.replace(/[^0-9]/g, '')}?text=Hi ${member.firstName}, this is regarding Candy Land camp. Please let me know if you have any questions!`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="text-green-600 hover:text-green-800 hover:underline transition-colors"

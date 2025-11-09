@@ -42,7 +42,7 @@ export default function NavBar() {
           <Link href="/home" className="flex items-center">
             <img 
               src="/logo.png" 
-              alt="BABA ZMAN" 
+              alt="Candy Land" 
               className="h-10 w-auto object-contain"
             />
           </Link>

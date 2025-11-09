@@ -180,7 +180,7 @@ export default function ReportsPage() {
                 <TrendingUp className="h-8 w-8 text-orange-600" />
                 <div>
                   <h1 className="text-xl font-semibold text-gray-800">
-                    BABA ZMAN Reports
+                    Candy Land Reports
                   </h1>
                   <p className="text-sm text-gray-500">
                     {activeReport?.description}

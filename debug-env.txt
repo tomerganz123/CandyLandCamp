@@ -1,8 +1,8 @@
 # Check these in your Vercel Dashboard → Settings → Environment Variables
 
-MONGODB_URI=mongodb+srv://tomerganz_db_user:RhEqhWorpJ6zCAAx@cluster0.dxihaof.mongodb.net/midburn-camp?retryWrites=true&w=majority&appName=Cluster0
+MONGODB_URI=mongodb+srv://tomerganz_db_user:RhEqhWorpJ6zCAAx@cluster0.dxihaof.mongodb.net/CandyLandCamp?retryWrites=true&w=majority&appName=Cluster0
 
-ADMIN_PASSWORD=midburn2024
+ADMIN_PASSWORD=CandyLand2025
 
 JWT_SECRET=qY7m9hZ2xP4tV6rL0aW8jN3cK5uG1eFq
 

@@ -5,12 +5,10 @@ import { motion } from 'framer-motion';
 import { 
   DollarSign, Calendar, User, Check, X, Plus, 
   Edit, Trash2, Download, Search, Filter,
-  ChevronDown, ChevronUp, AlertCircle, CheckCircle,
-  CreditCard
+  ChevronDown, ChevronUp, AlertCircle, CheckCircle
 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import FeeCollectionReport from './FeeCollectionReport';
 
 interface Payment {
   _id?: string;
@@ -80,7 +78,6 @@ interface ExpenseFormData {
 const CAMP_FEE_PER_MEMBER = 2000;
 
 export default function BudgetReport({ token }: BudgetReportProps) {
-  const [activeTab, setActiveTab] = useState<'expenses' | 'fees'>('expenses');
   const [expenses, setExpenses] = useState<BudgetExpense[]>([]);
   const [statistics, setStatistics] = useState<BudgetStatistics | null>(null);
   const [categoryStats, setCategoryStats] = useState<CategoryStat[]>([]);
@@ -569,43 +566,14 @@ export default function BudgetReport({ token }: BudgetReportProps) {
       {/* Header */}
       <div className="flex justify-between items-start">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Budget Management</h2>
-          <p className="text-gray-600 mt-1">Track camp expenses and fee collection</p>
+          <h2 className="text-2xl font-bold text-gray-900">Budget & Expenses</h2>
+          <p className="text-gray-600 mt-1">Track and manage camp expenditures and budget allocation</p>
         </div>
       </div>
 
-      {/* Tab Navigation */}
-      <div className="border-b border-gray-200">
-        <nav className="-mb-px flex space-x-8">
-          <button
-            onClick={() => setActiveTab('expenses')}
-            className={`py-2 px-1 border-b-2 font-medium text-sm ${
-              activeTab === 'expenses'
-                ? 'border-orange-500 text-orange-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-            }`}
-          >
-            <DollarSign className="w-4 h-4 mr-2 inline" />
-            Expenses
-          </button>
-          <button
-            onClick={() => setActiveTab('fees')}
-            className={`py-2 px-1 border-b-2 font-medium text-sm ${
-              activeTab === 'fees'
-                ? 'border-orange-500 text-orange-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-            }`}
-          >
-            <CreditCard className="w-4 h-4 mr-2 inline" />
-            Fee Collection
-          </button>
-        </nav>
-      </div>
-
-      {/* Tab Content */}
-      {activeTab === 'expenses' ? (
-        <div className="space-y-6">
-          {/* Expenses Header */}
+      {/* Content */}
+      <div className="space-y-6">
+        {/* Expenses Header */}
           <div className="flex justify-between items-start">
             <div>
               <h3 className="text-xl font-semibold text-gray-900">Camp Expenses</h3>
@@ -1363,12 +1331,7 @@ export default function BudgetReport({ token }: BudgetReportProps) {
           </div>
         </div>
       )}
-        </div>
-      ) : (
-        <div>
-          <FeeCollectionReport token={token} />
-        </div>
-      )}
+      </div>
     </div>
   );
 }

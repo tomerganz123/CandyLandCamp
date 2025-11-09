@@ -135,7 +135,7 @@ interface CleanupTask {
 type KitchenTab = 'health' | 'food-supply' | 'menu-planning' | 'volunteer-shifts' | 'kabab-gift' | 'equipment-checklist';
 
 export default function FoodHealth({ token }: FoodHealthProps) {
-  const [activeTab, setActiveTab] = useState<KitchenTab>('health');
+  const [activeTab, setActiveTab] = useState<KitchenTab>('volunteer-shifts');
   const [data, setData] = useState<HealthData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -686,10 +686,10 @@ export default function FoodHealth({ token }: FoodHealthProps) {
   }
 
   const tabs = [
+    { id: 'volunteer-shifts', label: 'Volunteer Shifts', icon: Users },
     { id: 'health', label: 'Health Overview', icon: Heart },
     { id: 'food-supply', label: 'Food Supply Order', icon: ShoppingCart },
     { id: 'menu-planning', label: 'Menu Planning', icon: Calendar },
-    { id: 'volunteer-shifts', label: 'Volunteer Shifts', icon: Users },
     { id: 'kabab-gift', label: 'Kabab Hazman Gift', icon: Gift },
     { id: 'equipment-checklist', label: 'Equipment & Setup', icon: Wrench },
   ];
@@ -1210,9 +1210,30 @@ export default function FoodHealth({ token }: FoodHealthProps) {
                     <div>
                       <strong>Assigned:</strong>
                       <div className="mt-1 space-y-1">
-                        {shift.memberNames.map((name, idx) => (
-                          <div key={idx} className="text-xs">• {name}</div>
-                        ))}
+                        {shift.memberNames
+                          .sort((a, b) => {
+                            // Sort managers to the top
+                            const aIsManager = a.toLowerCase().includes('manager');
+                            const bIsManager = b.toLowerCase().includes('manager');
+                            if (aIsManager && !bIsManager) return -1;
+                            if (!aIsManager && bIsManager) return 1;
+                            return 0;
+                          })
+                          .map((name, idx) => {
+                            const isManager = name.toLowerCase().includes('manager');
+                            return (
+                              <div 
+                                key={idx} 
+                                className={`text-xs font-medium rounded px-2 py-1 ${
+                                  isManager 
+                                    ? 'bg-orange-100 text-orange-800 border border-orange-300' 
+                                    : 'text-gray-700'
+                                }`}
+                              >
+                                {isManager ? '👨‍🍳 ' : '• '}{name}
+                              </div>
+                            );
+                          })}
                       </div>
                     </div>
                   ) : (

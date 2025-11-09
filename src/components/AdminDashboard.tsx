@@ -19,7 +19,8 @@ import {
   FileText,
   Settings,
   Eye,
-  EyeOff
+  EyeOff,
+  MessageCircle
 } from 'lucide-react';
 import { IMember } from '@/models/Member';
 import AdditionalInfoOverview from './AdditionalInfoOverview';
@@ -244,14 +245,19 @@ export default function AdminDashboard({ token, onLogout }: AdminDashboardProps)
     }
   };
 
+  // Debounced search effect
   useEffect(() => {
-    const loadData = async () => {
-      setLoading(true);
-      await Promise.all([fetchMembers(), fetchStats()]);
-      setLoading(false);
-    };
+    const delaySearch = setTimeout(() => {
+      const loadData = async () => {
+        setLoading(true);
+        await Promise.all([fetchMembers(), fetchStats()]);
+        setLoading(false);
+      };
 
-    loadData();
+      loadData();
+    }, 500); // Wait 500ms after user stops typing
+
+    return () => clearTimeout(delaySearch);
   }, [currentPage, searchTerm, roleFilter, approvedFilter, genderFilter, ticketStatusFilter]);
 
   if (loading && !members.length) {
@@ -657,8 +663,16 @@ export default function AdminDashboard({ token, onLogout }: AdminDashboardProps)
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm text-gray-900 flex items-center gap-1">
-                        <Phone className="h-3 w-3" />
-                        {member.phone}
+                        <MessageCircle className="h-3 w-3 text-green-500" />
+                        <a
+                          href={`https://wa.me/${member.phone.replace(/[^0-9]/g, '')}?text=Hi ${member.firstName}, this is regarding BABA ZMAN camp. Please let me know if you have any questions!`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-green-600 hover:text-green-800 hover:underline transition-colors"
+                          title="Send WhatsApp message"
+                        >
+                          {member.phone}
+                        </a>
                       </div>
                     </td>
                     {visibleFields.gender && (

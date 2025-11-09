@@ -190,6 +190,15 @@ export default function ReportsPage() {
             </div>
             
             <div className="flex items-center gap-3">
+              <a
+                href="/admin-unified"
+                className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-orange-500 to-red-600 text-white rounded-lg hover:from-orange-600 hover:to-red-700 transition-colors shadow-md"
+                title="Try the new unified admin dashboard"
+              >
+                <TrendingUp className="h-4 w-4" />
+                Unified
+              </a>
+              
               <button
                 onClick={handleExportAll}
                 className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
